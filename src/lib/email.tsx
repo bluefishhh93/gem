@@ -1,23 +1,34 @@
-import { Resend } from "resend";
-
+import nodemailer from 'nodemailer';
 import { env } from "@/env";
-import { ReactNode } from "react";
+import {render} from "@react-email/components";
 
-const resend = new Resend(env.EMAIL_SERVER_PASSWORD);
+const transporter = nodemailer.createTransport({
+    service: 'SMTP',
+    host: env.NODE_EMAIL_SERVER_HOST,
+    port: Number(env.NODE_EMAIL_SERVER_PORT),
+    secure: env.NODE_EMAIL_SERVER_SECURE === 'true',
+    auth: {
+        user: env.NODE_EMAIL_SERVER_USER,
+        pass: env.NODE_EMAIL_SERVER_PASSWORD,
+    },
+} as nodemailer.TransportOptions);
 
 export async function sendEmail(
-  email: string,
-  subject: string,
-  body: ReactNode,
+    email: string,
+    subject: string,
+    htmlBody: React.ReactElement
 ) {
-  const { error } = await resend.emails.send({
-    from: env.EMAIL_FROM,
-    to: email,
-    subject,
-    react: <>{body}</>,
-  });
+    const mailOptions = {
+        from: env.NODE_EMAIL_FROM,
+        to: email,
+        subject: subject,
+        html: render(htmlBody),
+    };
 
-  if (error) {
-    throw error;
-  }
+    try {
+        await transporter.sendMail(mailOptions);
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+    }
 }

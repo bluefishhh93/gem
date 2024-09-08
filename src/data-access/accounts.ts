@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { database } from "@/db";
 import { accounts } from "@/db/schema";
 import { UserId } from "@/use-cases/types";
 import { and, eq } from "drizzle-orm";
@@ -25,7 +25,7 @@ async function hashPassword(plainTextPassword: string, salt: string) {
 export async function createAccount(userId: UserId, password: string) {
   const salt = crypto.randomBytes(128).toString("base64");
   const hash = await hashPassword(password, salt);
-  const [account] = await db
+  const [account] = await database
     .insert(accounts)
     .values({
       userId,
@@ -37,20 +37,10 @@ export async function createAccount(userId: UserId, password: string) {
   return account;
 }
 
-export async function createAccountViaGithub(userId: UserId, githubId: string) {
-  await db
-    .insert(accounts)
-    .values({
-      userId: userId,
-      accountType: "github",
-      githubId,
-    })
-    .onConflictDoNothing()
-    .returning();
-}
+
 
 export async function createAccountViaGoogle(userId: UserId, googleId: string) {
-  await db
+  await database
     .insert(accounts)
     .values({
       userId: userId,
@@ -62,7 +52,7 @@ export async function createAccountViaGoogle(userId: UserId, googleId: string) {
 }
 
 export async function getAccountByUserId(userId: UserId) {
-  const account = await db.query.accounts.findFirst({
+  const account = await database.query.accounts.findFirst({
     where: eq(accounts.userId, userId),
   });
 
@@ -72,7 +62,7 @@ export async function getAccountByUserId(userId: UserId) {
 export async function updatePassword(
   userId: UserId,
   password: string,
-  trx = db,
+  trx = database,
 ) {
   const salt = crypto.randomBytes(128).toString("base64");
   const hash = await hashPassword(password, salt);
@@ -86,13 +76,8 @@ export async function updatePassword(
 }
 
 export async function getAccountByGoogleId(googleId: string) {
-  return await db.query.accounts.findFirst({
+  return await database.query.accounts.findFirst({
     where: eq(accounts.googleId, googleId),
   });
 }
 
-export async function getAccountByGithubId(githubId: string) {
-  return await db.query.accounts.findFirst({
-    where: eq(accounts.githubId, githubId),
-  });
-}

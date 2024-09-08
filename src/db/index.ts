@@ -1,12 +1,20 @@
-import * as schema from "./schema";
-
-import { drizzle } from "drizzle-orm/libsql";
-import { createClient } from "@libsql/client";
 import { env } from "@/env";
+import * as schema from "./schema";
+import { PostgresJsDatabase, drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-export const client = createClient({
-  url: env.DATABASE_URL!,
-  authToken: env.DB_AUTH_TOKEN!,
-});
+let database: PostgresJsDatabase<typeof schema>;
+let pg: ReturnType<typeof postgres>;
 
-export const db = drizzle(client, { schema });
+if (env.NODE_ENV === "production") {
+  pg = postgres(env.DATABASE_URL);
+  database = drizzle(pg, { schema });
+} else {
+  if (!(global as any).database!) {
+    pg = postgres(env.DATABASE_URL);
+    (global as any).database = drizzle(pg, { schema });
+  }
+  database = (global as any).database;
+}
+
+export { database, pg };

@@ -1,7 +1,7 @@
-import { GitHub, Google } from "arctic";
+import { Google } from "arctic";
 import { Lucia } from "lucia";
-import { DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
-import { db } from "@/db";
+import { DrizzlePostgreSQLAdapter, DrizzleSQLiteAdapter } from "@lucia-auth/adapter-drizzle";
+import { database } from "@/db";
 import { sessions, users } from "@/db/schema";
 import { cookies } from "next/headers";
 import { User } from "lucia";
@@ -9,7 +9,7 @@ import { Session } from "lucia";
 import { env } from "@/env";
 import { UserId as CustomUserId } from "@/types";
 
-const adapter = new DrizzleSQLiteAdapter(db, sessions, users);
+const adapter = new DrizzlePostgreSQLAdapter(database, sessions as any, users as any);
 
 export const lucia = new Lucia(adapter, {
   sessionCookie: {
@@ -69,11 +69,6 @@ declare module "lucia" {
     UserId: CustomUserId;
   }
 }
-
-export const github = new GitHub(
-  env.GITHUB_CLIENT_ID,
-  env.GITHUB_CLIENT_SECRET,
-);
 
 export const googleAuth = new Google(
   env.GOOGLE_CLIENT_ID,
