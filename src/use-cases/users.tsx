@@ -11,7 +11,7 @@ import {
   createAccountViaGoogle,
   updatePassword,
 } from "@/data-access/accounts";
-import { createProfile, getProfile } from "@/data-access/profiles";
+import { createProfile, getProfile, updateProfile } from "@/data-access/profiles";
 import { GoogleUser } from "@/app/api/login/google/callback/route";
 import {
   createPasswordResetToken,
@@ -36,6 +36,7 @@ import {
 } from "./errors";
 import { database } from "@/db";
 import { createTransaction } from "@/data-access/utils";
+import { getTop3UnreadNotificationsForUser } from "@/data-access/notifications";
 
 export async function deleteUserUseCase(
   authenticatedUser: UserSession,
@@ -151,4 +152,20 @@ export async function verifyEmailUseCase(token: string) {
   await updateUser(userId, { emailVerified: new Date() });
   await deleteVerifyEmailToken(token);
   return userId;
+}
+
+export async function getUnreadNotificationsForUserUseCase(userId: UserId) {
+  return await getTop3UnreadNotificationsForUser(userId);
+}
+
+export async function updateProfileImageUseCase(image: string, userId: UserId) {
+  
+  await updateProfile(userId, { image });
+}
+
+export async function updateProfileNameUseCase(
+  userId: UserId,
+  displayName: string
+) {
+  await updateProfile(userId, { displayName });
 }

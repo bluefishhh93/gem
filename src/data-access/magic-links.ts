@@ -1,5 +1,5 @@
 import { generateRandomToken } from "@/data-access/utils";
-import { db } from "@/db";
+import { database } from "@/db";
 import { magicLinks } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -11,7 +11,7 @@ export async function upsertMagicLink(email: string) {
   const token = await generateRandomToken(TOKEN_LENGTH);
   const tokenExpiresAt = new Date(Date.now() + TOKEN_TTL);
 
-  await db
+  await database
     .insert(magicLinks)
     .values({
       email,
@@ -30,7 +30,7 @@ export async function upsertMagicLink(email: string) {
 }
 
 export async function getMagicLinkByToken(token: string) {
-  const existingToken = await db.query.magicLinks.findFirst({
+  const existingToken = await database.query.magicLinks.findFirst({
     where: eq(magicLinks.token, token),
   });
 
@@ -38,5 +38,5 @@ export async function getMagicLinkByToken(token: string) {
 }
 
 export async function deleteMagicToken(token: string) {
-  await db.delete(magicLinks).where(eq(magicLinks.token, token));
+  await database.delete(magicLinks).where(eq(magicLinks.token, token));
 }

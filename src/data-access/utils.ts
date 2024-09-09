@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { database } from "@/db";
 import crypto from "crypto";
 
 export async function generateRandomToken(length: number) {
@@ -15,8 +15,8 @@ export async function generateRandomToken(length: number) {
   return buf.toString("hex").slice(0, length);
 }
 
-export async function createTransaction<T extends typeof db>(
+export async function createTransaction<T extends typeof database>(
   cb: (trx: T) => void,
 ) {
-  await db.transaction(cb as any);
+  await database.transaction(cb as any);
 }
