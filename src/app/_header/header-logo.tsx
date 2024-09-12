@@ -18,7 +18,7 @@ export function HeaderLogo() {
         className="rounded w-8 h-8"
         width="50"
         height="50"
-        src="/group.jpeg"
+        src="/gem-removebg.png"
         alt="hero image"
       />
       {applicationName}

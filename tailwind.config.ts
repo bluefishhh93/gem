@@ -36,11 +36,34 @@ const config = {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          50: "#f8f5f7",
+          100: "#f0eaef",
+          200: "#e1d6de",
+          300: "#c7b3c3",
+          400: "#a88ba2",
+          500: "#8e6b86",
+          600: "#77556e",
+          700: "#4a3144", // This is your main primary color
+          800: "#3e2a39",
+          900: "#352431",
+          950: "#231720",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          50: "#fef2f5",
+          100: "#fde6ec",
+          200: "#fcd0dd",
+          300: "#f9adc2",
+          400: "#f2a7bb", // This is your main secondary color
+          500: "#e56d8f",
+          600: "#d44a70",
+          700: "#b93357",
+          800: "#992d49",
+          900: "#802b42",
+          950: "#481019",
         },
+
         success: {
           DEFAULT: "hsl(var(--success))",
           foreground: "hsl(var(--success-foreground))",

@@ -5,13 +5,15 @@ import { validateRequest } from "@/lib/auth";
 import { cache } from "react";
 import { AuthenticationError } from "../use-cases/errors";
 import { UserId } from "@/use-cases/types";
+import { gettUserRole } from "@/data-access/users";
 
 export const getCurrentUser = cache(async () => {
   const session = await validateRequest();
   if (!session.user) {
     return undefined;
   }
-  return session.user;
+  const role = await gettUserRole(session.user.id);
+  return { ...session.user, role };
 });
 
 export const assertAuthenticated = async () => {

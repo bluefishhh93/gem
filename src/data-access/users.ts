@@ -98,6 +98,17 @@ export async function getUserByEmail(email: string) {
   return user;
 }
 
+export async function gettUserRole(userId: UserId){
+  const user = await database.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: {
+      role: true,
+    },
+  });
+
+  return user?.role;
+}
+
 export async function getMagicUserAccountByEmail(email: string) {
   const user = await database.query.users.findFirst({
     where: eq(users.email, email),

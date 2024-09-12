@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { Many, relations } from "drizzle-orm";
 import {
   timestamp,
   text,
@@ -7,16 +7,21 @@ import {
   boolean,
   pgTable,
   integer,
+  doublePrecision,
 } from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
 
-export const roleEnum = pgEnum("role", ["member", "admin"]);
+export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const accountTypeEnum = pgEnum("type", ["email", "google", "github"]);
+export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "failed"]);
+export const orderStatusEnum = pgEnum("order_status", ["pending", "processing", "shipped", "delivered", "canceled"]);
+export const paymentMethodEnum = pgEnum("payment_method", ["cod", "bank"]);
+export const shippingStatusEnum = pgEnum("shipping_status", ["pending", "shipping", "shipped"]);
 
 export const users = pgTable("gf_user", {
   id: serial("id").primaryKey(),
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
+  role: roleEnum("role").default("user").notNull(),
 });
 
 export const accounts = pgTable("gf_accounts", {
@@ -92,7 +97,184 @@ export const notifications = pgTable("gf_notifications", {
   message: text("message").notNull(),
   createdOn: timestamp("createdOn", { mode: "date" }).notNull(),
 });
+//*================================================
 
+// ImgProduct
+export const imgProducts = pgTable("img_products", {
+  id: serial("id").primaryKey(),
+  imageUrl: text("image_url"),
+  publicId: text("public_id"),
+  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }),
+});
+
+// ImgReview
+export const imgReviews = pgTable("img_reviews", {
+  id: serial("id").primaryKey(),
+  imageUrl: text("image_url").notNull(),
+  publicId: text("public_id").notNull(),
+  reviewId: integer("review_id").references(() => reviews.id, { onDelete: "cascade" }),
+});
+
+// Review
+export const reviews = pgTable("reviews", {
+  id: serial("id").primaryKey(),
+  comment: text("comment"),
+  rating: integer("rating").notNull(),
+  userId: integer("user_id").references(() => users.id),
+  productId: integer("product_id").references(() => products.id),
+  orderItemId: integer("order_item_id").references(() => orderItems.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Product
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  currentQuantity: integer("current_quantity").notNull(),
+  price: doublePrecision("price").notNull(),
+  salePrice: doublePrecision("sale_price"),
+  isActivated: boolean("is_activated").notNull(),
+  categoryId: integer("category_id").references(() => categories.id),
+});
+
+// Category
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  isActive: boolean("is_active").default(true),
+});
+
+//  order 
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  name: text("name"),
+  total: doublePrecision("total"),
+  orderStatus: orderStatusEnum("order_status").notNull(),
+  shipAddress: text("ship_address"),
+  phone: text("phone"),
+  email: text("email"),
+  paymentMethod:paymentMethodEnum("payment_method").notNull(),
+  paymentStatus: paymentStatusEnum("payment_status").notNull(),
+  trackingNumber: text("tracking_number"),
+  shippingStatus: shippingStatusEnum("shipping_status").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  shipDate: timestamp("ship_date"),
+});
+
+//order items
+export const orderItems = pgTable("order_items", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").references(() => orders.id, { onDelete: "cascade" }),
+  productId: integer("product_id").references(() => products.id),
+  quantity: integer("quantity").notNull(),
+  subtotal: doublePrecision("subtotal").notNull(),
+  isRated: boolean("is_rated").default(false),
+});
+
+export const discounts = pgTable("discounts", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull(),
+  discount: doublePrecision("discount").notNull(),
+  startDate: timestamp("start_date"),
+  endDate: timestamp("end_date"),
+});
+
+
+//
+export const strings = pgTable("strings", {
+  id: serial("id").primaryKey(),
+  color: text("color").notNull(),
+  material: text("material").notNull(),
+  price: doublePrecision("price").notNull(),
+});
+
+export const charms = pgTable("charms", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  price: doublePrecision("price").notNull(),
+  imageUrl: text("image_url").notNull(),
+});
+
+export const braceletCharms = pgTable("bracelet_charms", {
+  id: serial("id").primaryKey(),
+  braceletId: integer("bracelet_id").references(() => customBracelets.id, { onDelete: "cascade" }),
+  charmId: integer("charm_id").references(() => charms.id),
+  position: doublePrecision("position").notNull(),
+});
+
+export const customBracelets = pgTable("custom_bracelets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").references(() => users.id),
+  stringId: integer("string_id").references(() => strings.id),
+  totalPrice: doublePrecision("total_price").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+
+export const productsRelations = relations(products, ({ one, many }) => ({
+  category: one(categories, {
+    fields: [products.categoryId],
+    references: [categories.id],
+  }),
+  imgProducts: many(imgProducts),
+  orderItems: many(orderItems),
+}));
+
+export const ordersRelations = relations(orders, ({ many }) => ({
+  orderItems: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const reviewsRelations = relations(reviews, ({ one, many }) => ({
+  user: one(users, {
+    fields: [reviews.userId],
+    references: [users.id],
+  }),
+  product: one(products, {
+    fields: [reviews.productId],
+    references: [products.id],
+  }),
+  orderItem: one(orderItems, {
+    fields: [reviews.orderItemId],
+    references: [orderItems.id],
+  }),
+  imgReviews: many(imgReviews),
+}));
+
+export const customBraceletRelations = relations(customBracelets, ({ one, many }) => ({
+  user: one(users, {
+    fields: [customBracelets.userId],
+    references: [users.id],
+  }),
+  string: one(strings, {
+    fields: [customBracelets.stringId],
+    references: [strings.id],
+  }),
+  charms: many(braceletCharms),
+}));
+
+export const braceletCharmRelations = relations(braceletCharms, ({ one }) => ({
+  bracelet: one(customBracelets, {
+    fields: [braceletCharms.braceletId],
+    references: [customBracelets.id],
+  }),
+  charm: one(charms, {
+    fields: [braceletCharms.charmId],
+    references: [charms.id],
+  }),
+}));
 
 
 /**
@@ -110,3 +292,14 @@ export const newsletters = pgTable("gf_newsletter", {
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
+export type Product = typeof products.$inferSelect;
+export type Review = typeof reviews.$inferSelect;
+export type Order = typeof orders.$inferSelect;
+export type OrderItem = typeof orderItems.$inferSelect;
+export type Category = typeof categories.$inferSelect;
+export type ImgProduct = typeof imgProducts.$inferSelect;
+export type ImgReview = typeof imgReviews.$inferSelect;
+export type String = typeof strings.$inferSelect;
+export type Charm = typeof charms.$inferSelect;
+export type CustomBracelet = typeof customBracelets.$inferSelect;
+export type BraceletCharm = typeof braceletCharms.$inferSelect;
