@@ -40,7 +40,7 @@ export function DeleteAccountButton() {
   const form = useForm<z.infer<typeof deleteSchema>>({
     resolver: zodResolver(deleteSchema),
     defaultValues: {
-      confirm: "",
+      confirm: "Please delete",
     },
   });
 

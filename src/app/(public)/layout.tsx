@@ -6,7 +6,7 @@ import { ReactNode } from "react";
 
 import { Archivo } from "next/font/google";
 import { Libre_Franklin } from "next/font/google";
-import { Providers } from "./providers";
+import { Providers } from "../providers";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "./_header/header";
 

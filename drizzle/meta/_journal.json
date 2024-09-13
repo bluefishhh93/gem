@@ -15,6 +15,20 @@
       "when": 1726151877041,
       "tag": "0001_strong_molly_hayes",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1726238790506,
+      "tag": "0002_nasty_paladin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1726239103860,
+      "tag": "0003_natural_archangel",
+      "breakpoints": true
     }
   ]
 }

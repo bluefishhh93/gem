@@ -1,0 +1,1 @@
+ALTER TABLE "charms" ADD COLUMN "stock" integer NOT NULL;

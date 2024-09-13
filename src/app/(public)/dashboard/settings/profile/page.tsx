@@ -1,10 +1,7 @@
-import { ProfileImage } from "@/app/dashboard/settings/profile/profile-image";
-import { ProfileName } from "@/app/dashboard/settings/profile/profile-name";
-import { getCurrentUser } from "@/lib/session";
-import { Suspense, cache } from "react";
+import { ProfileImage } from "@/app/(public)/dashboard/settings/profile/profile-image";
+import { ProfileName } from "@/app/(public)/dashboard/settings/profile/profile-name";
+import {  cache } from "react";
 import { getUserProfileUseCase } from "@/use-cases/users";
-import { Skeleton } from "@/components/ui/skeleton";
-import { ConfigurationPanel } from "@/components/configuration-panel";
 
 export const getUserProfileLoader = cache(getUserProfileUseCase);
 

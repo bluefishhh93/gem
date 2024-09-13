@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ModeToggle } from "@/components/mode-toggle";
-import { HeaderLinks } from "@/app/_header/header-links";
+import { HeaderLinks } from "@/app/(public)/_header/header-links";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/session";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Settings2Icon } from "lucide-react";
-import { HeaderActionsFallback } from "@/app/_header/header-actions-fallback";
+import { HeaderActionsFallback } from "@/app/(public)/_header/header-actions-fallback";
 import { applicationName } from "@/app-config";
-import { SignOutItem } from "@/app/_header/sign-out-item";
+import { SignOutItem } from "@/app/(public)/_header/sign-out-item";
 import {
   getUnreadNotificationsForUserUseCase,
   getUserProfileUseCase,
 } from "@/use-cases/users";
-import { getProfileImageFullUrl } from "@/app/dashboard/settings/profile/profile-image";
+import { getProfileImageFullUrl } from "@/app/(public)/dashboard/settings/profile/profile-image";
 import { Notifications } from "./notifications";
 import { MenuButton } from "./menu-button";
 import Container from "@/components/container";
@@ -29,11 +29,11 @@ export async function Header() {
   const user = await getCurrentUser();
 
   return (
-    <div className="px-5 md:px-6">
+    <div className="px-5 md:px-6 bg-secondary-100 dark:bg-secondary-900">
       <div className="mx-auto flex w-full max-w-7xl py-4 justify-between">
         <div className="flex justify-between gap-10 items-center">
           <Link href="/" className="">
-            <span className="text-2xl font-bold">{applicationName}</span>
+            <span className="text-2xl font-bold text-secondary-700 dark:text-secondary-300">{applicationName}</span>
           </Link>
 
           <HeaderLinks isAuthenticated={!!user} />
@@ -62,7 +62,7 @@ async function ProfileAvatar({ userId }: { userId: number }) {
   );
 }
 
-async function HeaderActions() {
+export async function HeaderActions() {
   const user = await getCurrentUser();
   const isSignedIn = !!user;
 
@@ -71,7 +71,7 @@ async function HeaderActions() {
       {isSignedIn ? (
         <>
           <div className="hidden md:block">
-            <ModeToggle />
+            {/* <ModeToggle /> */}
           </div>
 
           <Suspense>
@@ -111,7 +111,7 @@ async function HeaderActions() {
         <>
           <ModeToggle />
 
-          <Button asChild variant="secondary">
+          <Button asChild variant="secondary" className="bg-secondary-500 hover:bg-secondary-600 text-white">
             <Link href="/sign-in">Sign In</Link>
           </Button>
         </>

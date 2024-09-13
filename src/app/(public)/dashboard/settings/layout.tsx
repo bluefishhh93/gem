@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/lib/session";
-import { SettingsTab } from "@/app/dashboard/settings/tabs-section";
+import { SettingsTab } from "@/app/(public)/dashboard/settings/tabs-section";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SquareUser } from "lucide-react";

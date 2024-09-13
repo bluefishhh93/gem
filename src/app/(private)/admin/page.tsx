@@ -12,23 +12,7 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold">Welcome, Admin!</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <AdminCard
-          title="Users"
-          description="Manage user accounts"
-          link="/admin/users"
-        />
-        <AdminCard
-          title="Products"
-          description="Manage product catalog"
-          link="/admin/products"
-        />
-        <AdminCard
-          title="Orders"
-          description="View and manage orders"
-          link="/admin/orders"
-        />
-      </div>
+     
     </div>
   );
 }

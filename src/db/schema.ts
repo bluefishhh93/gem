@@ -194,6 +194,7 @@ export const charms = pgTable("charms", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   price: doublePrecision("price").notNull(),
+  stock: integer("stock").notNull().default(0),
   imageUrl: text("image_url").notNull(),
 });
 
@@ -292,14 +293,30 @@ export const newsletters = pgTable("gf_newsletter", {
 export type User = typeof users.$inferSelect;
 export type Profile = typeof profiles.$inferSelect;
 export type Notification = typeof notifications.$inferSelect;
+
 export type Product = typeof products.$inferSelect;
+export type NewProduct = typeof products.$inferInsert;
+
 export type Review = typeof reviews.$inferSelect;
+export type NewReview = typeof reviews.$inferInsert;
+
 export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
+
 export type OrderItem = typeof orderItems.$inferSelect;
+export type NewOrderItem = typeof orderItems.$inferInsert;
+
 export type Category = typeof categories.$inferSelect;
+export type NewCategory = typeof categories.$inferInsert;
+
 export type ImgProduct = typeof imgProducts.$inferSelect;
 export type ImgReview = typeof imgReviews.$inferSelect;
+
 export type String = typeof strings.$inferSelect;
+export type NewString = typeof strings.$inferInsert;
+
 export type Charm = typeof charms.$inferSelect;
+export type NewCharm = typeof charms.$inferInsert;
+
 export type CustomBracelet = typeof customBracelets.$inferSelect;
 export type BraceletCharm = typeof braceletCharms.$inferSelect;
