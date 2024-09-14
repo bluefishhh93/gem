@@ -1,17 +1,17 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Charm } from "@/db/schema";
+import { String } from "@/db/schema";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import Image from "next/image";
+import { ArrowUpDown } from "lucide-react";
 import { vietnamCurrency } from "@/util/util";
-import { CharmCardActions } from "./charm-actions";
+import { StringCardActions } from "./strings-actions";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-export const columns: ColumnDef<Charm>[] = [
+export const columns: ColumnDef<String>[] = [
   {
-    accessorKey: "name",
+    accessorKey: "color",
     header: ({ column }) => {
       return (
         <Button
@@ -19,12 +19,28 @@ export const columns: ColumnDef<Charm>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="w-full font-semibold text-left"
         >
-          Name
+          Color
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="font-medium">{row.getValue("name")}</div>,
+    cell: ({ row }) => <div className="font-medium">{row.getValue("color")}</div>,
+  },
+  {
+    accessorKey: "material",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="w-full font-semibold text-left"
+        >
+          Material
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className="font-medium">{row.getValue("material")}</div>,
   },
   {
     accessorKey: "price",
@@ -80,7 +96,7 @@ export const columns: ColumnDef<Charm>[] = [
         <div className="flex justify-center">
           <Image
             src={row.getValue("imageUrl")}
-            alt={row.getValue("name")}
+            alt={row.getValue("color")}
             width={50}
             height={50}
             className="rounded-full object-cover border border-gray-200 dark:border-gray-700"
@@ -93,10 +109,10 @@ export const columns: ColumnDef<Charm>[] = [
     id: "actions",
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
-      const charm = row.original;
+      const string = row.original;
       return (
         <div className="flex justify-center">
-          <CharmCardActions charm={charm} />
+          <StringCardActions string={string} />
         </div>
       );
     },

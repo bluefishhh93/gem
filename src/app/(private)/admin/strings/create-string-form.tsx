@@ -1,13 +1,12 @@
-"use client";
-
 import React, { useContext, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
+import { ToggleContext } from "@/components/interactive-overlay";
 import { Terminal, Upload } from "lucide-react";
-import { createCharmAction } from "./action";
+import { createStringAction } from "./action";
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,11 +15,10 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import NumberInput from "@/components/number-input";
-import Image from "next/image";
-import { ToggleContext } from "@/components/interactive-overlay";
 
-const createCharmSchema = z.object({
-  name: z.string().min(1, "Name is required"),
+const createStringSchema = z.object({
+  color: z.string().min(1, "Color is required"),
+  material: z.string().min(1, "Material is required"),
   price: z.number().min(0, "Price must be a positive number"),
   stock: z.number().int().min(0, "Stock must be a non-negative integer"),
   file: z
@@ -30,16 +28,16 @@ const createCharmSchema = z.object({
     })
 });
 
-export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boolean) => void }) {
+export default function CreateStringForm({ setIsOpen }: { setIsOpen: (open: boolean) => void }) {
   const { setIsOpen: setIsOverlayOpen } = useContext(ToggleContext);
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
-  const { execute, error, isPending } = useServerAction(createCharmAction, {
+  const { execute, error, isPending } = useServerAction(createStringAction, {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Charm created successfully",
+        description: "String created successfully",
         variant: "success",
       });
       setIsOverlayOpen(false);
@@ -47,27 +45,29 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to create charm",
+        description: "Failed to create string",
         variant: "destructive",
       });
     }
   });
 
-  const form = useForm<z.infer<typeof createCharmSchema>>({
-    resolver: zodResolver(createCharmSchema),
+  const form = useForm<z.infer<typeof createStringSchema>>({
+    resolver: zodResolver(createStringSchema),
     defaultValues: {
-      name: "",
+      color: "",
+      material: "",
       price: 0,
       stock: 0,
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof createCharmSchema>> = (values) => {
+  const onSubmit: SubmitHandler<z.infer<typeof createStringSchema>> = (values) => {
     const formData = new FormData();
     formData.append('file', values.file);
 
     execute({
-      name: values.name,
+      color: values.color,
+      material: values.material,
       price: Number(values.price),
       stock: Number(values.stock),
       fileWrapper: formData,
@@ -76,17 +76,30 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
 
   return (
     <div className="w-[300px]">
-      <h2 className="text-lg text-center font-semibold mb-4">Create New Charm</h2>
+      <h2 className="text-lg text-center font-semibold mb-4">Create New String</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
             control={form.control}
-            name="name"
+            name="color"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Color</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter name" />
+                  <Input {...field} placeholder="Enter color" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="material"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Material</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter material" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -160,7 +173,7 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
                       <Upload className="mr-2 h-4 w-4" /> Upload Image
                     </label>
                     {imagePreview && (
-                      <Image src={imagePreview} alt="Charm preview" width={50} height={50} className="rounded-full object-cover" />
+                      <img src={imagePreview} alt="Preview" className="h-10 w-10 object-cover rounded-md" />
                     )}
                   </div>
                 </FormControl>
@@ -171,7 +184,7 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
           {error && (
             <Alert variant="destructive">
               <Terminal className="h-4 w-4" />
-              <AlertTitle>Error creating charm</AlertTitle>
+              <AlertTitle>Error creating string</AlertTitle>
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
@@ -180,7 +193,7 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
             disabled={isPending}
             className="w-full"
           >
-            {isPending ? "Creating..." : "Create Charm"}
+            {isPending ? "Creating..." : "Create String"}
           </Button>
         </form>
       </Form>

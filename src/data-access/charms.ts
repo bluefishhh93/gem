@@ -13,10 +13,12 @@ export async function getCharms() {
 }
 
 export async function getCharmById(id: number) {
-    return await database.select().from(charms).where(eq(charms.id, id));
+    return await database.query.charms.findFirst({
+        where: eq(charms.id, id),
+    });
 }
 
-export async function updateCharm(id: number, charm: Charm) {
+export async function updateCharm(id: number, charm: Partial<Charm>) {
     await database.update(charms).set(charm).where(eq(charms.id, id));
 }
 

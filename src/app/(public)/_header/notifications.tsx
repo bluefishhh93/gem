@@ -15,6 +15,7 @@ import { markNotificationAsReadAction } from "./actions";
 import { useServerAction } from "zsa-react";
 import { getNotificationIcon, getNotificationLink } from "@/util/notifications";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function Notifications({
   notifications,
@@ -30,9 +31,11 @@ export function Notifications({
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <div className="p-2 relative">
-          <BellIcon className="w-6 h-6" />
+          <Button variant="outline" size="icon">
+            <BellIcon className="h-4 w-4" />
+          </Button>
           {notifications.length > 0 && (
             <div className="absolute top-1 right-[1px] w-2 h-2 bg-red-500 rounded-full flex items-center justify-center text-xs text-white"></div>
           )}

@@ -3,12 +3,11 @@
 import { Button } from "@/components/ui/button"
 import { InteractiveOverlay } from "@/components/interactive-overlay";
 import { useState } from "react";
-import CreateCharmForm from "./create-charm-form";
+import CreateStringForm from "./create-string-form";
 import { btnStyles } from "@/styles/icons";
 import { cn } from "@/lib/utils";
-import { PlusIcon } from "lucide-react";
 
-export function CreateCharmButton() {
+export function CreateStringButton() {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -18,20 +17,17 @@ export function CreateCharmButton() {
                 description={""}
                 isOpen={isOpen}
                 setIsOpen={setIsOpen}
-                form={<CreateCharmForm setIsOpen={setIsOpen} />}
+                form={<CreateStringForm setIsOpen={setIsOpen} />}
             />
 
             <Button
-            
                 onClick={() => {
                     setIsOpen(true);
                 }}
-                className={cn(btnStyles, "flex items-center mr-8")}
+                className={cn(btnStyles, "mr-8")}
             >
-                <PlusIcon className="w-4 h-4" />
-                Create Charm
+                Create String
             </Button>
         </>
     )
 }
-

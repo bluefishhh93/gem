@@ -7,7 +7,7 @@ import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Terminal, Upload } from "lucide-react";
-import { createCharmAction } from "./action";
+import { updateCharmAction } from "./action";
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -18,8 +18,9 @@ import { Separator } from "@/components/ui/separator";
 import NumberInput from "@/components/number-input";
 import Image from "next/image";
 import { ToggleContext } from "@/components/interactive-overlay";
+import { Charm } from "@/db/schema";
 
-const createCharmSchema = z.object({
+const updateCharmSchema = z.object({
   name: z.string().min(1, "Name is required"),
   price: z.number().min(0, "Price must be a positive number"),
   stock: z.number().int().min(0, "Stock must be a non-negative integer"),
@@ -28,18 +29,19 @@ const createCharmSchema = z.object({
     .refine((file) => file.size < MAX_UPLOAD_IMAGE_SIZE, {
       message: `Image must be under ${MAX_UPLOAD_IMAGE_SIZE_IN_MB}MB`,
     })
+    .optional(),
 });
 
-export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boolean) => void }) {
+export function EditCharmForm({ charm, setIsOpen }: { charm: Charm; setIsOpen: (open: boolean) => void }) {
   const { setIsOpen: setIsOverlayOpen } = useContext(ToggleContext);
   const { toast } = useToast();
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(charm.imageUrl);
 
-  const { execute, error, isPending } = useServerAction(createCharmAction, {
+  const { execute, error, isPending } = useServerAction(updateCharmAction, {
     onSuccess: () => {
       toast({
         title: "Success",
-        description: "Charm created successfully",
+        description: "Charm updated successfully",
         variant: "success",
       });
       setIsOverlayOpen(false);
@@ -47,36 +49,39 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to create charm",
+        description: "Failed to update charm",
         variant: "destructive",
       });
     }
   });
 
-  const form = useForm<z.infer<typeof createCharmSchema>>({
-    resolver: zodResolver(createCharmSchema),
+  const form = useForm<z.infer<typeof updateCharmSchema>>({
+    resolver: zodResolver(updateCharmSchema),
     defaultValues: {
-      name: "",
-      price: 0,
-      stock: 0,
+      name: charm.name,
+      price: charm.price,
+      stock: charm.stock,
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof createCharmSchema>> = (values) => {
+  const onSubmit: SubmitHandler<z.infer<typeof updateCharmSchema>> = (values) => {
     const formData = new FormData();
-    formData.append('file', values.file);
+    if (values.file) {
+      formData.append('file', values.file);
+    }
 
     execute({
+      id: charm.id,
       name: values.name,
       price: Number(values.price),
       stock: Number(values.stock),
-      fileWrapper: formData,
+      fileWrapper: values.file ? formData : undefined,
     });
   };
 
   return (
     <div className="w-[300px]">
-      <h2 className="text-lg text-center font-semibold mb-4">Create New Charm</h2>
+      <h2 className="text-lg text-center font-semibold mb-4">Edit Charm</h2>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -171,7 +176,7 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
           {error && (
             <Alert variant="destructive">
               <Terminal className="h-4 w-4" />
-              <AlertTitle>Error creating charm</AlertTitle>
+              <AlertTitle>Error updating charm</AlertTitle>
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
@@ -180,7 +185,7 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
             disabled={isPending}
             className="w-full"
           >
-            {isPending ? "Creating..." : "Create Charm"}
+            {isPending ? "Saving..." : "Save changes"}
           </Button>
         </form>
       </Form>

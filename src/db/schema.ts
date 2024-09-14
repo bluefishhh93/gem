@@ -188,6 +188,9 @@ export const strings = pgTable("strings", {
   color: text("color").notNull(),
   material: text("material").notNull(),
   price: doublePrecision("price").notNull(),
+  stock: integer("stock").notNull().default(0),
+  imageUrl: text("image_url").notNull(),
+  
 });
 
 export const charms = pgTable("charms", {

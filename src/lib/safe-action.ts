@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { assertAuthenticated } from "@/lib/session";
+import { assertAdmin, assertAuthenticated } from "@/lib/session";
 import { createServerActionProcedure } from "zsa";
 import { PublicError } from "../use-cases/errors";
 
@@ -33,3 +33,10 @@ export const unauthenticatedAction = createServerActionProcedure()
   .handler(async () => {
     return { user: undefined };
   });
+
+export const adminOnlyAction = createServerActionProcedure()
+.experimental_shapeError(shapeErrors)
+.handler(async () => {
+  const user = await assertAdmin();
+  return { user };
+});

@@ -12,7 +12,7 @@ import Link from "next/link";
 export function MenuButton() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <MenuIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="space-y-2">
