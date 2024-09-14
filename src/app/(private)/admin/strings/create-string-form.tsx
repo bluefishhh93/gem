@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import NumberInput from "@/components/number-input";
+import Image from "next/image";
 
 const createStringSchema = z.object({
   color: z.string().min(1, "Color is required"),
@@ -173,7 +174,7 @@ export default function CreateStringForm({ setIsOpen }: { setIsOpen: (open: bool
                       <Upload className="mr-2 h-4 w-4" /> Upload Image
                     </label>
                     {imagePreview && (
-                      <img src={imagePreview} alt="Preview" className="h-10 w-10 object-cover rounded-md" />
+                      <Image src={imagePreview} alt="Preview" width={40} height={40} className="object-cover rounded-md" />
                     )}
                   </div>
                 </FormControl>
