@@ -11,14 +11,23 @@ import {
 import { DeleteModal } from "@/components/delete-modal";
 import { useServerAction } from "zsa-react";
 import { deleteProductAction } from "./action";
-import { Product } from "@/db/schema";
+import { ImgProduct, Product } from "@/db/schema";
 import { btnIconStyles, btnStyles } from "@/styles/icons";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { InteractiveOverlay } from "@/components/interactive-overlay";
 import { EditProductForm } from "./edit-product-form";
 
-export function ProductCardActions({ product }: { product: Product }) {
+export function ProductCardActions({ product }: { product: {
+  id: number;
+  name: string;
+  price: number;
+  currentQuantity: number;
+  description: string;
+  categoryId: number;
+  imgProducts: ImgProduct[];
+  salePrice: number;
+} }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditProductOpen, setIsEditProductOpen] = useState(false);
   const { execute, isPending } = useServerAction(deleteProductAction, {
