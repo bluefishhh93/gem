@@ -1,9 +1,12 @@
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import MetricChart from "./(charts)/@metric/page";
-import CategoryChart from "./(charts)/@category/page";
-import ProductChart from "./(charts)/@product/page";
-import RevenueChart from "./(charts)/@revenue/page";
+
+const MetricChart = dynamic(() => import('./(charts)/@metric/page'), { ssr: false });
+const CategoryChart = dynamic(() => import('./(charts)/@category/page'), { ssr: false });
+const ProductChart = dynamic(() => import('./(charts)/@product/page'), { ssr: false });
+const RevenueChart = dynamic(() => import('./(charts)/@revenue/page'), { ssr: false });
+
 
 const managementSections = [
     { title: "Products", link: "/admin/products" },
