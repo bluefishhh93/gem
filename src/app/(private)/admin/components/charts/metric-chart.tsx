@@ -2,6 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, Package, ShoppingCart, TrendingDown, TrendingUp, UserCircle } from "lucide-react"
+import { vietnamCurrency } from "@/util/util"
 
 const cardData = [
   {
@@ -13,7 +14,7 @@ const cardData = [
   },
   {
     title: "Today's Income",
-    value: "$3,245",
+    value: 245000,
     icon: DollarSign,
     trend: "+8%",
     trendDirection: "up",
@@ -44,7 +45,9 @@ export default function MetricChart() {
             <card.icon className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold mb-2">{card.value}</div>
+            <div className="text-2xl font-bold mb-2">
+              {card.title === "Today's Income" ? vietnamCurrency(card.value as number) : card.value}
+            </div>
             <p className="text-xs text-muted-foreground">
               <span className={`inline-flex items-center ${card.trendDirection === 'up' ? 'text-green-600' : 'text-red-600'}`}>
                 {card.trendDirection === 'up' ? <TrendingUp className="mr-1 h-3 w-3" /> : <TrendingDown className="mr-1 h-3 w-3" />}

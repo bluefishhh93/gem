@@ -1,32 +1,31 @@
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-
-const MetricChart = dynamic(() => import('./(charts)/@metric/page'), { ssr: false });
-const CategoryChart = dynamic(() => import('./(charts)/@category/page'), { ssr: false });
-const ProductChart = dynamic(() => import('./(charts)/@product/page'), { ssr: false });
-const RevenueChart = dynamic(() => import('./(charts)/@revenue/page'), { ssr: false });
+import MetricChart from "./components/charts/metric-chart";
+import CategoryChart from "./components/charts/category-chart";
+import ProductChart from "./components/charts/product-chart";
+import RevenueChart from "./components/charts/revenue-chart";
 
 
 const managementSections = [
-    { title: "Products", link: "/admin/products" },
-    { title: "Strings", link: "/admin/strings" },
-    { title: "Charms", link: "/admin/charms" },
-    // Add more sections as needed
+  { title: "Products", link: "/admin/products" },
+  { title: "Strings", link: "/admin/strings" },
+  { title: "Charms", link: "/admin/charms" },
+  // Add more sections as needed
 ];
 
 export default function AdminDashboardPage(
-// {
-//   metric,
-//   category,
-//   product,
-//   revenue,
-// }: {
-//   metric: React.ReactNode
-//   category: React.ReactNode
-//   product: React.ReactNode
-//   revenue: React.ReactNode
-// }
+  // {
+  //   metric,
+  //   category,
+  //   product,
+  //   revenue,
+  // }: {
+  //   metric: React.ReactNode
+  //   category: React.ReactNode
+  //   product: React.ReactNode
+  //   revenue: React.ReactNode
+  // }
 ) {
   return (
     <div className="space-y-6">
