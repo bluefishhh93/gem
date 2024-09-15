@@ -15,7 +15,7 @@ import { getUserProfileLoader } from "./page";
 
 export async function ProfileImage() {
     return (
-        <ConfigurationPanel title="Profile Image">
+        <ConfigurationPanel title="Ảnh đại diện">
             <Suspense fallback={<Skeleton className="w-full h-[200px] rounded" />}>
                 <ProfileImageContent />
             </Suspense>
@@ -65,7 +65,7 @@ async function ProfileImageContent() {
                         </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Click to update your profile picture</p>
+                        <p>Nhấp để cập nhật ảnh hồ sơ của bạn</p>
                     </TooltipContent>
                 </Tooltip>
 

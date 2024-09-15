@@ -19,7 +19,7 @@ export default async function SettingsPage({
       <div className={cn(headerStyles, "py-8")}>
         <div className="container mx-auto">
           <div className="flex justify-between">
-            <h1 className="text-4xl">Account Settings</h1>
+            <h1 className="text-4xl">Cài đặt hồ sơ</h1>
 
             <Suspense
               fallback={<Skeleton className="w-[160px] h-[40px] rounded" />}

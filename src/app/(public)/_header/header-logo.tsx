@@ -4,24 +4,25 @@ import { applicationName } from "@/app-config";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { dancingScript } from "@/util/fonts";
+import { cn } from "@/lib/utils";
 
 export function HeaderLogo() {
-  const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/dashboard");
+
 
   return (
     <Link
-      href={isDashboard ? "/dashboard" : "/"}
+      href={"/"}
       className="flex gap-2 items-center text-xl"
     >
       <Image
-        className="rounded w-8 h-8"
-        width="50"
-        height="50"
+        className="rounded w-16 h-16"
+        width={300}
+        height={300}
         src="/gem-removebg.png"
         alt="hero image"
       />
-      {applicationName}
+      <span className={cn(dancingScript.className, " text-secondary-500 text-base dark:text-secondary-50")}>Wear Your Stars</span>
     </Link>
   );
 }

@@ -131,7 +131,7 @@ export default async function RootLayout({
         )}
       >
         <Providers>
-          <NextTopLoader color="#3b82f6" showSpinner={false} />
+          <NextTopLoader color="var(--loader-color)" showSpinner={false} />
           <div className="flex h-screen overflow-hidden">
             <AdminSidebar />
             <div className="flex-1 flex flex-col overflow-hidden">

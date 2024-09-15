@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Notification } from "@/db/schema";
-import { BellIcon } from "lucide-react";
+import { BellIcon, FrownIcon, SmileIcon } from "lucide-react";
 import Link from "next/link";
 import { markNotificationAsReadAction } from "./actions";
 import { useServerAction } from "zsa-react";
@@ -42,12 +42,14 @@ export function Notifications({
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+        <DropdownMenuLabel>Thông Báo</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         {notifications.length === 0 && (
-          <div className="flex items-center gap-2 p-4">
-            <div>No new notifications</div>
+          <div className="flex flex-col items-center justify-center p-8 text-center bg-gray-50 rounded-lg">
+            <SmileIcon className="h-8 w-8 text-gray-400 mb-2" />
+            <div className="text-gray-500 font-medium">Không có thông báo nào</div>
+            <p className="text-sm text-gray-400 mt-1">Chúng tôi sẽ thông báo khi có thông báo mới</p>
           </div>
         )}
 
@@ -73,10 +75,10 @@ export function Notifications({
             onClick={() => {
               setIsOpen(false);
             }}
-            className="text-xs text-blue-400 hover:text-blue-500"
+            className="text-xs text-secondary-400 hover:text-secondary-500"
             href="/notifications"
           >
-            View Notifications
+            Xem Thông Báo
           </Link>
         </div>
       </DropdownMenuContent>

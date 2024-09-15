@@ -24,22 +24,20 @@ import { getProfileImageFullUrl } from "@/app/(public)/dashboard/settings/profil
 import { Notifications } from "./notifications";
 import { MenuButton } from "./menu-button";
 import Container from "@/components/container";
+import { HeaderLogo } from "./header-logo";
 
 export async function Header() {
   const user = await getCurrentUser();
-
   return (
-    <div className="px-5 md:px-6 bg-secondary-100 dark:bg-secondary-900">
-      <div className="mx-auto flex w-full max-w-7xl py-4 justify-between">
-        <div className="flex justify-between gap-10 items-center">
-          <Link href="/" className="">
-            <span className="text-2xl font-bold text-secondary-700 dark:text-secondary-300">{applicationName}</span>
-          </Link>
+    <div className="px-5 md:px-6 bg-secondary-50 dark:bg-secondary-300">
+      <div className="mx-auto flex w-full max-w-7xl py-4 items-center">
+        <HeaderLogo />
 
+        <div className="flex-grow flex justify-center">
           <HeaderLinks isAuthenticated={!!user} />
         </div>
 
-        <div className="flex items-center justify-between gap-5">
+        <div className="flex items-center gap-1">
           <Suspense fallback={<HeaderActionsFallback />}>
             <HeaderActions />
           </Suspense>
@@ -47,6 +45,7 @@ export async function Header() {
       </div>
     </div>
   );
+  
 }
 
 async function ProfileAvatar({ userId }: { userId: number }) {
@@ -96,7 +95,7 @@ export async function HeaderActions() {
                   href="/dashboard/settings"
                   className="flex gap-2 items-center cursor-pointer"
                 >
-                  <Settings2Icon className="w-4 h-4" /> Settings
+                  <Settings2Icon className="w-4 h-4" /> Cài đặt
                 </Link>
               </DropdownMenuItem>
               <SignOutItem />
@@ -112,7 +111,7 @@ export async function HeaderActions() {
           <ModeToggle />
 
           <Button asChild variant="secondary" className="bg-secondary-500 hover:bg-secondary-600 text-white">
-            <Link href="/sign-in">Sign In</Link>
+            <Link href="/sign-in">Đăng nhập</Link>
           </Button>
         </>
       )}

@@ -43,8 +43,8 @@ export function ProfileNameForm({ profileName }: { profileName: string }) {
           form.reset();
         }
         toast({
-          title: "Name Updated",
-          description: "Name updated successfully.",
+          title: "Thành công",
+          description: "Tên đã được cập nhật thành công.",
         });
       });
     });
@@ -61,7 +61,7 @@ export function ProfileNameForm({ profileName }: { profileName: string }) {
           name="profileName"
           render={({ field }) => (
             <FormItem className="flex-1">
-              <FormLabel>Display Name</FormLabel>
+              <FormLabel>Tên hiển thị</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -69,7 +69,7 @@ export function ProfileNameForm({ profileName }: { profileName: string }) {
             </FormItem>
           )}
         />
-        <LoaderButton isLoading={pending}>Save</LoaderButton>
+        <LoaderButton isLoading={pending}>Lưu</LoaderButton>
       </form>
     </Form>
   );

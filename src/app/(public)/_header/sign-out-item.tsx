@@ -17,7 +17,7 @@ export function SignOutItem() {
       }}
     >
       <LogOut className="w-4 h-4 mr-2" />
-      Sign Out
+      Đăng Xuất
     </DropdownMenuItem>
   );
 }

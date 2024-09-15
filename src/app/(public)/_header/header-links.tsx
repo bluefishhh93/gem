@@ -2,14 +2,33 @@
 
 import { Button } from "@/components/ui/button";
 import useMediaQuery from "@/hooks/use-media-query";
+import { cn } from "@/lib/utils";
 import { BookIcon, SearchIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const HeaderButton = ({ href, label, isActive }: { href: string, label: string, isActive: boolean }) => {
+  return (
+    <Button
+      variant={"ghost"}
+      asChild
+      className={cn(
+        "flex items-center justify-center gap-2 text-md hover:text-secondary-500 hover:bg-transparent",
+        isActive ? 'font-bold text-secondary-500' : ''
+      )}
+    >
+      <Link href={href}>
+        {label}
+      </Link>
+    </Button>
+  );
+};
+
+
 export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
-  const path = usePathname();
+  const pathname = usePathname();
   const { isMobile } = useMediaQuery();
-  const isLandingPage = path === "/";
+  const isLandingPage = pathname === "/";
 
   if (isMobile) return null;
 
@@ -17,51 +36,21 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
     <>
       {!isLandingPage && isAuthenticated && (
         <div className="flex items-center gap-2">
-          <Button
-            variant={"link"}
-            asChild
-            className="flex items-center justify-center gap-2"
-          >
-            <Link href={"/dashboard"}>
-              <UsersIcon className="w-4 h-4" /> Your Groups
-            </Link>
-          </Button>
-
-          <Button
-            variant={"link"}
-            asChild
-            className="flex items-center justify-center gap-2"
-          >
-            <Link href={"/browse"}>
-              <SearchIcon className="w-4 h-4" /> Browse Groups
-            </Link>
-          </Button>
-
-          <Button
-            variant={"link"}
-            asChild
-            className="flex items-center justify-center gap-2"
-          >
-            <Link href={"/docs"}>
-              <BookIcon className="w-4 h-4" /> API Docs
-            </Link>
-          </Button>
+          <HeaderButton href={"/"} label={"Trang chủ"} isActive={pathname === '/'} />
+          <HeaderButton href={"/products"} label={"Sản phẩm"} isActive={pathname === '/products'} />
+          <HeaderButton href={"/promotions"} label={"Khuyến mãi"} isActive={pathname === '/promotions'} />         
+          <HeaderButton href={"/about"} label={"Giới thiệu"} isActive={pathname === '/about'} />
+          <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname === '/blogs'} />
         </div>
       )}
 
       {(isLandingPage || !isAuthenticated) && (
-        <div className="flex gap-4">
-          <Button variant={"link"} asChild>
-            <Link href="/#features">Features</Link>
-          </Button>
-
-          <Button variant={"link"} asChild>
-            <Link href="/#pricing">Pricing</Link>
-          </Button>
-
-          <Button variant={"link"} asChild>
-            <Link href={"/browse"}>Browse Groups</Link>
-          </Button>
+        <div className="flex gap-2">
+          <HeaderButton href={"/"} label={"Trang chủ"} isActive={pathname === '/'} />
+          <HeaderButton href={"/products"} label={"Sản phẩm"} isActive={pathname === '/products'} />
+          <HeaderButton href={"/promotions"} label={"Khuyến mãi"} isActive={pathname === '/promotions'} />         
+          <HeaderButton href={"/about"} label={"Giới thiệu"} isActive={pathname === '/about'} />
+          <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname === '/blogs'} />
         </div>
       )}
     </>

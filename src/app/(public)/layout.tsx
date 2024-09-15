@@ -4,7 +4,7 @@ import NextTopLoader from "nextjs-toploader";
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 
-import { Archivo } from "next/font/google";
+import { Archivo, Playfair_Display } from "next/font/google";
 import { Libre_Franklin } from "next/font/google";
 import { Providers } from "../providers";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +19,12 @@ const libre_franklin = Libre_Franklin({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-libre_franklin",
+});
+
+const playfair_display = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair_display",
 });
 
 export const metadata: Metadata = {
@@ -37,14 +43,16 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
+       <body
         className={cn(
           "min-h-screen bg-background antialiased",
-          archivo.variable + " " + libre_franklin.variable,
+          archivo.variable,
+          libre_franklin.variable,
+          playfair_display.variable
         )}
       >
         <Providers>
-          <NextTopLoader />
+          <NextTopLoader color="var(--loader-color)" showSpinner={false} />
           <Header />
           <div className="container mx-auto w-full py-12">{children}</div>
         </Providers>
