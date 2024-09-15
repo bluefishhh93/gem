@@ -1,6 +1,6 @@
 "use server";
 
-import { adminOnlyAction, authenticatedAction } from "@/lib/safe-action";
+import { adminOnlyAction } from "@/lib/safe-action";
 import { z } from "zod";
 import { createStringUseCase, deleteStringUseCase, updateStringUseCase } from "@/use-cases/strings";
 import { revalidatePath } from "next/cache";

@@ -14,7 +14,6 @@ export async function uploadToCloudinary(file: File, options: {
   resourceType?: "auto" | "image" | "video";
 }) {
   const { folder = 'charms', publicId, resourceType = 'auto' } = options;
-
   return new Promise<{ secure_url: string; public_id: string }>((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
@@ -60,6 +59,14 @@ export async function getCloudinaryUrl(publicId: string, options: {
     format,
     secure: true,
   });
+}
+
+export async function uploadMultipleToCloudinary(files: File[], options: {
+  folder?: string;
+  publicId?: string;
+  resourceType?: "auto" | "image" | "video";
+}) {
+  return Promise.all(files.map(file => uploadToCloudinary(file, options)));
 }
 
 export async function deleteFromCloudinary(publicId: string) {

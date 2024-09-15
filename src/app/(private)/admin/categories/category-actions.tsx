@@ -10,18 +10,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DeleteModal } from "@/components/delete-modal";
 import { useServerAction } from "zsa-react";
-import { deleteCharmAction } from "./action";
-import { Charm } from "@/db/schema";
+import { deleteCategoryAction } from "./action";
+import { Category } from "@/db/schema";
 import { btnIconStyles, btnStyles } from "@/styles/icons";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { InteractiveOverlay } from "@/components/interactive-overlay";
-import { EditCharmForm } from "./edit-charm-form";
+import { EditCategoryForm } from "./edit-category-form";
 
-export function CharmCardActions({ charm }: { charm: Charm }) {
+export function CategoryCardActions({ category }: { category: Category }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isEditCharmOpen, setIsEditCharmOpen] = useState(false);
-  const { execute, isPending } = useServerAction(deleteCharmAction, {
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
+  const { execute, isPending } = useServerAction(deleteCategoryAction, {
     onSuccess() {
       setIsOpen(false);
     },
@@ -31,21 +31,21 @@ export function CharmCardActions({ charm }: { charm: Charm }) {
   return (
     <>
       <InteractiveOverlay
-        isOpen={isEditCharmOpen}
-        setIsOpen={setIsEditCharmOpen}
+        isOpen={isEditCategoryOpen}
+        setIsOpen={setIsEditCategoryOpen}
         title={""}
         description={""}
-        form={<EditCharmForm charm={charm} setIsOpen={setIsEditCharmOpen} />}
+        form={<EditCategoryForm category={category} setIsOpen={setIsEditCategoryOpen} />}
       />
 
       <DeleteModal
         isOpen={isDeleteModalOpen}
         setIsOpen={setIsDeleteModalOpen}
-        title="Delete Charm"
-        description="Are you sure you want to delete this charm? This action cannot be undone."
+        title="Delete Category"
+        description="Are you sure you want to delete this category? This action cannot be undone."
         onConfirm={() => {
           execute({
-            charmId: charm.id,
+            categoryId: category.id,
           });
         }}
         isPending={isPending}
@@ -60,7 +60,7 @@ export function CharmCardActions({ charm }: { charm: Charm }) {
         <DropdownMenuContent>
           <DropdownMenuItem
             onClick={(e) => {
-              setIsEditCharmOpen(true);
+              setIsEditCategoryOpen(true);
             }}
             className={btnStyles}
           >

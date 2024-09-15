@@ -3,7 +3,7 @@ import { CreateStringButton } from "./create-string-button";
 import { getStringsUseCase } from "@/use-cases/strings";
 
 export default async function StringsPage() {
-  const strings = await getStringsUseCase();
+  // const strings = await getStringsUseCase();
 
   return (
     <div className="space-y-4">

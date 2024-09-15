@@ -2,7 +2,7 @@ import { createString, deleteString, getStringById, getStrings, updateString } f
 import { UserSession } from "./types";
 import { String } from "@/db/schema";
 import { validateImage } from "@/util/util";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { deleteFromCloudinary, uploadToCloudinary } from "@/lib/cloudinary";
 
 export async function createStringUseCase(
   authenticatedUser: UserSession,
@@ -26,11 +26,17 @@ export async function getStringsUseCase() {
   return strings;
 }
 
-export async function deleteStringUseCase(
-  authenticatedUser: UserSession,
-  stringId: number
-) {
-  return deleteString(stringId);
+export async function deleteStringUseCase(id: number) {
+  const string = await getStringById(id);
+  if (!string) {
+      throw new Error("String not found");
+  }
+
+  if (string.imageUrl) {
+      await deleteFromCloudinary(string.imageUrl);
+  }
+
+  return deleteString(id);
 }
 
 export async function updateStringUseCase(

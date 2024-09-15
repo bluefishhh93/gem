@@ -71,7 +71,7 @@ export async function HeaderActions() {
       {isSignedIn ? (
         <>
           <div className="hidden md:block">
-            {/* <ModeToggle /> */}
+            <ModeToggle />
           </div>
 
           <Suspense>

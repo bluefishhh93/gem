@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2 flex-1">
-          <Search className="text-gray-400 dark:text-gray-500 h-4 w-4" />
+          <Search className="text-secondary-400 dark:text-secondary-500 h-4 w-4" />
           <Input
             placeholder="Search all columns..."
             value={globalFilter ?? ""}

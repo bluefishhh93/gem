@@ -5,7 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, ChevronRight, Users, ShoppingCart, Package, Sparkles, Scissors, Boxes, LayoutDashboardIcon, ShellIcon, PencilLineIcon } from "lucide-react";
+import { ChevronLeft, ChevronRight, Users, ShoppingCart, Package, Sparkles, Scissors, Boxes, LayoutDashboardIcon, ShellIcon, PencilLineIcon, FileStackIcon } from "lucide-react";
 
 const mainItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboardIcon },
@@ -16,6 +16,7 @@ const mainItems = [
 
 const inventoryItems = [
   { label: "Products", href: "/admin/products", icon: Package },
+  { label: "Categories", href: "/admin/categories", icon: FileStackIcon },
   { label: "Charms", href: "/admin/charms", icon: Sparkles },
   { label: "Strings", href: "/admin/strings", icon: ShellIcon },
 ];

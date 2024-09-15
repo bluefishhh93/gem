@@ -1,6 +1,6 @@
 import { createCharm, deleteCharm, getCharmById, getCharms, updateCharm } from "@/data-access/charms";
 import { UserSession } from "./types";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { deleteFromCloudinary, uploadToCloudinary } from "@/lib/cloudinary";
 import { validateImage } from "@/util/util";
 import { Charm } from "@/db/schema";
 
@@ -26,11 +26,17 @@ export async function getCharmsUseCase() {
   return charms;
 }
 
-export async function deleteCharmUseCase(
-  authenticatedUser: UserSession,
-  charmId: number
-) {
-  return deleteCharm(charmId);
+export async function deleteCharmUseCase(id: number) {
+  const charm = await getCharmById(id);
+  if (!charm) {
+      throw new Error("Charm not found");
+  }
+
+  if (charm.imageUrl) {
+      await deleteFromCloudinary(charm.imageUrl);
+  }
+
+  return deleteCharm(id);
 }
 
 

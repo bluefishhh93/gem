@@ -53,9 +53,9 @@ export function StringCardActions({ string }: { string: String }) {
 
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen} modal={false}>
         <DropdownMenuTrigger asChild>
-        <div>
+          <Button variant="outline" size={"icon"}>
             <EllipsisVertical />
-          </div>
+          </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuItem
@@ -65,7 +65,7 @@ export function StringCardActions({ string }: { string: String }) {
             className={btnStyles}
           >
             <PencilIcon className={btnIconStyles} />
-            Edit String
+            Edit
           </DropdownMenuItem>
           <DropdownMenuItem
             className={cn(btnStyles, "text-red-500")}
@@ -74,7 +74,7 @@ export function StringCardActions({ string }: { string: String }) {
             }}
           >
             <TrashIcon className={btnIconStyles} />
-            Delete String
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

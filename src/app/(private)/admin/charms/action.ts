@@ -2,11 +2,7 @@
 
 import { adminOnlyAction, authenticatedAction } from "@/lib/safe-action";
 import { z } from "zod";
-import { database } from "@/db";
-import { charms } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { AuthorizationError } from "@/use-cases/errors";
-import { createCharm, deleteCharm, getCharmById, updateCharm } from "@/data-access/charms";
+import {  getCharmById } from "@/data-access/charms";
 import { createCharmUseCase, deleteCharmUseCase, updateCharmUseCase } from "@/use-cases/charms";
 import { revalidatePath } from "next/cache";
 import { deleteFromCloudinary, uploadToCloudinary } from "@/lib/cloudinary";
@@ -50,7 +46,7 @@ export const deleteCharmAction = authenticatedAction
     input: { charmId },
     ctx: { user },
   }) => {
-    await deleteCharmUseCase(user, charmId);
+    await deleteCharmUseCase(charmId);
     revalidatePath("/admin/charms");
 
   });

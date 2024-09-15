@@ -134,8 +134,8 @@ export const products = pgTable("products", {
   currentQuantity: integer("current_quantity").notNull(),
   price: doublePrecision("price").notNull(),
   salePrice: doublePrecision("sale_price"),
-  isActivated: boolean("is_activated").notNull(),
-  categoryId: integer("category_id").references(() => categories.id),
+  isActivated: boolean("is_activated").default(true),
+  categoryId: integer("category_id").notNull().references(() => categories.id),
 });
 
 // Category
@@ -277,6 +277,13 @@ export const braceletCharmRelations = relations(braceletCharms, ({ one }) => ({
   charm: one(charms, {
     fields: [braceletCharms.charmId],
     references: [charms.id],
+  }),
+}));
+
+export const imgProductsRelations = relations(imgProducts, ({ one }) => ({
+  product: one(products, {
+    fields: [imgProducts.productId],
+    references: [products.id],
   }),
 }));
 

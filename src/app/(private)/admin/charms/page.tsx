@@ -3,8 +3,6 @@ import { CreateCharmButton } from "./create-charm-button";
 import { getCharmsUseCase } from "@/use-cases/charms";
 
 export default async function CharmsPage() {
-  const charms = await getCharmsUseCase();
-
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
