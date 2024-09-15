@@ -10,7 +10,7 @@ async function StringsTableContent() {
   return <DataTable columns={columns} data={strings} />;
 }
 
-export function StringsTable() {
+export async function StringsTable() {
   return (
     <div className="container mx-auto py-10">
       <Suspense fallback={<TableSkeleton />}>

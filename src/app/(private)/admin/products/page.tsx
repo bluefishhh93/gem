@@ -3,7 +3,7 @@ import { CreateProductButton } from "./create-product-button";
 import { Breadcrumb } from "@/components/Breadcrumb";
 
 
-export default function Page() {
+export default async function Page() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

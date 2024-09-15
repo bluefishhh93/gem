@@ -10,7 +10,7 @@ async function CharmsTableContent() {
   return <DataTable columns={columns} data={charms} />;
 }
 
-export function CharmsTable() {
+export async function CharmsTable() {
   return (
     <div className="container mx-auto py-10">
       <Suspense fallback={<TableSkeleton />}>

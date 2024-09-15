@@ -10,7 +10,7 @@ async function CategoriesTableContent() {
   return <DataTable columns={columns} data={categories} />;
 }
 
-export function CategoriesTable() {
+export async function CategoriesTable() {
   return (
     <div className="container mx-auto py-10">
       <Suspense fallback={<TableSkeleton />}>

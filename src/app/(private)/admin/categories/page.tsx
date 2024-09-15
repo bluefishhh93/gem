@@ -2,7 +2,7 @@ import { Breadcrumb } from "@/components/Breadcrumb";
 import { CategoriesTable } from "./categories-table";
 import { CreateCategoryButton } from "./create-category-button";
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

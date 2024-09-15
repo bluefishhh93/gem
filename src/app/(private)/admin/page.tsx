@@ -14,7 +14,7 @@ const managementSections = [
   // Add more sections as needed
 ];
 
-export default function AdminDashboardPage(
+export default async function AdminDashboardPage(
   // {
   //   metric,
   //   category,
