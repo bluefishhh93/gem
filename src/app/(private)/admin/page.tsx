@@ -1,5 +1,9 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import MetricChart from "./(charts)/@metric/page";
+import CategoryChart from "./(charts)/@category/page";
+import ProductChart from "./(charts)/@product/page";
+import RevenueChart from "./(charts)/@revenue/page";
 
 const managementSections = [
     { title: "Products", link: "/admin/products" },
@@ -8,11 +12,30 @@ const managementSections = [
     // Add more sections as needed
 ];
 
-export default function AdminDashboardPage() {
+export default function AdminDashboardPage(
+// {
+//   metric,
+//   category,
+//   product,
+//   revenue,
+// }: {
+//   metric: React.ReactNode
+//   category: React.ReactNode
+//   product: React.ReactNode
+//   revenue: React.ReactNode
+// }
+) {
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold">Welcome, Admin!</h2>
-     
+      <div>
+        <MetricChart />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <CategoryChart />
+        <ProductChart />
+        <RevenueChart />
+      </div>
     </div>
   );
 }

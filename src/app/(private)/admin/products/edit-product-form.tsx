@@ -1,15 +1,13 @@
-"use client";
-
 import React, { useContext, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Terminal, Upload } from "lucide-react";
+import { LoaderCircleIcon, Terminal, Upload } from "lucide-react";
 import { updateProductAction } from "./action";
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
-import { Product } from "@/db/schema";
+import { Product, ImgProduct } from "@/db/schema";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -28,6 +26,7 @@ const editProductSchema = z.object({
   stock: z.number().int().min(0, "Stock must be a non-negative integer"),
   description: z.string().min(1, "Description is required"),
   categoryId: z.number().positive("Category is required"),
+  salePrice: z.number().min(0, "Sale price must be a positive number"),
   files: z.array(z.instanceof(File))
     .refine((files) => files.length === 0 || files.every(file => file.size < MAX_UPLOAD_IMAGE_SIZE), {
       message: `Each image must be under ${MAX_UPLOAD_IMAGE_SIZE_IN_MB}MB`,
@@ -35,12 +34,24 @@ const editProductSchema = z.object({
     .optional()
 });
 
-export function EditProductForm({ product, setIsOpen }: { product: Product; setIsOpen: (open: boolean) => void }) {
+export function EditProductForm({ product, setIsOpen }: {
+  product: {
+    id: number;
+    name: string;
+    price: number;
+    currentQuantity: number;
+    description: string;
+    categoryId: number;
+    imgProducts: ImgProduct[];
+    salePrice: number;
+  }; setIsOpen: (open: boolean) => void
+}) {
   const { setIsOpen: setIsOverlayOpen } = useContext(ToggleContext);
   const { toast } = useToast();
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const { categories, isLoading } = useCategories();
 
+  console.log(product, "product");
   const { execute, error, isPending } = useServerAction(updateProductAction, {
     onSuccess: () => {
       toast({
@@ -67,12 +78,13 @@ export function EditProductForm({ product, setIsOpen }: { product: Product; setI
       stock: product.currentQuantity,
       description: product.description,
       categoryId: product.categoryId,
+      salePrice: product.salePrice,
     },
   });
 
   const onSubmit: SubmitHandler<z.infer<typeof editProductSchema>> = (values) => {
     const formData = new FormData();
-    if (values.files) {
+    if (values.files && values.files.length > 0) {
       values.files.forEach((file, index) => {
         formData.append(`files`, file);
       });
@@ -85,6 +97,7 @@ export function EditProductForm({ product, setIsOpen }: { product: Product; setI
       stock: Number(values.stock),
       description: values.description,
       categoryId: Number(values.categoryId),
+      salePrice: Number(values.salePrice),
       fileWrapper: formData,
     });
   };
@@ -150,6 +163,24 @@ export function EditProductForm({ product, setIsOpen }: { product: Product; setI
                 </FormItem>
               )}
             />
+             <FormField
+              control={form.control}
+              name="salePrice"
+              render={({ field }) => (
+                <FormItem className="flex-1">
+                  <FormLabel>Sale Price</FormLabel>
+                  <FormControl>
+                    <NumberInput
+                      isInteger={false}
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value ? parseFloat(e.target.value) : undefined)}
+                      placeholder="0.00"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="stock"
@@ -206,7 +237,7 @@ export function EditProductForm({ product, setIsOpen }: { product: Product; setI
             name="files"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Images (Optional)</FormLabel>
+                <FormLabel>Images</FormLabel>
                 <FormControl>
                   <Input
                     type="file"
@@ -220,11 +251,27 @@ export function EditProductForm({ product, setIsOpen }: { product: Product; setI
                   />
                 </FormControl>
                 <FormMessage />
+                  {product.imgProducts && product.imgProducts.length > 0 && (
+                  <div className="mt-2">
+                    <h3 className="text-sm font-medium mb-1">Current Images:</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {product.imgProducts.map((img, index) => (
+                        <Image key={index} src={img.imageUrl!} alt={`Existing ${index + 1}`} width={50} height={50} className="object-cover rounded" />
+                      ))}
+                    </div>
+                  </div>
+                )}
                 {imagePreview.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {imagePreview.map((src, index) => (
-                      <Image key={index} src={src} alt={`Preview ${index + 1}`} width={50} height={50} className="object-cover rounded" />
-                    ))}
+                  <div className="mt-2">
+                    <h3 className="text-sm font-medium mb-1">New Images to Upload:</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {imagePreview.map((src, index) => (
+                        <Image key={index} src={src} alt={`Preview ${index + 1}`} width={50} height={50} className="object-cover rounded" />
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">
+                      These new images will replace the current images when you submit.
+                    </p>
                   </div>
                 )}
               </FormItem>
@@ -240,11 +287,11 @@ export function EditProductForm({ product, setIsOpen }: { product: Product; setI
           <Button type="submit" className="w-full" disabled={isPending}>
             {isPending ? (
               <>
-                <Upload className="mr-2 h-4 w-4 animate-spin" />
+                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
                 Updating...
               </>
             ) : (
-              "Update Product"
+              "Save Changes"
             )}
           </Button>
         </form>

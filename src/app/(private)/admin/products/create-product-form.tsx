@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Terminal, Upload } from "lucide-react";
+import { Circle, LoaderCircleIcon, Terminal, Upload } from "lucide-react";
 import { createProductAction } from "./action";
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -96,8 +96,8 @@ export default function CreateProductForm({ setIsOpen }: { setIsOpen: (isOpen: b
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Category</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-                                    <FormControl>
+                                <Select onValueChange={(value) => field.onChange(parseInt(value, 10))} defaultValue={field.value?.toString()}>
+                                <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a category" />
                                         </SelectTrigger>
@@ -236,7 +236,7 @@ export default function CreateProductForm({ setIsOpen }: { setIsOpen: (isOpen: b
                     <Button type="submit" className="w-full" disabled={isPending}>
                         {isPending ? (
                             <>
-                                <Upload className="mr-2 h-4 w-4 animate-spin" />
+                                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
                                 Creating...
                             </>
                         ) : (

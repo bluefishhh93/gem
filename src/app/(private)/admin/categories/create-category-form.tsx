@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Terminal } from "lucide-react";
+import { LoaderCircleIcon, Terminal } from "lucide-react";
 import { createCategoryAction } from "./action";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -99,12 +99,15 @@ export default function CreateCategoryForm({ setIsOpen }: { setIsOpen: (open: bo
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full"
-          >
-            {isPending ? "Creating..." : "Create Category"}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Category"
+            )}
           </Button>
         </form>
       </Form>

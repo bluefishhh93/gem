@@ -58,15 +58,21 @@ export const deleteProductAction = adminOnlyAction
         stock: z.number().positive(),
         description: z.string(),
         categoryId: z.number().positive(),
-        fileWrapper: z.instanceof(FormData)
+        fileWrapper: z.instanceof(FormData),
+        salePrice: z.number().positive()
     }))
     .handler(async({
-        input: {productId, name, price, stock, categoryId, description, fileWrapper},
+        input: {productId, name, price, stock, categoryId, description, fileWrapper, salePrice},
         ctx: {user}
     }) => {
-        // Extract product images from fileWrapper
-        const productImages = fileWrapper.getAll("files") as File[];
-       
+        let productImages: File[] | undefined;
+
+        if (fileWrapper) {
+            productImages = fileWrapper.getAll("files") as File[];
+            if (productImages.length === 0) {
+                productImages = undefined;
+            }
+        }       
         await updateProductUseCase({
             id: productId,
             name,
@@ -74,6 +80,7 @@ export const deleteProductAction = adminOnlyAction
             stock,
             description,
             categoryId,
+            salePrice,
             productImages, // Pass productImages to the use case
         });
 

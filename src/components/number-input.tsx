@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { Input } from "@/components/ui/input";
 
 interface NumberInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -7,13 +7,13 @@ interface NumberInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   max?: number;
 }
 
-const NumberInput: React.FC<NumberInputProps> = ({ 
+const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(({ 
   isInteger = false, 
   min = 0, 
   max = Number.MAX_SAFE_INTEGER,
   onChange,
   ...props 
-}) => {
+}, ref) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (isInteger && (e.key === '.' || e.key === 'e')) {
       e.preventDefault();
@@ -56,9 +56,12 @@ const NumberInput: React.FC<NumberInputProps> = ({
       max={max}
       onKeyDown={handleKeyDown}
       onChange={handleChange}
+      ref={ref}
       {...props}
     />
   );
-};
+});
+
+NumberInput.displayName = 'NumberInput';
 
 export default NumberInput;

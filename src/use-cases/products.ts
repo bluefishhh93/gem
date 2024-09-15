@@ -57,7 +57,7 @@ export async function createProductUseCase({
 }
 
 export async function updateProductUseCase(
-    { id, name, price, stock, description, categoryId, productImages }: {
+    { id, name, price, stock, description, categoryId, productImages, salePrice }: {
         id: number;
         name: string;
         price: number;
@@ -65,6 +65,7 @@ export async function updateProductUseCase(
         categoryId: number;
         description: string;
         productImages?: File[];
+        salePrice: number;
     }
 ) {
     const product = await getProductById(id);
@@ -99,7 +100,7 @@ export async function updateProductUseCase(
         price,
         currentQuantity: stock,
         description,
-        salePrice: price,
+        salePrice,
         categoryId
     };
 

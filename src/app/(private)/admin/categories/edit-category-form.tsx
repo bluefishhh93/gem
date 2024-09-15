@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Terminal } from "lucide-react";
+import { LoaderCircleIcon, Terminal } from "lucide-react";
 import { updateCategoryAction } from "./action";
 import { Category } from "@/db/schema";
 
@@ -102,12 +102,15 @@ export function EditCategoryForm({ category, setIsOpen }: { category: Category; 
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full"
-          >
-            {isPending ? "Updating..." : "Update Category"}
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
+                Updating...
+              </>
+            ) : (
+              "Save Changes"
+            )}
           </Button>
         </form>
       </Form>

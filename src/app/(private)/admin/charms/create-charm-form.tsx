@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
 import { useToast } from "@/components/ui/use-toast";
-import { Terminal, Upload } from "lucide-react";
+import { LoaderCircleIcon, Terminal, Upload } from "lucide-react";
 import { createCharmAction } from "./action";
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
 
@@ -175,12 +175,16 @@ export default function CreateCharmForm({ setIsOpen }: { setIsOpen: (open: boole
               <AlertDescription>{error.message}</AlertDescription>
             </Alert>
           )}
-          <Button
-            type="submit"
-            disabled={isPending}
-            className="w-full"
-          >
-            {isPending ? "Creating..." : "Create Charm"}
+          
+          <Button type="submit" className="w-full" disabled={isPending}>
+            {isPending ? (
+              <>
+                <LoaderCircleIcon className="mr-2 h-4 w-4 animate-spin" />
+                Creating...
+              </>
+            ) : (
+              "Create Charm"
+            )}
           </Button>
         </form>
       </Form>

@@ -1,6 +1,7 @@
 import { StringsTable } from "./strings-table";
 import { CreateStringButton } from "./create-string-button";
 import { getStringsUseCase } from "@/use-cases/strings";
+import { Breadcrumb } from "@/components/Breadcrumb";
 
 export default async function StringsPage() {
   // const strings = await getStringsUseCase();
@@ -8,7 +9,7 @@ export default async function StringsPage() {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-secondary-700">Strings</h1>
+        <Breadcrumb items={[{ label: "Dashboard", link: "/admin" }, { label: "Strings" }]} />
         <CreateStringButton />
       </div>
       <StringsTable/>

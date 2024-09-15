@@ -63,7 +63,7 @@ export const columns: ColumnDef<Product>[] = [
             )
         },
         cell: ({ row }) => {
-             const stock = parseInt(row.getValue("currentQuantitty"));
+             const stock = parseInt(row.getValue("currentQuantity"));
              let color  = "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
              if (stock <= 10) {
                 color = "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100"
