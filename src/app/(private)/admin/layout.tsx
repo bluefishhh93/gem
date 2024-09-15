@@ -89,6 +89,7 @@ import { redirect } from "next/navigation";
 import { HeaderActionsFallback } from "@/app/(public)/_header/header-actions-fallback";
 import { ModeToggle } from "@/components/mode-toggle";
 import Image from "next/image";
+import Link from "next/link";
 
 
 const archivo = Archivo({
@@ -137,7 +138,7 @@ export default async function RootLayout({
               <header className="bg-white dark:bg-gray-800 shadow-sm z-10">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="flex justify-between items-center py-6">
-                    <div className="flex items-center space-x-2">
+                    <Link href="/" className="flex items-center space-x-2 cursor-pointer">
                       <Image
                         src="/gem-removebg.png"
                         alt="GEM Logo"
@@ -147,7 +148,7 @@ export default async function RootLayout({
                       <h1 className="text-3xl font-bold text-secondary-400 dark:text-secondary-100">
                         GEM
                       </h1>
-                    </div>
+                    </Link>
                     <div className="flex items-center space-x-2">
                       {/* <ModeToggle />                     */}
                       <Suspense fallback={<HeaderActionsFallback />}>
