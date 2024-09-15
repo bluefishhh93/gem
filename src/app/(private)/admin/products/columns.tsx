@@ -1,17 +1,23 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
-import { Product } from "@/db/schema";
+import { ImgProduct, Product } from "@/db/schema";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import Image from "next/image";
 import { vietnamCurrency } from "@/util/util";
 import { ProductCardActions } from "./product-actions";
 import { Badge } from "@/components/ui/badge";
-import { ceil } from "lodash";
-import { cn } from "@/lib/utils";
 
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<{
+    id: number;
+    name: string;
+    price: number;
+    currentQuantity: number;
+    description: string;
+    categoryId: number;
+    imgProducts: ImgProduct[];
+    salePrice: number;
+}>[] = [
     {
         accessorKey: "name",
         header: ({ column }) => {

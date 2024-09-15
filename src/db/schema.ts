@@ -133,7 +133,7 @@ export const products = pgTable("products", {
   description: text("description").notNull(),
   currentQuantity: integer("current_quantity").notNull(),
   price: doublePrecision("price").notNull(),
-  salePrice: doublePrecision("sale_price"),
+  salePrice: doublePrecision("sale_price").notNull(),
   isActivated: boolean("is_activated").default(true),
   categoryId: integer("category_id").notNull().references(() => categories.id),
 });
