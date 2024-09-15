@@ -113,19 +113,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({
   children,
-  metric,
-  category,
-  product,
-  revenue,
-
- 
 }: Readonly<{
   children: ReactNode
-  metric: React.ReactNode
-  category: React.ReactNode
-  product: React.ReactNode
-  revenue: React.ReactNode
-
 }>) {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") {
