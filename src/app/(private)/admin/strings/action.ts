@@ -45,7 +45,7 @@ export const deleteStringAction = adminOnlyAction
     input: { stringId },
     ctx: { user },
   }) => {
-    await deleteStringUseCase(user, stringId);
+    await deleteStringUseCase(stringId);
     revalidatePath("/admin/strings");
   });
 
