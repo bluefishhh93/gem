@@ -1,6 +1,7 @@
 import { database } from "@/db";
 import { categories, Charm, imgProducts, NewProduct, Product, products } from "@/db/schema";
 import { eq, gte, like, lte } from "drizzle-orm";
+import { PgSelect } from "drizzle-orm/pg-core";
 
 // export async function getProducts() {
 //   return (await database.select()
@@ -105,7 +106,7 @@ export async function getProductImages(productId: number) {
 //     maxPrice: number;
 //   }
 // ) {
-//   let query = database.select().from(products);
+//   let query: PgSelect<typeof products> = database.select().from(products);
 
 //   if (search) {
 //     query = query.where(like(products.name, `%${search}%`));
@@ -133,6 +134,6 @@ export async function getProductImages(productId: number) {
 //   return { products: productsResult, totalProducts };
 // }
 
-// export async function getCategories() {
-//   return database.select().from(categories).execute();
-// }
+export async function getCategories() {
+  return database.select().from(categories).execute();
+}
