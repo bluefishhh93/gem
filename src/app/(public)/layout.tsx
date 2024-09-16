@@ -9,6 +9,7 @@ import { Libre_Franklin } from "next/font/google";
 import { Providers } from "../providers";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "./_header/header";
+import Footer from "@/components/footer";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -43,7 +44,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-       <body
+      <body
         className={cn(
           "min-h-screen bg-background antialiased",
           archivo.variable,
@@ -55,6 +56,7 @@ export default async function RootLayout({
           <NextTopLoader color="var(--loader-color)" showSpinner={false} />
           <Header />
           <div className="container mx-auto w-full py-12">{children}</div>
+          <Footer />
         </Providers>
         <Toaster />
       </body>
