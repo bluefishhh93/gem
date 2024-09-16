@@ -1,12 +1,13 @@
 import { database } from "@/db";
-import { Charm, imgProducts, NewProduct, Product, products } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { categories, Charm, imgProducts, NewProduct, Product, products } from "@/db/schema";
+import { eq, gte, like, lte } from "drizzle-orm";
 
 // export async function getProducts() {
 //   return (await database.select()
 //     .from(products)
 //     .leftJoin(imgProducts, eq(products.id, imgProducts.productId)));
 // }
+
 export async function getProducts() {
   return await database.query.products.findMany({
     with: {
@@ -86,3 +87,52 @@ export async function deleteProduct(id: number) {
 export async function getProductImages(productId: number) {
   return await database.select().from(imgProducts).where(eq(imgProducts.productId, productId))
 }
+
+// export async function getShopProducts(
+//   {
+//     page,
+//     pageSize,
+//     search,
+//     category,
+//     minPrice,
+//     maxPrice
+//   }: {
+//     page: number;
+//     pageSize: number;
+//     search: string;
+//     category: string;
+//     minPrice: number;
+//     maxPrice: number;
+//   }
+// ) {
+//   let query = database.select().from(products);
+
+//   if (search) {
+//     query = query.where(like(products.name, `%${search}%`));
+//   }
+
+//   if (category) {
+//     query = query.where(eq(products.categoryId, parseInt(category)));
+//   }
+
+//   if (minPrice !== undefined) {
+//     query = query.where(gte(products.price, minPrice));
+//   }
+
+//   if (maxPrice !== undefined) {
+//     query = query.where(lte(products.price, maxPrice));
+//   }
+
+//   const totalProducts = await query.execute().then((res) => res.length);
+
+//   const productsResult = await query
+//     .limit(pageSize)
+//     .offset((page - 1) * pageSize)
+//     .execute();
+
+//   return { products: productsResult, totalProducts };
+// }
+
+// export async function getCategories() {
+//   return database.select().from(categories).execute();
+// }

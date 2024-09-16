@@ -1,6 +1,6 @@
 // components/DashboardSidebar.tsx
 import React from 'react';
-import ReusableSidebar from '../../components/sidebar';
+import ReusableSidebar from '../sidebar';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Grid, NotepadText, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
@@ -15,11 +15,11 @@ const DashboardSidebar: React.FC = async () => {
 
   const header = (
     <div className="flex items-center gap-4">
-      <Avatar>
+      {/* <Avatar>
         <AvatarImage src={user.image} alt="@shadcn" />
         <AvatarFallback>CN</AvatarFallback>
       </Avatar>
-      <h1 className="text-lg font-bold">{user.firstname + ' ' + user.lastname}</h1>
+      <h1 className="text-lg font-bold">{user.firstname + ' ' + user.lastname}</h1> */}
     </div>
   );
 
