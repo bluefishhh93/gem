@@ -6,7 +6,6 @@ import { z } from "zod";
 import { updateProfileImageUseCase, updateProfileNameUseCase } from "@/use-cases/users";
 import { revalidatePath } from "next/cache";
 import { rateLimitByKey } from "@/lib/limiter";
-import sanitizeHtml from "sanitize-html";
 
 export const updateProfileImageAction = authenticatedAction
   .createServerAction()

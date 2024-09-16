@@ -1,1 +1,0 @@
-ALTER TABLE "charms" ALTER COLUMN "stock" SET DEFAULT 0;

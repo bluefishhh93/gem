@@ -11,7 +11,7 @@ const mainItems = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboardIcon },
   { label: "Users", href: "/admin/users", icon: Users },
   { label: "Orders", href: "/admin/orders", icon: ShoppingCart },
-  { label: "SEO", href: "/admin/seo", icon: PencilLineIcon }
+  { label: "SEO", href: "/admin-blogs", icon: PencilLineIcon }
 ];
 
 const inventoryItems = [

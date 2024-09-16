@@ -117,3 +117,272 @@
     font-family: var(--font-playfair_display), serif;
   }
 }
+
+/* iptap */
+.no-scroll .tiptap {
+  @apply h-full;
+}
+
+.tiptap {
+  >*+* {
+    margin-top: 0.75em;
+  }
+
+  @apply bg-gray-200 dark:bg-slate-900 rounded p-8 overflow-auto h-[500px];
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+
+  ul {
+    padding: 0 1rem;
+    @apply list-disc;
+  }
+
+  ol {
+    padding: 0 1rem;
+    @apply list-decimal;
+  }
+
+  li {
+    padding: 0 1rem;
+  }
+
+  a {
+    @apply text-blue-600 hover:underline cursor-pointer;
+  }
+
+
+  h1 {
+    @apply text-6xl font-bold;
+  }
+
+  h2 {
+    @apply text-5xl font-bold;
+  }
+
+  h3 {
+    @apply text-4xl font-bold;
+  }
+
+  h4 {
+    @apply text-3xl font-bold;
+  }
+
+  h5 {
+    @apply text-2xl font-bold;
+  }
+
+  h6 {
+    @apply text-xl font-bold;
+  }
+
+
+  code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
+
+  pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: "JetBrainsMono", monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+
+    code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(#0d0d0d, 0.1);
+  }
+
+  hr {
+    border: none;
+    border-top: 2px solid rgba(#0d0d0d, 0.1);
+    margin: 2rem 0;
+  }
+
+  span {
+    @apply dark:text-gray-400 !important;
+  }
+
+
+}
+
+/* Button styles */
+.tiptap__buttons {
+  @apply flex flex-wrap gap-2 mb-4;
+}
+
+.tiptap__buttons button {
+  @apply flex items-center justify-center px-3 py-2 bg-gray-200 border border-gray-300 rounded-md text-gray-700 cursor-pointer transition-colors duration-300 ease-in-out;
+
+  /* Dark mode */
+  @apply dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200;
+
+  &:hover {
+    @apply bg-gray-300 dark:bg-gray-600;
+  }
+
+  &.is-active {
+    @apply bg-gray-300 border-gray-400 dark:bg-gray-800 dark:border-gray-500;
+  }
+}
+
+
+.blog-content {
+  @apply max-w-5xl mx-auto;
+
+  span {
+    @apply dark:text-gray-200 !important;
+  }
+  code {
+    background-color: rgba(#616161, 0.1);
+    color: #616161;
+  }
+
+  pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: "JetBrainsMono", monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+
+    code {
+      color: inherit;
+      padding: 0;
+      background: none;
+      font-size: 0.8rem;
+    }
+  }
+
+  .ProseMirror {
+    
+    @apply text-base leading-relaxed bg-white dark:bg-slate-950 text-gray-800 dark:text-gray-200 p-4 rounded;
+
+    >*+* {
+      @apply mt-6;
+    }
+
+    h1 {
+      @apply text-4xl font-bold mb-4;
+    }
+
+    h2 {
+      @apply text-3xl font-bold mb-3;
+    }
+
+    h3 {
+      @apply text-2xl font-bold mb-2;
+    }
+
+    h4 {
+      @apply text-xl font-bold mb-2;
+    }
+
+    h5 {
+      @apply text-lg font-bold mb-2;
+    }
+
+    h6 {
+      @apply text-base font-bold mb-2;
+    }
+
+    p {
+      @apply mb-4;
+    }
+
+    ul,
+    ol {
+      @apply pl-8 mb-4;
+    }
+
+    ul {
+      @apply list-disc;
+    }
+
+    ol {
+      @apply list-decimal;
+    }
+
+    li {
+      @apply mb-2;
+    }
+
+    blockquote {
+      @apply border-l-4 border-gray-300 pl-4 italic my-4;
+    }
+
+    pre {
+      @apply bg-gray-100 rounded p-4 overflow-x-auto my-4;
+    }
+
+    a {
+      @apply text-blue-600 hover:underline cursor-pointer;
+    }
+
+    code {
+      background-color: rgba(#616161, 0.1);
+      color: #616161;
+    }
+
+    
+
+    pre {
+      background: #0d0d0d;
+      color: #fff;
+      font-family: "JetBrainsMono", monospace;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      @apply dark:bg-gray-700;
+
+      code {
+        color: inherit;
+        padding: 0;
+        background: none;
+        font-size: 0.8rem;
+      }
+    }
+
+    img {
+      @apply w-full max-w-full h-auto rounded-lg shadow-md object-cover;
+    }
+
+
+    .youtube-video {
+      margin: 2rem auto;
+      /* Center the video horizontally and add vertical spacing */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .youtube-video iframe {
+      width: 100%;
+      max-width: 100%;
+      /* Ensure the video is responsive */
+      height: auto;
+      aspect-ratio: 16 / 9;
+      /* Maintain a 16:9 aspect ratio */
+      border: none;
+      /* Remove the border around the iframe */
+      border-radius: 8px;
+      /* Optional: Add rounded corners to the video */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      /* Optional: Add a subtle shadow */
+    }
+
+
+  }
+}

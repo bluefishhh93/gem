@@ -1,4 +1,10 @@
 DO $$ BEGIN
+ CREATE TYPE "public"."type" AS ENUM('email', 'google', 'github');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "public"."order_status" AS ENUM('pending', 'processing', 'shipped', 'delivered', 'canceled');
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -17,12 +23,38 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ CREATE TYPE "public"."role" AS ENUM('user', 'admin');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  CREATE TYPE "public"."shipping_status" AS ENUM('pending', 'shipping', 'shipped');
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
-ALTER TYPE "role" ADD VALUE 'user';--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_accounts" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"userId" serial NOT NULL,
+	"accountType" "type" NOT NULL,
+	"githubId" text,
+	"googleId" text,
+	"password" text,
+	"salt" text,
+	CONSTRAINT "gf_accounts_githubId_unique" UNIQUE("githubId"),
+	CONSTRAINT "gf_accounts_googleId_unique" UNIQUE("googleId")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "blogs" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"title" text NOT NULL,
+	"content" text NOT NULL,
+	"image_url" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"published" boolean DEFAULT false NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bracelet_charms" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"bracelet_id" integer,
@@ -40,6 +72,7 @@ CREATE TABLE IF NOT EXISTS "charms" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" text NOT NULL,
 	"price" double precision NOT NULL,
+	"stock" integer DEFAULT 0 NOT NULL,
 	"image_url" text NOT NULL
 );
 --> statement-breakpoint
@@ -71,6 +104,20 @@ CREATE TABLE IF NOT EXISTS "img_reviews" (
 	"image_url" text NOT NULL,
 	"public_id" text NOT NULL,
 	"review_id" integer
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_magic_links" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	"token" text,
+	"tokenExpiresAt" timestamp,
+	CONSTRAINT "gf_magic_links_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_newsletter" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" text NOT NULL,
+	CONSTRAINT "gf_newsletter_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "gf_notifications" (
@@ -115,9 +162,27 @@ CREATE TABLE IF NOT EXISTS "products" (
 	"description" text NOT NULL,
 	"current_quantity" integer NOT NULL,
 	"price" double precision NOT NULL,
-	"sale_price" double precision,
-	"is_activated" boolean NOT NULL,
-	"category_id" integer
+	"sale_price" double precision NOT NULL,
+	"is_activated" boolean DEFAULT true,
+	"category_id" integer NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_profile" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"userId" serial NOT NULL,
+	"displayName" text,
+	"imageId" text,
+	"image" text,
+	"bio" text DEFAULT '' NOT NULL,
+	CONSTRAINT "gf_profile_userId_unique" UNIQUE("userId")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_reset_tokens" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"userId" serial NOT NULL,
+	"token" text,
+	"tokenExpiresAt" timestamp,
+	CONSTRAINT "gf_reset_tokens_userId_unique" UNIQUE("userId")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "reviews" (
@@ -130,14 +195,43 @@ CREATE TABLE IF NOT EXISTS "reviews" (
 	"created_at" timestamp DEFAULT now()
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_session" (
+	"id" text PRIMARY KEY NOT NULL,
+	"userId" serial NOT NULL,
+	"expires_at" timestamp with time zone NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "strings" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"color" text NOT NULL,
 	"material" text NOT NULL,
-	"price" double precision NOT NULL
+	"price" double precision NOT NULL,
+	"stock" integer DEFAULT 0 NOT NULL,
+	"image_url" text NOT NULL
 );
 --> statement-breakpoint
-ALTER TABLE "gf_user" ADD COLUMN "role" "role" DEFAULT 'user' NOT NULL;--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_user" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"email" text,
+	"emailVerified" timestamp,
+	"role" "role" DEFAULT 'user' NOT NULL,
+	CONSTRAINT "gf_user_email_unique" UNIQUE("email")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "gf_verify_email_tokens" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"userId" serial NOT NULL,
+	"token" text,
+	"tokenExpiresAt" timestamp,
+	CONSTRAINT "gf_verify_email_tokens_userId_unique" UNIQUE("userId")
+);
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "gf_accounts" ADD CONSTRAINT "gf_accounts_userId_gf_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."gf_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "bracelet_charms" ADD CONSTRAINT "bracelet_charms_bracelet_id_custom_bracelets_id_fk" FOREIGN KEY ("bracelet_id") REFERENCES "public"."custom_bracelets"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
@@ -199,6 +293,18 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "gf_profile" ADD CONSTRAINT "gf_profile_userId_gf_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."gf_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "gf_reset_tokens" ADD CONSTRAINT "gf_reset_tokens_userId_gf_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."gf_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_gf_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."gf_user"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -212,6 +318,18 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "reviews" ADD CONSTRAINT "reviews_order_item_id_order_items_id_fk" FOREIGN KEY ("order_item_id") REFERENCES "public"."order_items"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "gf_session" ADD CONSTRAINT "gf_session_userId_gf_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."gf_user"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "gf_verify_email_tokens" ADD CONSTRAINT "gf_verify_email_tokens_userId_gf_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."gf_user"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

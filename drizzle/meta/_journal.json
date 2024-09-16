@@ -5,43 +5,15 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1725804657214,
-      "tag": "0000_spotty_justin_hammer",
+      "when": 1726437014302,
+      "tag": "0000_closed_mastermind",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "6",
-      "when": 1726151877041,
-      "tag": "0001_strong_molly_hayes",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1726238790506,
-      "tag": "0002_nasty_paladin",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1726239103860,
-      "tag": "0003_natural_archangel",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1726265545356,
-      "tag": "0004_lush_ezekiel",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1726387263261,
-      "tag": "0005_neat_eddie_brock",
+      "when": 1726455048456,
+      "tag": "0001_tidy_green_goblin",
       "breakpoints": true
     }
   ]

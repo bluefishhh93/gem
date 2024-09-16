@@ -216,6 +216,17 @@ export const customBracelets = pgTable("custom_bracelets", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// blog
+export const blogs = pgTable("blogs", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  imageUrl: text("image_url").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  published: boolean("published").notNull().default(false),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 
 export const productsRelations = relations(products, ({ one, many }) => ({
   category: one(categories, {
@@ -330,3 +341,7 @@ export type NewCharm = typeof charms.$inferInsert;
 
 export type CustomBracelet = typeof customBracelets.$inferSelect;
 export type BraceletCharm = typeof braceletCharms.$inferSelect;
+
+export type Blog = typeof blogs.$inferSelect;
+export type NewBlog = typeof blogs.$inferInsert;
+

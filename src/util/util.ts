@@ -1,4 +1,7 @@
+
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
+import slugify from 'slugify';
+
 interface Omit {
   <T extends object, K extends [...(keyof T)[]]>(obj: T, ...keys: K): {
     [K2 in Exclude<keyof T, K[number]>]: T[K2];
@@ -30,4 +33,21 @@ export function validateImage(image: File) {
 
 export function vietnamCurrency(price: number) {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+}
+
+
+export function convertToSlug(title: string): string {
+  // Remove diacritics and convert to lowercase
+  const slug = slugify(title, {
+    lower: true,      // convert to lower case
+    strict: true,     // strip special characters except replacement
+    locale: 'vi',     // language code of the locale to use
+  });
+  
+  // Further clean up the slug
+  return slug
+    .replace(/[^\w\-]+/g, '')   // Remove any remaining non-word chars
+    .replace(/\-\-+/g, '-')     // Replace multiple - with single -
+    .replace(/^-+/, '')         // Trim - from start of text
+    .replace(/-+$/, '');        // Trim - from end of text
 }
