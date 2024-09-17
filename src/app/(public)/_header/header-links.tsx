@@ -37,20 +37,20 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
       {!isLandingPage && isAuthenticated && (
         <div className="flex items-center gap-2">
           <HeaderButton href={"/"} label={"Trang chủ"} isActive={pathname === '/'} />
-          <HeaderButton href={"/products"} label={"Sản phẩm"} isActive={pathname === '/products'} />
+          <HeaderButton href={"/products"} label={"Sản phẩm"} isActive={pathname.startsWith('/products')} />
           <HeaderButton href={"/promotions"} label={"Khuyến mãi"} isActive={pathname === '/promotions'} />         
           <HeaderButton href={"/about"} label={"Giới thiệu"} isActive={pathname === '/about'} />
-          <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname === '/blogs'} />
+          <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname.startsWith('/blogs')} />
         </div>
       )}
 
       {(isLandingPage || !isAuthenticated) && (
         <div className="flex gap-2">
           <HeaderButton href={"/"} label={"Trang chủ"} isActive={pathname === '/'} />
-          <HeaderButton href={"/products"} label={"Sản phẩm"} isActive={pathname === '/products'} />
+          <HeaderButton href={"/products"} label={"Sản phẩm"} isActive={pathname.startsWith('/products')} />
           <HeaderButton href={"/promotions"} label={"Khuyến mãi"} isActive={pathname === '/promotions'} />         
           <HeaderButton href={"/about"} label={"Giới thiệu"} isActive={pathname === '/about'} />
-          <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname === '/blogs'} />
+          <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname.startsWith('/blogs')} />
         </div>
       )}
     </>

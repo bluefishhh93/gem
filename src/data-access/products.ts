@@ -19,7 +19,10 @@ export async function getProducts() {
 
 export async function getProductById(id: number) {
   return await database.query.products.findFirst({
-    where: eq(products.id, id)
+    where: eq(products.id, id),
+    with: {
+      imgProducts: true
+    },
   })
 }
 

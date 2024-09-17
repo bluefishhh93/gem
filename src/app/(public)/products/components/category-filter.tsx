@@ -36,7 +36,7 @@ export default function CategoryFilter() {
 
   return (
     <div className="mb-6">
-      <h3 className="text-lg font-semibold mb-2">Category</h3>
+      <h3 className="text-lg font-semibold mb-2">Phân loại</h3>
       <select
         className="w-full p-2 border border-gray-300 rounded-md"
         onChange={(e) => handleCategoryChange(e.target.value)}

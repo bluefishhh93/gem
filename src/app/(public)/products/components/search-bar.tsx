@@ -29,7 +29,7 @@ export default function SearchBar() {
                     type="text"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search products..."
+                    placeholder="Nhập tên sản phẩm..."
                     className="flex-grow"
                 />
                 <Button type="submit" className="ml-2">
