@@ -25,7 +25,7 @@ export default function CategoryFilter() {
 
   const categoryOptions = useMemo(() => (
     <>
-      <SelectItem value="">All Categories</SelectItem>
+      <SelectItem value="">Tất cả</SelectItem>
       {categories.map((category) => (
         <SelectItem key={category.id} value={category.id.toString()}>
           {category.name}
@@ -42,7 +42,7 @@ export default function CategoryFilter() {
         onChange={(e) => handleCategoryChange(e.target.value)}
         value={currentCategory}
       >
-        <option value="">All Categories</option>
+        <option value="">Tất cả</option>
         {isLoading ? (
           <option value="" disabled>Loading...</option>
         ) : (
