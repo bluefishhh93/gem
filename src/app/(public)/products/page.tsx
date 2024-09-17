@@ -12,7 +12,6 @@ export default async function ProductsPage({
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
-
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="relative mb-8">
@@ -20,9 +19,11 @@ export default async function ProductsPage({
       </div>
       <div className="flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-1/5">
-          <SearchBar />
-          <CategoryFilter />
-          <PriceFilter />
+          <Suspense fallback={<FiltersSkeleton />}>
+            <SearchBar />
+            <CategoryFilter />
+            <PriceFilter />
+          </Suspense>
         </div>
         <div className="w-full md:w-3/4">
           <Suspense fallback={<ProductListSkeleton />}>
@@ -34,6 +35,16 @@ export default async function ProductsPage({
     </div>
   );
 }
+
+const FiltersSkeleton = () => {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-10 w-full" />
+      <Skeleton className="h-40 w-full" />
+      <Skeleton className="h-40 w-full" />
+    </div>
+  );
+};
 
 const Banner = () => {
   return (
