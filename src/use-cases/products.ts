@@ -1,4 +1,5 @@
-import { createProduct, deleteProduct, getProductById, getProductImages, getProducts, getShopProducts, updateProduct } from "@/data-access/products";
+'use server';
+import { checkIneficient, createProduct, deleteProduct, getProductById, getProductImages, getProducts, getShopProducts, updateProduct } from "@/data-access/products";
 import { deleteFromCloudinary, uploadMultipleToCloudinary } from "@/lib/cloudinary";
 import { validateImage } from "@/util/util";
 
@@ -119,4 +120,12 @@ export async function getShopProductsUseCase(
 ) {
     const products = await getShopProducts({ page, pageSize, search, category, minPrice, maxPrice });
     return products;
+}
+
+export async function checkIneficientUseCase(cartItems: {
+    productId: number;
+    quantity: number;
+}[]){
+   const insufficientProducts = await checkIneficient(cartItems);
+   return insufficientProducts;
 }

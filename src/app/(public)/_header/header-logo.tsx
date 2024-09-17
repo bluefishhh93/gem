@@ -22,7 +22,9 @@ export function HeaderLogo() {
         src="/gem-removebg.png"
         alt="hero image"
       />
-      <span className={cn(dancingScript.className, " text-secondary-500 text-base dark:text-secondary-50")}>Wear Your Stars</span>
+      <span className={`${dancingScript.className} text-secondary-500 text-base dark:text-secondary-50`}>
+        Wear Your Stars
+      </span>
     </Link>
   );
 }

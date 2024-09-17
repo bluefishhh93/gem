@@ -1,26 +1,17 @@
-import ProductList from './components/product-list';
 import SearchBar from './components/search-bar';
-import { getShopProductsUseCase } from '@/use-cases/products';
-import { getCategoriesUseCase } from '@/use-cases/categories';
-import Pagination from './components/pagination';
 import CategoryFilter from './components/category-filter';
 import PriceFilter from './components/price-filter';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+import ProductList from './components/product-list';
+import Cart from '@/components/cart/Cart';
 export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
-  const page = Number(searchParams.page) || 1;
-  const pageSize = 12;
-  const search = searchParams.search as string | undefined;
-  const category = searchParams.category ? Number(searchParams.category) : undefined;
-  const minPrice = Number(searchParams.minPrice) || undefined;
-  const maxPrice = Number(searchParams.maxPrice) || undefined;
-
-  // const categories = await getCategoriesUseCase();
-  const { products, totalProducts } = await getShopProductsUseCase({ page, pageSize, search, category, minPrice, maxPrice });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -34,26 +25,19 @@ export default async function ProductsPage({
           <PriceFilter />
         </div>
         <div className="w-full md:w-3/4">
-          {products.length > 0 ? (
-            <>
-              <ProductList products={products} />
-              <Pagination
-                currentPage={page}
-                totalPages={Math.max(1, Math.ceil(Number(totalProducts) / pageSize))}
-              />
-            </>
-          ) : (
-            <p className="text-center text-gray-500">No products found.</p>
-          )}
+          <Suspense fallback={<ProductListSkeleton />}>
+            <ProductList searchParams={searchParams} />
+          </Suspense>
         </div>
       </div>
+      <Cart />
     </div>
   );
 }
 
 const Banner = () => {
   return (
-    <section className="relative h-[60vh] w-full overflow-hidden">
+    <section className="relative h-[60vh] w-full overflow-hidden rounded-3xl">
       {/* Background Image */}
       <Image
         src="/hero-img.jpg"
@@ -64,7 +48,7 @@ const Banner = () => {
       />
 
       {/* Lighter Background Overlay with Blur for Light and Dark Mode */}
-      <div className="absolute inset-0 bg-white/30 backdrop-blur-md dark:bg-black/50" />
+      <div className="absolute inset-0 bg-white/30 backdrop-blur-md dark:bg-black/50 rounded-3xl" />
 
       {/* Banner Content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-6 px-4 text-center">
@@ -77,7 +61,7 @@ const Banner = () => {
         </p>
         <Link
           href="#"
-          className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:bg-primary/90 dark:text-primary-foreground"
+          className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:bg-secondary/90 dark:text-secondary-foreground dark:hover:bg-secondary/50"
           prefetch={false}
         >
           Mua ngay
@@ -86,3 +70,30 @@ const Banner = () => {
     </section>
   );
 };
+
+const ProductListSkeleton = () => {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, index) => (
+        <div
+          key={index}
+          className="group relative overflow-hidden rounded-lg shadow-lg transition-all hover:shadow-md dark:bg-gray-800"
+        >
+          <div className="absolute inset-0 z-10" />
+
+          {/* Skeleton Image */}
+          <Skeleton className="h-48 w-full object-cover object-center" />
+
+          {/* Product Info Skeleton */}
+          <div className="p-10 bg-background dark:bg-gray-900">
+            <Skeleton className="h-6 w-3/4 mb-4" />
+            <Skeleton className="h-4 w-full mb-2" />
+            <Skeleton className="h-4 w-5/6 mb-2" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+

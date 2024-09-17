@@ -1,5 +1,6 @@
 
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
+import { CartItemType, ProductType } from "@/hooks/use-cart-store";
 import slugify from 'slugify';
 
 interface Omit {
@@ -51,3 +52,12 @@ export function convertToSlug(title: string): string {
     .replace(/^-+/, '')         // Trim - from start of text
     .replace(/-+$/, '');        // Trim - from end of text
 }
+
+
+export const getItemList = (cart: ProductType[]): CartItemType[] => {
+  return cart.map((item: ProductType) => ({
+      productId: item.id,
+      quantity: item.quantity,
+      subtotal: item.price * item.quantity,
+  }));
+};

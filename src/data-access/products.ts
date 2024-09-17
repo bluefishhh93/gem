@@ -1,7 +1,6 @@
 import { database } from "@/db";
-import { categories, Charm, imgProducts, NewProduct, Product, products } from "@/db/schema";
-import { and, eq, gte, ilike, like, lte, sql } from "drizzle-orm";
-import { PgSelect } from "drizzle-orm/pg-core";
+import { categories, Charm, imgProducts, NewProduct, OrderItem, Product, products } from "@/db/schema";
+import { and, eq, gte, ilike, inArray, like, lte, sql } from "drizzle-orm";
 
 // export async function getProducts() {
 //   return (await database.select()
@@ -138,6 +137,8 @@ export async function getShopProducts({
     pageSize
   }
 }
+
+
 // export async function getShopProducts({
 //   page = 1,
 //   pageSize = 12,
@@ -208,4 +209,24 @@ export async function getShopProducts({
 
 export async function getCategories() {
   return database.select().from(categories).execute();
+}
+
+export async function checkIneficient(orderItems: {
+  productId: number;
+  quantity: number;
+}[]) {
+  const productIds = orderItems.map(item => item.productId).filter((id): id is number => id !== undefined);
+
+  const productsCheck = await database.select().from(products).where(inArray(products.id, productIds));
+
+  const insufficientProductIds = productsCheck
+    .filter((product) => {
+      const orderItem = orderItems.find(
+        (item) => item.productId === product.id
+      );
+      return !orderItem || product.currentQuantity < orderItem.quantity;
+    })
+    .map((product) => product.id);
+
+  return insufficientProductIds;
 }

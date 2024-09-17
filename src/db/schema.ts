@@ -102,9 +102,9 @@ export const notifications = pgTable("gf_notifications", {
 // ImgProduct
 export const imgProducts = pgTable("img_products", {
   id: serial("id").primaryKey(),
-  imageUrl: text("image_url"),
-  publicId: text("public_id"),
-  productId: integer("product_id").references(() => products.id, { onDelete: "cascade" }),
+  imageUrl: text("image_url").notNull(),
+  publicId: text("public_id").notNull(),
+  productId: integer("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
 });
 
 // ImgReview
@@ -134,7 +134,7 @@ export const products = pgTable("products", {
   currentQuantity: integer("current_quantity").notNull(),
   price: doublePrecision("price").notNull(),
   salePrice: doublePrecision("sale_price").notNull(),
-  isActivated: boolean("is_activated").default(true),
+  isActivated: boolean("is_activated").notNull().default(true),
   categoryId: integer("category_id").notNull().references(() => categories.id),
 });
 
@@ -167,7 +167,7 @@ export const orders = pgTable("orders", {
 export const orderItems = pgTable("order_items", {
   id: serial("id").primaryKey(),
   orderId: integer("order_id").references(() => orders.id, { onDelete: "cascade" }),
-  productId: integer("product_id").references(() => products.id),
+  productId: integer("product_id").notNull().references(() => products.id),
   quantity: integer("quantity").notNull(),
   subtotal: doublePrecision("subtotal").notNull(),
   isRated: boolean("is_rated").default(false),
