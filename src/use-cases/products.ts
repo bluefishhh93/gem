@@ -1,4 +1,4 @@
-import { createProduct, deleteProduct, getProductById, getProductImages, getProducts, updateProduct } from "@/data-access/products";
+import { createProduct, deleteProduct, getProductById, getProductImages, getProducts, getShopProducts, updateProduct } from "@/data-access/products";
 import { deleteFromCloudinary, uploadMultipleToCloudinary } from "@/lib/cloudinary";
 import { validateImage } from "@/util/util";
 
@@ -105,4 +105,18 @@ export async function updateProductUseCase(
     };
 
     return updateProduct(id, updatedProduct, images);
+}
+
+export async function getShopProductsUseCase(
+    { page, pageSize, search, category, minPrice, maxPrice }: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        category?: number;
+        minPrice?: number;
+        maxPrice?: number;
+    }
+) {
+    const products = await getShopProducts({ page, pageSize, search, category, minPrice, maxPrice });
+    return products;
 }

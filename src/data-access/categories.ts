@@ -8,7 +8,7 @@ export async function createCategory(category: NewCategory) {
 }
 
 export async function getCategories() {
-    return await database.select().from(categories);
+    return await database.select().from(categories).where(eq(categories.isActive, true));
 }
 
 export async function getCategoryById(id: number) {

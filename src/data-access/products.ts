@@ -1,6 +1,6 @@
 import { database } from "@/db";
 import { categories, Charm, imgProducts, NewProduct, Product, products } from "@/db/schema";
-import { eq, gte, like, lte } from "drizzle-orm";
+import { and, eq, gte, ilike, like, lte, sql } from "drizzle-orm";
 import { PgSelect } from "drizzle-orm/pg-core";
 
 // export async function getProducts() {
@@ -89,49 +89,121 @@ export async function getProductImages(productId: number) {
   return await database.select().from(imgProducts).where(eq(imgProducts.productId, productId))
 }
 
-// export async function getShopProducts(
-//   {
+export async function getShopProducts({
+  page = 1,
+  pageSize = 12,
+  search = '',
+  category,
+  minPrice = 0,
+  maxPrice = Number.MAX_SAFE_INTEGER
+}: {
+  page?: number;
+  pageSize?: number;
+  search?: string;
+  category?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}) {
+  const productsData = await database.query.products.findMany({
+    where: and(
+      like(products.name, `%${search}%`),
+      category ? eq(products.categoryId, category) : undefined,
+      gte(products.price, minPrice),
+      lte(products.price, maxPrice),
+    ),
+    with: {
+      imgProducts: true
+    },
+    limit: pageSize,
+    offset: (page - 1) * pageSize
+  })
+
+  const totalProducts = await database.select({ count: sql<number>`count(*)` })
+    .from(products)
+    .where(and(
+      ilike(products.name, `%${search}%`),
+      category ? eq(products.categoryId, category) : undefined,
+      gte(products.price, minPrice),
+      lte(products.price, maxPrice),
+    ));
+
+  // Extract the count value
+  const totalCount = totalProducts[0]?.count ?? 0;
+
+
+  return {
+    products: productsData,
+    totalProducts: totalCount,
+    page,
+    pageSize
+  }
+}
+// export async function getShopProducts({
+//   page = 1,
+//   pageSize = 12,
+//   search = '',
+//   category,
+//   minPrice = 0,
+//   maxPrice = Number.MAX_SAFE_INTEGER
+// }: {
+//   page?: number;
+//   pageSize?: number;
+//   search?: string;
+//   category?: number;
+//   minPrice?: number;
+//   maxPrice?: number;
+// }) {
+//   const whereConditions = [
+//     like(products.name, `%${search}%`),
+//     category ? eq(products.categoryId, category) : undefined,
+//     gte(products.price, minPrice),
+//     lte(products.price, maxPrice)
+//   ].filter(Boolean);
+
+//   const productsResult = await database.select({
+//     id: products.id,
+//     name: products.name,
+//     price: products.price,
+//     description: products.description,
+//     salePrice: products.salePrice,
+//     currentQuantity: products.currentQuantity,
+//     categoryId: products.categoryId,
+//     images: sql<string>`
+//       coalesce(
+//         json_agg(
+//           json_build_object(
+//             'id', ${imgProducts.id},
+//             'secure_url', ${imgProducts.imageUrl},
+//             'public_id', ${imgProducts.publicId}
+//           )
+//         ) filter (where ${imgProducts.id} is not null),
+//         '[]'::json
+//       )::text
+//     `,
+//   })
+//   .from(products)
+//   .leftJoin(imgProducts, eq(products.id, imgProducts.productId))
+//   .where(and(...whereConditions))
+//   .groupBy(products.id)
+//   .limit(pageSize)
+//   .offset((page - 1) * pageSize);
+
+
+//   const [{ count }] = await database.select({ 
+//     count: sql`count(distinct ${products.id})`.mapWith(Number) 
+//   })
+//   .from(products)
+//   .where(and(...whereConditions));
+
+//   return {
+//     products: productsResult.map(product => ({
+//       ...product,
+//       images: JSON.parse(product.images)
+//     })),
+//     totalProducts: count,
 //     page,
-//     pageSize,
-//     search,
-//     category,
-//     minPrice,
-//     maxPrice
-//   }: {
-//     page: number;
-//     pageSize: number;
-//     search: string;
-//     category: string;
-//     minPrice: number;
-//     maxPrice: number;
-//   }
-// ) {
-//   let query: PgSelect<typeof products> = database.select().from(products);
-
-//   if (search) {
-//     query = query.where(like(products.name, `%${search}%`));
-//   }
-
-//   if (category) {
-//     query = query.where(eq(products.categoryId, parseInt(category)));
-//   }
-
-//   if (minPrice !== undefined) {
-//     query = query.where(gte(products.price, minPrice));
-//   }
-
-//   if (maxPrice !== undefined) {
-//     query = query.where(lte(products.price, maxPrice));
-//   }
-
-//   const totalProducts = await query.execute().then((res) => res.length);
-
-//   const productsResult = await query
-//     .limit(pageSize)
-//     .offset((page - 1) * pageSize)
-//     .execute();
-
-//   return { products: productsResult, totalProducts };
+//     pageSize
+//   };
 // }
 
 export async function getCategories() {
