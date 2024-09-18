@@ -176,7 +176,7 @@ const MobileFooter = () => {
 
           {/* Social Media Links */}
           <div className="grid gap-2">
-            <h3 className="font-semibold text-base mb-2">Follow Us</h3>
+            <h3 className="font-semibold text-base mb-2">Theo dõi</h3>
             <div className="flex gap-4">
               <Link href="#" prefetch={false} className="hover:opacity-80 transition-opacity duration-200">
                 <Image width={20} height={20} src="/facebook-icon.png" alt="Facebook" className="w-5 h-5" />

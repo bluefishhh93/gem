@@ -110,9 +110,12 @@ export async function HeaderActions() {
         <>
           <ModeToggle />
 
-          <Button asChild variant="secondary" className="bg-secondary-500 hover:bg-secondary-600 text-white">
+          <Button asChild variant="secondary" className=" bg-secondary-500 hover:bg-secondary-600 text-white ">
             <Link href="/sign-in">Đăng nhập</Link>
           </Button>
+          <div className="md:hidden">
+            <MenuButton />
+          </div>
         </>
       )}
     </>
