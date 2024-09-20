@@ -5,7 +5,7 @@ import { validateRequest } from "@/lib/auth";
 import { cache } from "react";
 import { AuthenticationError, AuthorizationError } from "../use-cases/errors";
 import { UserId } from "@/use-cases/types";
-import { gettUserRole } from "@/data-access/users";
+import { gettUserRole, getUserInfo } from "@/data-access/users";
 
 export const getCurrentUser = cache(async () => {
   const session = await validateRequest();
@@ -14,6 +14,15 @@ export const getCurrentUser = cache(async () => {
   }
   const role = await gettUserRole(session.user.id);
   return { ...session.user, role };
+});
+
+export const getCurrentUserInfo = cache(async () => {
+  const session = await validateRequest();
+  if (!session.user) {
+    return undefined;
+  }
+  const userInfo = await getUserInfo(session.user.id);
+  return userInfo;
 });
 
 export const assertAuthenticated = async () => {

@@ -15,6 +15,13 @@
       "when": 1726455048456,
       "tag": "0001_tidy_green_goblin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1726836183895,
+      "tag": "0002_easy_living_lightning",
+      "breakpoints": true
     }
   ]
 }

@@ -4,7 +4,7 @@ export const appConfig: {
   mode: "live",
 };
 
-export const protectedRoutes = ["/purchases", "/dashboard"];
+export const protectedRoutes = ["/purchases", "/dashboard", "/admin" ,"/admin-blogs"];
 export const applicationName = "GEM";
 export const companyName = "Groupie, LLC";
 
@@ -18,4 +18,4 @@ export const VERIFY_EMAIL_TTL = 1000 * 60 * 60 * 24 * 7; // 7 days
 export const MAX_GROUP_LIMIT = 10;
 export const MAX_GROUP_PREMIUM_LIMIT = 50;
 
-export const afterLoginUrl = "/dashboard";
+export const afterLoginUrl = "/";

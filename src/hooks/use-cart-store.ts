@@ -3,15 +3,29 @@ import { persist } from "zustand/middleware";
 
 export interface CheckoutPayload {
     id?: number; //order id
-    userId?: string; //user id
-    name?: string;
-    phone?: string;
-    email?: string;
-    paymentMethod?: string;
-    shipAddress?: string;
-    orderItems?: CartItem[];
+    userId?: number; //user id
+    name: string;
+    phone: string;
+    email: string;
+    paymentMethod: string;
+    address: string;
+    ward: string;
+    district: string;
+    orderItems: CartItem[];
     totalPrice?: number;
+    trackingNumber?: string;
 };
+
+export type CheckoutFormType = {
+    name: string;
+    phone: string;
+    email: string;
+    paymentMethod: string;
+    ward: string; // Add this line if 'ward' is a field in your form
+    // province: string; // Add this line if 'province' is a field in your form
+    district: string; // Add this line if 'district' is a field in your form
+    address: string;
+  };
 
 export interface CartItem {
     productId: number;

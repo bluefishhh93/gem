@@ -1,5 +1,5 @@
 import { database } from "@/db";
-import { User, accounts, users } from "@/db/schema";
+import { User, accounts, profiles, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import crypto from "crypto";
 import { UserId } from "@/use-cases/types";
@@ -107,6 +107,41 @@ export async function gettUserRole(userId: UserId){
   });
 
   return user?.role;
+}
+
+export async function getUserEmail(userId: UserId) {
+  const user = await database.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: {
+      email: true,
+    },
+  });
+
+  return user?.email;
+}
+
+export async function getUserInfo(userId: UserId) {
+  const user = await database.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: {
+      id: true,
+      email: true,
+      role: true,
+    },
+  });
+
+  const userProfile = await database.query.profiles.findFirst({
+    where: eq(profiles.userId, userId),
+    columns: {
+      displayName: true,
+      image: true,
+    },
+  });
+
+  return {
+    ...user,
+    ...userProfile,
+  };
 }
 
 export async function getMagicUserAccountByEmail(email: string) {

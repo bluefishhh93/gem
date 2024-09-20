@@ -12,11 +12,13 @@ import CartItemList from "./CartItemList";
 import EmptyCart from "./EmptyCart";
 import InsufficientStockWarning from "./InsufficientStockWarning";
 import { useTransition } from "react";
+import CheckoutButton from "./CheckoutButton";
+import { useRouter } from "next/navigation";
 
 export default function Cart() {
   // const router = useRouter();
   const [isPending, startTransition] = useTransition();
-
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const cart = useFromStore(useCartStore, (state) => state.cart);
   const [insufficientList, setInsufficientList] = useState<number[]>([]);
@@ -93,10 +95,10 @@ export default function Cart() {
               </p>
             </div>
             <InsufficientStockWarning insufficientList={insufficientList} />
-            {/* <CheckoutButton
+            <CheckoutButton
               insufficientList={insufficientList}
               onCheckout={() => router.push('/checkout')}
-            /> */}
+            />
           </DrawerFooter>
         )}
       </DrawerContent>

@@ -42,7 +42,7 @@ export function MenuButton() {
       <DropdownMenuContent className="space-y-2">
         <MenuItem href="/" label="Trang chủ" isActive={pathname === '/'} />
         <MenuItem href="/products" label="Sản phẩm" isActive={pathname === '/products'} />
-        <MenuItem href="/promotions" label="Khuyến mãi" isActive={pathname === '/promotions'} />
+        <MenuItem href="/promotion" label="Khuyến mãi" isActive={pathname === '/promotion'} />
         <MenuItem href="/about" label="Giới thiệu" isActive={pathname === '/about'} />
         <MenuItem href="/blogs" label="Bài viết" isActive={pathname === '/blogs'} />
       </DropdownMenuContent>

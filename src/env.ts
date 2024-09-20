@@ -18,6 +18,9 @@ export const env = createEnv({
     CLOUDINARY_API_SECRET: z.string().min(1),
     CLOUDINARY_CLOUD_NAME: z.string().min(1),
     CLOUDINARY_API_KEY: z.string().min(1),
+    VNPAY_TMN_CODE: z.string().min(1),
+    VNPAY_SECURE_SECRET: z.string().min(1),
+    VNPAY_HOST: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
@@ -47,6 +50,8 @@ export const env = createEnv({
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY, 
-    
+    VNPAY_TMN_CODE: process.env.VNPAY_TMN_CODE,
+    VNPAY_SECURE_SECRET: process.env.VNPAY_SECURE_SECRET,
+    VNPAY_HOST: process.env.VNPAY_HOST,
   },
 });

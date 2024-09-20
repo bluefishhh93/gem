@@ -36,6 +36,11 @@ export default function ProductListContent({ products }: { products: Product[] }
 function ProductItem({ product }: { product: Product }) {
   const { handleAddToCart, isAdding } = useAddToCart();
 
+  const isOnSale = product.salePrice < product.price;
+  const discountPercentage = isOnSale
+    ? Math.round(((product.price - product.salePrice) / product.price) * 100)
+    : 0;
+
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -45,39 +50,44 @@ function ProductItem({ product }: { product: Product }) {
   return (
     <div
       key={product.id}
-      className="group relative overflow-hidden rounded-lg shadow-lg transition-all hover:shadow-md dark:bg-gray-800"
+      className="group relative overflow-hidden rounded-lg shadow-lg transition-all hover:shadow-xl dark:bg-gray-800"
     >
-
-      <span className="sr-only">View Product</span>
-
-      <Link
-        href={`/products/${product.id}`}
-
-      >
-        <Image
-          src={product.imgProducts[0]?.imageUrl || '/default-product.png'}
-          alt={product.name}
-          width={600}
-          height={600}
-          className="h-48 w-full object-cover object-center transition-all group-hover:scale-105"
-        />
+      <Link href={`/products/${product.id}`}>
+        <div className="relative">
+          <Image
+            src={product.imgProducts[0]?.imageUrl || '/default-product.png'}
+            alt={product.name}
+            width={600}
+            height={600}
+            className="h-48 w-full object-cover object-center transition-all group-hover:scale-105"
+          />
+          {isOnSale && (
+            <div className="absolute top-0 left-0 bg-secondary-500 text-white px-2 py-1 text-xs font-bold">
+              -{discountPercentage}%
+            </div>
+          )}
+        </div>
       </Link>
       <div className="p-4 bg-background dark:bg-gray-900">
-        <h3 className="text-xl font-bold dark:text-white">{product.name}</h3>
-        <div className="h-14">
-          <p className="text-sm text-muted-foreground dark:text-gray-300">
+        <h3 className="text-xl font-bold dark:text-white truncate">{product.name}</h3>
+        <div className="h-12 mt-2">
+          <p className="text-sm text-muted-foreground dark:text-gray-300 line-clamp-2">
             {product.description}
           </p>
         </div>
         <div className="mt-4 flex items-center justify-between">
-          <Button size="sm" className="dark:bg-primary dark:text-primary-foreground"
+          <Button 
+            size="sm" 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 dark:bg-primary dark:text-primary-foreground"
             onClick={handleClick}
           >
             Thêm vào giỏ hàng
           </Button>
-          <span className="font-semibold dark:text-gray-100">
-            {vietnamCurrency(product.price)}
-          </span>
+          <div className="text-right">         
+            <span className="block text-lg font-semibold text-primary dark:text-primary">
+              {vietnamCurrency(product.salePrice)}
+            </span>
+          </div>
         </div>
       </div>
     </div>
