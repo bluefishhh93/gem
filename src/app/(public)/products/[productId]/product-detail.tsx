@@ -121,7 +121,7 @@ export default function ProductDetail({ product }: { product: ProductDetail }) {
                             {product.name}
                         </h1>
                         <h1 className="flex items-center gap-4 text-muted">
-                            {product.salePrice < product.price + 300000 ? (
+                            {product.salePrice < product.price ? (
                                 <>
                                     <span className="text-xl font-semibold text-gray-500 line-through">
                                         {vietnamCurrency(product.price)}

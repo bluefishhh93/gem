@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { useCartStore } from '@/hooks/use-cart-store';
 import { finalizeVNPayPaymentAction } from '../checkout/actions';
@@ -12,6 +12,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
 export default function VNPayReturnPage() {
+    return (
+        <Suspense fallback={<LoadingFallback />}>
+            <VNPayReturnContent />
+        </Suspense>
+    );
+}
+
+
+function VNPayReturnContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { checkoutPayload, clearCart } = useCartStore();
@@ -87,4 +96,27 @@ export default function VNPayReturnPage() {
     }
 
     return null;
+}
+
+function LoadingFallback() {
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center justify-center min-h-screen bg-background"
+        >
+            <Card className="w-full max-w-md border-secondary">
+                <CardHeader>
+                    <CardTitle className="text-center text-secondary-400 text-2xl font-bold">Đang tải...</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center">
+                    <Loader2 className="h-16 w-16 animate-spin text-secondary" />
+                    <p className="mt-4 text-center text-muted-foreground">
+                        Vui lòng chờ trong giây lát...
+                    </p>
+                </CardContent>
+            </Card>
+        </motion.div>
+    );
 }
