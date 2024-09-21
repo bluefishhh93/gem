@@ -45,18 +45,18 @@ const vnpayReturnSchema = z.object({
 });
 
 const checkoutFormSchema = z.object({
-    name: z.string().trim().min(1, "Name is required"),
-    phone: z.string().trim().min(1, "Phone is required").regex(/^\d{10}$/, "Phone number is invalid"),
-    email: z.string().email("Invalid email address").min(1, "Email is required"),
-    paymentMethod: z.string().min(1, "Payment method is required"),
-    address: z.string().trim().min(1, "Address is required"),
-    ward: z.string().trim().min(1, "Ward is required"),
-    district: z.string().trim().min(1, "District is required"),
-    orderItems: z.array(z.object({
-        productId: z.number(),
-        quantity: z.number(),
-        subtotal: z.number(),
-    })),
+  name: z.string().trim().min(1, "Name is required"),
+  phone: z.string().trim().min(1, "Phone is required").regex(/^\d{10}$/, "Phone number is invalid"),
+  email: z.string().email("Invalid email address").min(1, "Email is required"),
+  paymentMethod: z.string().min(1, "Payment method is required"),
+  address: z.string().trim().min(1, "Address is required"),
+  ward: z.string().trim().min(1, "Ward is required"),
+  district: z.string().trim().min(1, "District is required"),
+  orderItems: z.array(z.object({
+    productId: z.number(),
+    quantity: z.number(),
+    subtotal: z.number(),
+  })),
 });
 
 
@@ -65,7 +65,7 @@ export const checkoutWithCOD = unauthenticatedAction
   .input(checkoutFormSchema)
   .handler(async ({ input }) => {
     console.log(input);
-  
+
     const order = await createOrderUseCase(input);
     return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
   });
@@ -93,57 +93,60 @@ export const checkoutWithVNPay = unauthenticatedAction
     }
   });
 
-  function ensureString(value: string | string[] | undefined): string {
-    if (Array.isArray(value)) return value[0] || '';
-    return value || '';
+function ensureString(value: string | string[] | undefined): string {
+  if (Array.isArray(value)) return value[0] || '';
+  return value || '';
 }
 
 export const finalizeVNPayPaymentAction = unauthenticatedAction
-    .createServerAction()
-    .input(z.object({
-        queryString: z.string(),
-        checkoutData: checkoutFormSchema,
-    }))
-    .handler(async ({ input }) => {
-        try {
-            const parsedQuery = parse(input.queryString);
-            const vnpayReturn: ReturnQueryFromVNPay = {
-              vnp_Amount: ensureString(parsedQuery.vnp_Amount),
-              vnp_BankCode: ensureString(parsedQuery.vnp_BankCode),
-              vnp_BankTranNo: ensureString(parsedQuery.vnp_BankTranNo),
-              vnp_CardType: ensureString(parsedQuery.vnp_CardType),
-              vnp_OrderInfo: ensureString(parsedQuery.vnp_OrderInfo),
-              vnp_PayDate: ensureString(parsedQuery.vnp_PayDate),
-              vnp_ResponseCode: ensureString(parsedQuery.vnp_ResponseCode),
-              vnp_TmnCode: ensureString(parsedQuery.vnp_TmnCode),
-              vnp_TransactionNo: ensureString(parsedQuery.vnp_TransactionNo),
-              vnp_TransactionStatus: ensureString(parsedQuery.vnp_TransactionStatus),
-              vnp_TxnRef: ensureString(parsedQuery.vnp_TxnRef),
-              vnp_SecureHash: ensureString(parsedQuery.vnp_SecureHash)
-            };
+  .createServerAction()
+  .input(z.object({
+    queryString: z.string(),
+    checkoutData: checkoutFormSchema,
+  }))
+  .handler(async ({ input }) => {
+    try {
+      const parsedQuery = parse(input.queryString);
+      const vnpayReturn: ReturnQueryFromVNPay = {
+        vnp_Amount: ensureString(parsedQuery.vnp_Amount),
+        vnp_BankCode: ensureString(parsedQuery.vnp_BankCode),
+        vnp_BankTranNo: ensureString(parsedQuery.vnp_BankTranNo),
+        vnp_CardType: ensureString(parsedQuery.vnp_CardType),
+        vnp_OrderInfo: ensureString(parsedQuery.vnp_OrderInfo),
+        vnp_PayDate: ensureString(parsedQuery.vnp_PayDate),
+        vnp_ResponseCode: ensureString(parsedQuery.vnp_ResponseCode),
+        vnp_TmnCode: ensureString(parsedQuery.vnp_TmnCode),
+        vnp_TransactionNo: ensureString(parsedQuery.vnp_TransactionNo),
+        vnp_TransactionStatus: ensureString(parsedQuery.vnp_TransactionStatus),
+        vnp_TxnRef: ensureString(parsedQuery.vnp_TxnRef),
+        vnp_SecureHash: ensureString(parsedQuery.vnp_SecureHash)
+      };
 
-          
-            const paymentResult = vnpay.verifyReturnUrl(vnpayReturn); 
-            
-            if (!paymentResult.isVerified) {
-                throw new VNPayError();
-            } else if (!paymentResult.isSuccess) {
-                throw new PaymentError();
-            } 
-            const order = await createOrderUseCase({
-              ...input.checkoutData,
-              trackingNumber: vnpayReturn.vnp_TxnRef,
-              paymentMethod: 'vnpay',
-            });
 
-            if(order) {
-              return { success: true, orderId: order.id };
-            } else {
-              throw new Error("Failed to create order");
-            }
-             
-        } catch (error) {
-            console.error("Payment finalization failed:", error);
-            return { success: false, error: error instanceof Error ? error.message : "Failed to finalize payment" };
-        }
-    });
+      const paymentResult = vnpay.verifyReturnUrl(vnpayReturn);
+
+      if (!paymentResult.isVerified) {
+        throw new VNPayError();
+      } else if (vnpayReturn.vnp_ResponseCode === '24') {
+        console.log('redirect to checkout', vnpayReturn.vnp_ResponseCode);
+        return { success: false, redirectUrl: '/checkout' };
+      } else if (!paymentResult.isSuccess) {
+        throw new PaymentError();
+      }
+      const order = await createOrderUseCase({
+        ...input.checkoutData,
+        trackingNumber: vnpayReturn.vnp_TxnRef,
+        paymentMethod: 'vnpay',
+      });
+
+      if (order) {
+        return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
+      } else {
+        throw new Error("Failed to create order");
+      }
+
+    } catch (error) {
+      console.error("Payment finalization failed:", error);
+      return { success: false, error: error instanceof Error ? error.message : "Failed to finalize payment" };
+    }
+  });

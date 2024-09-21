@@ -72,7 +72,7 @@ const CheckoutForm = () => {
     paymentMethod === "cod" ? checkoutWithCOD : checkoutWithVNPay,
     {
       onSuccess: () => {      
-          clearCart();
+          // clearCart();
       },
       onError: ({err}) => {
         toast({

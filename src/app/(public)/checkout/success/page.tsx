@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, CheckCircle } from "lucide-react";
 import Link from 'next/link';
 import { vietnamCurrency } from '@/util/util';
+import ClearCart from './clear-cart';
 
 export default async function CheckoutSuccessPage({ searchParams }: { searchParams: { orderId: string } }) {
   const { orderId } = searchParams;
@@ -21,6 +22,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
 
   return (
     <div className="container mx-auto px-4 py-8 ">
+      <ClearCart />
       <Card className="max-w-2xl mx-auto dark:bg-slate-900">
         <CardHeader className="text-center">
           <CheckCircle className="w-16 h-16 text-secondary-400 mx-auto mb-4" />
