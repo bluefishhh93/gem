@@ -80,7 +80,7 @@ const BlogEntryDropdown = ({ isPublished, id }: { isPublished: boolean, id: stri
     </DropdownMenu>
 );
 
-const truncateTitle = (title: string, maxLength: number = 17) => {
+const truncateTitle = (title: string, maxLength: number = 12) => {
     if (title.length <= maxLength) return title;
     return `${title.slice(0, maxLength)} ...`;
 };
@@ -112,7 +112,7 @@ const BlogEntry = ({ id, title, isPublished }: {
                             <FileText className="text-yellow-600 group-hover:text-yellow-800 transition-colors duration-200" size={20} />
                         )}
                         <span
-                            className="flex-grow truncate font-medium text-gray-800 dark:text-gray-200 group-hover:text-secondary-600 dark:group-hover:text-secondary-300 transition-colors duration-200"
+                            className="flex-grow truncate text-sm text-gray-800 dark:text-gray-200 group-hover:text-secondary-600 dark:group-hover:text-secondary-300 transition-colors duration-200"
                             title={title}
                         >
                             {truncateTitle(title)}

@@ -41,9 +41,20 @@ const checkoutFormSchema = z.object({
   district: z.string().trim().min(1, "Vui lòng chọn quận/huyện"), 
 });
 
-const CheckoutForm = () => {
+const CheckoutForm = ({
+  user
+}: {
+  user: {
+    id?: number;
+    displayName?: string | null | undefined;
+    image?: string | null | undefined;
+    role?: "user" | "admin" | undefined;
+    email?: string | null | undefined;
+  } | undefined;
+}) => {
   const { districts, wards, fetchDistricts, fetchWards } = useAddressData();
   const [paymentMethod, setPaymentMethod] = useState("cod");
+
   const { cart, clearCart, setCheckoutPayload } = useCartStore();
   const { toast } = useToast();
   const router = useRouter();
@@ -58,9 +69,9 @@ const CheckoutForm = () => {
   const form = useForm({
     resolver: zodResolver(checkoutFormSchema),
     defaultValues: {
-      name: "",
+      name: user?.displayName || "",
       phone: "",
-      email: "",
+      email: user?.email || "",
       paymentMethod: "cod",
       address: "",
       district: "",
@@ -92,6 +103,7 @@ const CheckoutForm = () => {
   const onSubmit = async (data: z.infer<typeof checkoutFormSchema>) => {
     const result = await execute({
       ...data,
+      userId: user?.id,
       orderItems: getItemList(cart),
     });
 

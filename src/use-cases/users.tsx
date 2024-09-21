@@ -1,6 +1,8 @@
 import {
   createUser,
   deleteUser,
+  getAllUsers,
+  gettUserRole,
   getUserByEmail,
   updateUser,
   verifyPassword,
@@ -168,4 +170,17 @@ export async function updateProfileNameUseCase(
   displayName: string
 ) {
   await updateProfile(userId, { displayName });
+}
+
+
+export async function toggleUserRoleUseCase(
+  authenticatedUser: UserSession,
+  userId: UserId
+) {
+  const currentRole = await gettUserRole(userId);
+  const newRole = currentRole === "user" ? "admin" : "user";
+  await updateUser(userId, { role: newRole });
+}
+export async function getUsersUseCase() {
+  return await getAllUsers();
 }

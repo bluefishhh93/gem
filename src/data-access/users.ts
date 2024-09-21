@@ -164,3 +164,7 @@ export async function setEmailVerified(userId: UserId) {
 export async function updateUser(userId: UserId, updatedUser: Partial<User>) {
   await database.update(users).set(updatedUser).where(eq(users.id, userId));
 }
+
+export async function getAllUsers() {
+  return await database.select().from(users);
+}

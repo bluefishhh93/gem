@@ -1,8 +1,12 @@
-import { NewOrder, NewOrderItem, orderItems, orders, products } from "@/db/schema";
+import { NewOrder, NewOrderItem, Order, orderItems, orders, products } from "@/db/schema";
 import { database } from "@/db";
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
+import { OrderStatus, PaymentStatus, ShippingStatus } from "@/types/enums";
+
 
 export async function createOrder({orderData, orderItemsData}: {orderData: NewOrder, orderItemsData: NewOrderItem[]}) {
+
+
     return await database.transaction(async (tx) => {
         // Create the order
         const [newOrder] = await tx.insert(orders).values(orderData).returning();
@@ -37,3 +41,26 @@ export async function getOrderById(id: number) {
         }
     })
 }
+
+export async function updateOrder(id: number, orderData: Partial<{
+    orderStatus: OrderStatus;
+    paymentStatus: PaymentStatus;
+    shippingStatus: ShippingStatus;
+}>) {
+    return await database.update(orders).set(orderData).where(eq(orders.id, id));
+}
+
+export async function getOrders() {
+    return await database.query.orders.findMany({
+        orderBy: desc(orders.createdAt),
+        with: {
+            orderItems: {
+                with: {
+                    product: true,
+                }
+            },
+        }
+    });
+}
+
+

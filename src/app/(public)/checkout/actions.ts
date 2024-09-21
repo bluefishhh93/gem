@@ -11,22 +11,6 @@ import { ReturnQueryFromVNPay } from "vnpay";
 
 import { z } from "zod";
 
-enum PaymentMethod {
-  COD = 'cod',
-  VNPAY = 'vnpay',
-}
-
-enum PaymentStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  FAILED = 'failed',
-}
-
-enum ShippingStatus {
-  PENDING = 'pending',
-  SHIPPING = 'shipping',
-  SHIPPED = 'shipped',
-}
 
 
 const vnpayReturnSchema = z.object({
@@ -49,6 +33,7 @@ const checkoutFormSchema = z.object({
   phone: z.string().trim().min(1, "Phone is required").regex(/^\d{10}$/, "Phone number is invalid"),
   email: z.string().email("Invalid email address").min(1, "Email is required"),
   paymentMethod: z.string().min(1, "Payment method is required"),
+  userId: z.number().optional(),
   address: z.string().trim().min(1, "Address is required"),
   ward: z.string().trim().min(1, "Ward is required"),
   district: z.string().trim().min(1, "District is required"),

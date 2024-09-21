@@ -1,29 +1,14 @@
 'use server';
+import { UpdateOrderInput } from "@/app/(private)/admin/orders/action";
 import { InsufficientProductQuantityError } from "@/app/util";
-import { createOrder, getOrderById } from "@/data-access/orders";
+import { createOrder, getOrderById, getOrders, updateOrder } from "@/data-access/orders";
 import { checkIneficient, getProductById } from "@/data-access/products";
 import moment from "moment";
+import { PaymentMethod, PaymentStatus, ShippingStatus, OrderStatus } from "@/types/enums";
 
-
-
-enum PaymentMethod {
-    COD = 'cod',
-    VNPAY = 'vnpay',
-}
-
-enum PaymentStatus {
-    PENDING = 'pending',
-    PAID = 'paid',
-    FAILED = 'failed',
-}
-
-enum ShippingStatus {
-    PENDING = 'pending',
-    SHIPPING = 'shipping',
-    SHIPPED = 'shipped',
-}
 
 export async function checkIneficientUseCase(cartItems: {
+
     productId: number;
     quantity: number;
 }[]) {
@@ -91,4 +76,14 @@ export async function getOrderByIdUseCase(id: number) {
     const order = await getOrderById(id);
     console.log(order);
     return order;
+}
+
+export async function updateOrderUseCase(id: number, orderData: Omit<UpdateOrderInput, 'orderId'>) {
+    const order = await updateOrder(id, orderData);
+    return order;
+}
+
+export async function getOrdersUseCase() {
+    const orders = await getOrders();
+    return orders;
 }

@@ -1,7 +1,6 @@
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { CharmsTable } from "./charms-table";
 import { CreateCharmButton } from "./create-charm-button";
-import { getCharmsUseCase } from "@/use-cases/charms";
 
 export default async function CharmsPage() {
   return (
