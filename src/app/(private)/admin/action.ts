@@ -13,7 +13,5 @@ export const adminOnlyAction = authenticatedAction
       throw new AuthorizationError();
     }
 
-    // Perform admin-only actions here
-    console.log("Admin action performed");
     return { success: true };
   });

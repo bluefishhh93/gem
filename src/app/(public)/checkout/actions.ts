@@ -49,7 +49,6 @@ export const checkoutWithCOD = unauthenticatedAction
   .createServerAction()
   .input(checkoutFormSchema)
   .handler(async ({ input }) => {
-    console.log(input);
 
     const order = await createOrderUseCase(input);
     return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
@@ -113,7 +112,6 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
       if (!paymentResult.isVerified) {
         throw new VNPayError();
       } else if (vnpayReturn.vnp_ResponseCode === '24') {
-        console.log('redirect to checkout', vnpayReturn.vnp_ResponseCode);
         return { success: false, redirectUrl: '/checkout' };
       } else if (!paymentResult.isSuccess) {
         throw new PaymentError();

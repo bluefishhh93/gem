@@ -1,10 +1,11 @@
 import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import MetricChart from "./components/charts/metric-chart";
+import MetricChart, { MetricChartSkeleton } from "./components/charts/metric-chart";
 import CategoryChart from "./components/charts/category-chart";
 import ProductChart from "./components/charts/product-chart";
 import RevenueChart from "./components/charts/revenue-chart";
+import { Suspense } from "react";
 
 
 const managementSections = [
@@ -30,12 +31,13 @@ export default async function AdminDashboardPage(
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-semibold">Welcome, Admin!</h2>
-      <div>
+      <Suspense fallback={<MetricChartSkeleton />}>
         <MetricChart />
-      </div>
+      </Suspense>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <CategoryChart />
-        <ProductChart />
+
+        {/* <ProductChart /> */}
         <RevenueChart />
       </div>
     </div>

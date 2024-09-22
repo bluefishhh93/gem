@@ -74,7 +74,6 @@ export async function createOrderUseCase(orderData: {
 
 export async function getOrderByIdUseCase(id: number) {
     const order = await getOrderById(id);
-    console.log(order);
     return order;
 }
 

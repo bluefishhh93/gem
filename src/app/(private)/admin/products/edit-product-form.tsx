@@ -51,7 +51,6 @@ export function EditProductForm({ product, setIsOpen }: {
   const [imagePreview, setImagePreview] = useState<string[]>([]);
   const { categories, isLoading } = useCategories();
 
-  console.log(product, "product");
   const { execute, error, isPending } = useServerAction(updateProductAction, {
     onSuccess: () => {
       toast({

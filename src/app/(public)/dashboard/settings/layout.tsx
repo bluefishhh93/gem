@@ -24,7 +24,7 @@ export default async function SettingsPage({
             <Suspense
               fallback={<Skeleton className="w-[160px] h-[40px] rounded" />}
             >
-              <SwitchProfileButton />
+              {/* <SwitchProfileButton /> */}
             </Suspense>
           </div>
         </div>

@@ -22,6 +22,7 @@ export const users = pgTable("gf_user", {
   email: text("email").unique(),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   role: roleEnum("role").default("user").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const accounts = pgTable("gf_accounts", {
