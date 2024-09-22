@@ -28,7 +28,6 @@ interface StringSelectorProps {
 interface StringSelectorProps {
   onSelect: (string: StringType) => void;
 }
-
 export function StringSelector({ onSelect }: StringSelectorProps) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: false, 
@@ -36,6 +35,7 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
     skipSnaps: false,
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedString, setSelectedString] = useState<StringType | null>(null);
 
   const scrollPrev = React.useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -58,9 +58,14 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
     }
   }, [emblaApi, onSlideChange]);
 
+  const handleStringSelect = (string: StringType) => {
+    setSelectedString(string);
+    onSelect(string);
+  };
+
   return (
-    <div className="relative px-4 py-8 bg-gradient-to-r from-pink-50 to-pink-50 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Choose Your String</h2>
+    <div className="relative px-4 py-8 bg-gradient-to-r from-pink-50 to-pink-50 rounded-lg shadow-md ">
+      <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Chọn loại vòng dây</h2>
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
           {stringTypes.map((string, index) => (
@@ -72,13 +77,13 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
               transition={{ delay: index * 0.1 }}
             >
               <Card 
-                className={`cursor-pointer transition-all duration-300 ${
-                  selectedIndex === index ? 'ring-2 ring-blue-500 shadow-lg scale-105' : 'hover:shadow-md'
+                className={`cursor-pointer transition-all duration-300 dark:bg-slate-200 ${
+                  selectedString?.id === string.id ? 'ring-2 ring-pink-500 shadow-lg scale-105' : 'hover:shadow-md'
                 }`}
-                onClick={() => onSelect(string)}
+                onClick={() => handleStringSelect(string)}
               >
                 <CardHeader>
-                  <CardTitle className="text-center">{string.name}</CardTitle>
+                  <CardTitle className="text-center dark:text-slate-800">{string.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Image 
@@ -98,7 +103,7 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
         <Button
           variant="outline"
           size="icon"
-          className="bg-white hover:bg-gray-100"
+          className="bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
           onClick={scrollPrev}
         >
           <ChevronLeft className="h-4 w-4" />
@@ -106,7 +111,7 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
         <Button
           variant="outline"
           size="icon"
-          className="bg-white hover:bg-gray-100"
+          className="bg-white hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600"
           onClick={scrollNext}
         >
           <ChevronRight className="h-4 w-4" />

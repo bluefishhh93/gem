@@ -49,13 +49,13 @@ export function CustomBraceletCreator() {
   return (
     <Card className="w-full max-w-4xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Create Your Custom Bracelet</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center">Tạo vòng tay theo sở thích của bạn</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="string" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="string">Choose String</TabsTrigger>
-            <TabsTrigger value="charms" disabled={!selectedString}>Place Charms</TabsTrigger>
+            <TabsTrigger value="string">Chọn loại vòng dây</TabsTrigger>
+            <TabsTrigger value="charms" disabled={!selectedString}>Đặt charms</TabsTrigger>
           </TabsList>
           <TabsContent value="string">
             <StringSelector onSelect={setSelectedString} />

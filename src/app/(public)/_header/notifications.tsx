@@ -76,7 +76,7 @@ export function Notifications({
               setIsOpen(false);
             }}
             className="text-xs text-secondary-400 hover:text-secondary-500"
-            href="/notifications"
+            href="/#"
           >
             Xem Thông Báo
           </Link>
