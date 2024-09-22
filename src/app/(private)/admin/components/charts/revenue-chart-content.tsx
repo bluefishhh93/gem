@@ -1,13 +1,11 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis, Tooltip } from "recharts"
 import { useState, useEffect } from "react"
-
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from "recharts"
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -15,34 +13,27 @@ import {
   ChartConfig,
   ChartContainer,
 } from "@/components/ui/chart"
-import { TrendingUp, DollarSign } from "lucide-react"
 import { vietnamCurrency } from "@/util/util"
 
 interface ChartDataItem {
   month: string;
   revenue: number;
+  fill: string;
 }
 
 interface RevenueChartContentProps {
   initialData: ChartDataItem[];
+  chartConfig: ChartConfig;
+  totalRevenue: number;
+  averageRevenue: number;
 }
 
-const chartConfig = {
-  revenue: {
-    label: "Revenue",
-    color: "hsl(var(--chart-1))",
-  },
-} satisfies ChartConfig
-
-export default function RevenueChartContent({ initialData }: RevenueChartContentProps) {
+export default function RevenueChartContent({ initialData, chartConfig, totalRevenue, averageRevenue }: RevenueChartContentProps) {
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
 
   useEffect(() => {
     setChartData(initialData);
   }, [initialData]);
-
-  const totalRevenue = chartData.reduce((sum, item) => sum + item.revenue, 0)
-  const averageRevenue = totalRevenue / chartData.length
 
   return (
     <Card>
@@ -91,19 +82,10 @@ export default function RevenueChartContent({ initialData }: RevenueChartContent
           </BarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 font-medium leading-none">
-          <DollarSign className="h-4 w-4" />
-          Total Revenue: {vietnamCurrency(totalRevenue)}
-        </div>
-        <div className="flex gap-2 font-medium leading-none">
-          <TrendingUp className="h-4 w-4" />
-          Average Monthly Revenue: {vietnamCurrency(averageRevenue)}
-        </div>
-        <div className="leading-none text-muted-foreground">
-          Showing monthly revenue for the last 6 months
-        </div>
-      </CardFooter>
+      <CardContent className="flex justify-between text-sm text-muted-foreground">
+        <div>Total Revenue: {vietnamCurrency(totalRevenue)}</div>
+        <div>Average Revenue: {vietnamCurrency(averageRevenue)}</div>
+      </CardContent>
     </Card>
   )
 }

@@ -1,105 +1,100 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
-import { LabelList, Pie, PieChart } from "recharts"
-import { useEffect, useState } from "react"
-
+import { useState, useEffect } from "react"
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LabelList } from "recharts"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card"
 import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
 } from "@/components/ui/chart"
 
-
 interface ChartDataItem {
-    category: string;
-    sales: number;
-    fill: string;
+  category: string;
+  sales: number;
+  fill: string;
 }
 
 interface CategoryChartContentProps {
-    initialData: { category: string; sales: number }[];
+  initialData: ChartDataItem[];
+  chartConfig: ChartConfig;
 }
 
-const colors = [
-    "hsl(var(--chart-1))",
-    "hsl(var(--chart-2))",
-    "hsl(var(--chart-3))",
-    "hsl(var(--chart-4))",
-    "hsl(var(--chart-5))",
-    "hsl(var(--chart-6))",
-    "hsl(var(--chart-7))",
-    "hsl(var(--chart-8))",
-    "hsl(var(--chart-9))",
-    "hsl(var(--chart-10))"
-];
-export default function CategoryChartContent({ initialData }: CategoryChartContentProps) {
-    const [chartData, setChartData] = useState<ChartDataItem[]>([]);
-    const chartConfig = Object.fromEntries(
-        initialData.map((data, index) => [
-            data.category,
-            {
-                label: `${data.category}`,
-                color: `hsl(var(--chart-${index + 1}))`
-            }
-        ])
-    ) satisfies ChartConfig;
+export default function CategoryChartContent({ initialData, chartConfig }: CategoryChartContentProps) {
+  const [chartData, setChartData] = useState<ChartDataItem[]>([]);
 
+  useEffect(() => {
+    setChartData(initialData);
+  }, [initialData]);
 
-    useEffect(() => {
-        setChartData(
-            initialData.map((item, index) => ({
-                category: item.category,
-                sales: item.sales,
-                fill: colors[index % colors.length]
-            }))
-        );
-    }, [initialData])
-
-    return (
-        <Card className="flex flex-col">
-            <CardHeader className="items-center pb-0">
-                <CardTitle>Charm Bracelet Sales by Category</CardTitle>
-                <CardDescription>This month</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1 pb-0">
-                <ChartContainer
-                    config={chartConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
-                >
-                    <PieChart>
-                        <ChartTooltip
-                            content={<ChartTooltipContent nameKey="category" hideLabel />}
-                        />
-                        <Pie data={chartData} dataKey="sales">
-                            <LabelList
-                                dataKey="category"
-                                className="fill-background"
-                                stroke="none"
-                                fontSize={12}
-                                formatter={(value: string) => value}
-                            />
-                        </Pie>
-                    </PieChart>
-                </ChartContainer>
-            </CardContent>
-            <CardFooter className="flex-col gap-2 text-sm">
-                <div className="flex items-center gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total sales by charm bracelet category for the last 6 months
-                </div>
-            </CardFooter>
-        </Card>
-    )
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="items-center pb-0">
+        <CardTitle>Charm Bracelet Sales by Category</CardTitle>
+        <CardDescription>This month</CardDescription>
+      </CardHeader>
+      <CardContent className="flex-1 pb-0">
+        <ChartContainer
+          config={chartConfig}
+          className="mx-auto aspect-square max-h-[250px]"
+        >
+          <PieChart>
+            <ChartTooltip
+              content={({ payload }) => {
+                if (payload && payload.length) {
+                  const data = payload[0].payload;
+                  return (
+                    <div className="rounded-lg border bg-background p-2 shadow-sm">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="flex flex-col">
+                          <span className="text-[0.70rem] uppercase text-muted-foreground">
+                            Category
+                          </span>
+                          <span className="font-bold text-muted-foreground">
+                            {data.category}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[0.70rem] uppercase text-muted-foreground">
+                            Sales
+                          </span>
+                          <span className="font-bold">{data.sales}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                }
+                return null;
+              }}
+            />
+            <Pie
+              data={chartData}
+              dataKey="sales"
+              nameKey="category"
+              cx="50%"
+              cy="50%"
+              outerRadius={80}
+              innerRadius={50}
+              paddingAngle={2}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+              <LabelList
+                dataKey="category"
+                position="outside"
+                className="fill-muted-foreground text-sm"
+              />
+            </Pie>
+          </PieChart>
+        </ChartContainer>
+      </CardContent>
+    </Card>
+  )
 }

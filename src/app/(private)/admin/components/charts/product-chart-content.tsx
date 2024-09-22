@@ -24,41 +24,17 @@ interface ChartDataItem {
 }
 
 interface ProductChartContentProps {
-  initialData: { product: string; sales: number }[];
+  initialData: ChartDataItem[];
+  chartConfig: ChartConfig;
+  topSeller: ChartDataItem;
 }
 
-const colors = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-];
-
-export default function ProductChartContent({ initialData }: ProductChartContentProps) {
+export default function ProductChartContent({ initialData, chartConfig, topSeller }: ProductChartContentProps) {
   const [chartData, setChartData] = useState<ChartDataItem[]>([]);
 
   useEffect(() => {
-    setChartData(
-      initialData.map((item, index) => ({
-        product: item.product,
-        sales: item.sales,
-        fill: colors[index % colors.length]
-      }))
-    );
+    setChartData(initialData);
   }, [initialData]);
-
-  const chartConfig = Object.fromEntries(
-    initialData.map((data, index) => [
-      data.product,
-      {
-        label: `${data.product}`,
-        color: colors[index % colors.length]
-      }
-    ])
-  ) satisfies ChartConfig;
-
-  const topSeller = chartData.reduce((max, item) => item.sales > max.sales ? item : max, chartData[0]);
 
   return (
     <ResponsiveContainer width="100%">
@@ -85,7 +61,7 @@ export default function ProductChartContent({ initialData }: ProductChartContent
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                width={150}
+                width={50}
               />
               <XAxis dataKey="sales" type="number" hide />
               <Tooltip

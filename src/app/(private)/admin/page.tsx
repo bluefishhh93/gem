@@ -37,7 +37,7 @@ export default async function AdminDashboardPage(
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <CategoryChart />
 
-        {/* <ProductChart /> */}
+        <ProductChart />
         <RevenueChart />
       </div>
     </div>

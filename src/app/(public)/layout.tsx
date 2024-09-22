@@ -10,6 +10,7 @@ import { Providers } from "../providers";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "./_header/header";
 import Footer from "@/components/footer";
+import { FloatingContactButtons } from "@/components/contact-button";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -57,6 +58,7 @@ export default async function RootLayout({
           <Header />
           <div className="container mx-auto w-full py-12">{children}</div>
           <Footer />
+          <FloatingContactButtons />
         </Providers>
         <Toaster />
       </body>
