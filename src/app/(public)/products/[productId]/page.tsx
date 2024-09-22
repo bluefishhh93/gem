@@ -1,6 +1,7 @@
 import { getProductByIdUseCase } from "@/use-cases/products";
 import ProductDetail from "./product-detail";
 import { notFound } from "next/navigation";
+import Cart from "@/components/cart/Cart";
 
 export default async function ProductPage({ params }: { params: { productId: string } }) {
 
@@ -14,5 +15,10 @@ export default async function ProductPage({ params }: { params: { productId: str
         return notFound();
     }
 
-    return <ProductDetail product={product} />;
+    return (
+        <>
+        <ProductDetail product={product} />
+        <Cart />
+        </>
+    )
 }
