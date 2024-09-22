@@ -12,7 +12,11 @@ export function useCategories() {
     useEffect(() => {
         async function fetchCategories() {
             try {
-                const response = await fetch('/api/categories');
+                const response = await fetch('/api/categories',{
+                    next: {
+                        revalidate: 60 * 60,
+                    }
+                });
                 const data = await response.json(); 
                 setCategories(data);
                 setIsLoading(false);
