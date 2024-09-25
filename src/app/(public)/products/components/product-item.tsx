@@ -37,7 +37,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
         name: product.name,
         description: product.description,
         currentQuantity: product.currentQuantity,
-        price: product.price,
+        price: product.salePrice,
         salePrice: product.salePrice,
         isActivated: product.isActivated,
         categoryId: product.categoryId,

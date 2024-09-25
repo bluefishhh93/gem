@@ -5,30 +5,29 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { motion } from 'framer-motion';
+import { fetchStrings } from './actions';
 
 interface StringType {
+  material: string;
+  color: string;
+  imageUrl: string;
   id: number;
-  name: string;
-  image: string;
+  price: number;
+  stock: number;
 }
 
-const stringTypes: StringType[] = [
-  { id: 1, name: 'Leather', image: '/string-1.png' },
-  { id: 2, name: 'Silver Chain', image: '/string-2.png' },
-  { id: 2, name: 'Silver Chain', image: '/string-2.png' },
-  { id: 2, name: 'Silver Chain', image: '/string-2.png' },
-  { id: 2, name: 'Silver Chain', image: '/string-2.png' },
-  { id: 3, name: 'Gold Chain', image: '/string-3.png' },
-  // Add more string types as needed
-];
 
 interface StringSelectorProps {
   onSelect: (string: StringType) => void;
 }
 interface StringSelectorProps {
   onSelect: (string: StringType) => void;
+  strings: StringType[];
 }
-export function StringSelector({ onSelect }: StringSelectorProps) {
+
+export function StringSelector({ onSelect, strings }: StringSelectorProps) {
+ 
+ 
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
     loop: false, 
     align: 'start',
@@ -68,7 +67,7 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">Chọn loại vòng dây</h2>
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex">
-          {stringTypes.map((string, index) => (
+          {strings.map((string, index) => (
             <motion.div 
               key={string.id} 
               className="flex-[0_0_100%] min-w-0 sm:flex-[0_0_50%] md:flex-[0_0_33.33%] lg:flex-[0_0_25%] px-2"
@@ -83,12 +82,12 @@ export function StringSelector({ onSelect }: StringSelectorProps) {
                 onClick={() => handleStringSelect(string)}
               >
                 <CardHeader>
-                  <CardTitle className="text-center dark:text-slate-800">{string.name}</CardTitle>
+                  <CardTitle className="text-center text-sm dark:text-slate-800">{string.material} {string.color}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Image 
-                    src={string.image} 
-                    alt={string.name} 
+                    src={string.imageUrl} 
+                    alt={`${string.material} ${string.color}`} 
                     width={200} 
                     height={200} 
                     className="w-full h-36 object-fill rounded-md"

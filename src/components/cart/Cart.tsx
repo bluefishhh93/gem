@@ -14,6 +14,7 @@ import InsufficientStockWarning from "./InsufficientStockWarning";
 import { useTransition } from "react";
 import CheckoutButton from "./CheckoutButton";
 import { useRouter } from "next/navigation";
+import CustomList from "./CustomList";
 
 export default function Cart() {
   // const router = useRouter();
@@ -23,7 +24,7 @@ export default function Cart() {
   const cart = useFromStore(useCartStore, (state) => state.cart);
   const [insufficientList, setInsufficientList] = useState<number[]>([]);
   const { total, cartItems } = useCartCalculations(cart!);
-
+  const customBracelets = useFromStore(useCartStore, (state) => state.customBracelets);
   useEffect(() => {
     const fetchInefficientItems = async () => {
       if (cart && cart.length > 0) {
@@ -75,11 +76,15 @@ export default function Cart() {
           </DrawerDescription>
         </DrawerHeader>
         <ScrollArea className="flex-1 overflow-auto py-4 max-h-[250px]">
-          {cart && cart.length > 0 ? (
-            <CartItemList cart={cart} insufficientList={insufficientList} />
+          {cart && cart.length > 0 || customBracelets && customBracelets.length > 0 ? (
+            <>
+              <CartItemList cart={cart || []} insufficientList={insufficientList} />
+              <CustomList customBracelets={customBracelets || []} />
+            </>
           ) : (
             <EmptyCart setIsOpen={setIsOpen} />
           )}
+         
         </ScrollArea>
         {cart && cart.length > 0 && (
           <DrawerFooter className="border-t px-6 py-4">

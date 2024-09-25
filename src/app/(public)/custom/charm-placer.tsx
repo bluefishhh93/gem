@@ -6,11 +6,17 @@ import { X, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { fetchCharms } from './actions';
+
+
+const CHARM_POSITIONS = 30;
 
 interface Charm {
   id: number;
   name: string;
-  image: string;
+  price: number;
+  stock: number;
+  imageUrl: string;
 }
 
 interface PlacedCharm {
@@ -19,9 +25,12 @@ interface PlacedCharm {
 }
 
 interface StringType {
+  material: string;
+  color: string;
+  imageUrl: string;
   id: number;
-  name: string;
-  image: string;
+  price: number;
+  stock: number;
 }
 
 interface CharmItemProps {
@@ -40,14 +49,9 @@ interface CharmPlacerProps {
   selectedString: StringType | null;
   placedCharms: PlacedCharm[];
   setPlacedCharms: React.Dispatch<React.SetStateAction<PlacedCharm[]>>;
+  charms: Charm[];
 }
 
-const charms: Charm[] = [
-  { id: 1, name: 'Heart', image: '/charm-2.png' },
-  { id: 2, name: 'Star', image: '/charm-3.png' },
-  { id: 3, name: 'Moon', image: '/charm-4.png' },
-  // Add more charms as needed
-];
 
 const CharmItem: React.FC<CharmItemProps> = ({ charm }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -71,7 +75,7 @@ const CharmItem: React.FC<CharmItemProps> = ({ charm }) => {
             className="cursor-move w-16 h-16 rounded-full overflow-hidden transition-transform hover:scale-110 border-2 border-gray-200 hover:border-pink-300"
           >
             <Image 
-              src={charm.image} 
+              src={charm.imageUrl} 
               alt={charm.name} 
               width={64} 
               height={64} 
@@ -99,8 +103,8 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
 
   drop(ref);
 
-  const angle = (position / 20) * 2 * Math.PI;
-  const radius = 140;
+  const angle = (position / CHARM_POSITIONS) * 2 * Math.PI;
+  const radius = 145;
   const left = 150 + radius * Math.cos(angle) - 15;
   const top = 150 + radius * Math.sin(angle) - 15;
 
@@ -120,7 +124,7 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
       {charm && (
         <>
           <Image 
-            src={charm.image} 
+            src={charm.imageUrl} 
             alt={charm.name} 
             width={30} 
             height={30} 
@@ -138,8 +142,15 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
   );
 };
 
-export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms }: CharmPlacerProps) {
+export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms, charms }: CharmPlacerProps & { charms: Charm[] }) {
   const [zoom, setZoom] = useState(1);
+
+  const totalPrice = selectedString!.price! + charms.reduce((sum, charm) => 
+    sum + (placedCharms.find(pc => pc.charmId === charm.id) ? charm.price : 0), 0
+  );
+  
+  const charmCount = placedCharms.length;
+  
 
   const handleDrop = (charmId: number, position: number) => {
     setPlacedCharms((prev) => {
@@ -173,13 +184,13 @@ export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms }: C
           <div className="relative w-[300px] h-[300px] mb-8">
             <div style={{ transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.3s ease-in-out' }}>
               <Image 
-                src={selectedString?.image || ''}
-                alt={selectedString?.name || ''}
+                src={selectedString?.imageUrl || ''}
+                alt={`${selectedString?.material} ${selectedString?.color}` || ''}
                 width={300}
                 height={300}
                 className="rounded-full shadow-md"
               />
-              {Array.from({ length: 20 }).map((_, index) => (
+              {Array.from({ length: CHARM_POSITIONS }).map((_, index) => (
                 <StringDropZone
                   key={index}
                   position={index}
@@ -209,6 +220,7 @@ export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms }: C
               <Button onClick={handleZoomIn} variant="outline" size="icon">
                 <ZoomIn size={20} />
               </Button>
+              
             </div>
           </div>
         </div>

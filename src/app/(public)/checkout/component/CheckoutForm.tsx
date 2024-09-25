@@ -41,7 +41,7 @@ const checkoutFormSchema = z.object({
   district: z.string().trim().min(1, "Vui lòng chọn quận/huyện"), 
 });
 
-const CheckoutForm = ({
+export const CheckoutForm = ({
   user
 }: {
   user: {
@@ -62,7 +62,7 @@ const CheckoutForm = ({
     return cart.map((item: ProductType) => ({
       productId: item.id,
       quantity: item.quantity,
-      subtotal: item.price * item.quantity,
+      subtotal: item.salePrice * item.quantity,
     }));
   }, []);
 
@@ -245,12 +245,12 @@ const CheckoutForm = ({
                     <div>
                       <p className="font-semibold">{item.name}</p>
                       <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
-                      <p className="text-sm font-medium">{vietnamCurrency(item.price * item.quantity)}</p>
+                      <p className="text-sm font-medium">{vietnamCurrency(item.salePrice * item.quantity)}</p>
                     </div>
                   </div>
                 ))}
                 <div className="border-t pt-4">
-                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(cart.reduce((total, item) => total + item.price * item.quantity, 0))}</span></p>
+                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(cart.reduce((total, item) => total + item.salePrice * item.quantity, 0))}</span></p>
                 </div>
               </div>
             </CardContent>

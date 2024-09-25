@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -247,6 +248,7 @@
   span {
     @apply dark:text-gray-200 !important;
   }
+
   code {
     background-color: rgba(#616161, 0.1);
     color: #616161;
@@ -268,7 +270,7 @@
   }
 
   .ProseMirror {
-    
+
     @apply text-base leading-relaxed bg-white dark:bg-slate-950 text-gray-800 dark:text-gray-200 p-4 rounded;
 
     >*+* {
@@ -337,7 +339,7 @@
       color: #616161;
     }
 
-    
+
 
     pre {
       background: #0d0d0d;

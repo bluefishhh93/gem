@@ -1,5 +1,27 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { v4 as uuidv4 } from 'uuid';
+
+export interface CustomBracelet {
+    id: string;
+    stringType: {
+        id: number;
+        material: string;
+        color: string;
+        price: number;
+        imageUrl: string;
+    };
+    charms: {
+        id: number;
+        name: string;
+        imageUrl: string;
+        price: number;
+        position: number;
+    }[];
+    price: number;
+    quantity: number;
+}
+
 
 export interface CheckoutPayload {
     id?: number; //order id
@@ -81,6 +103,7 @@ export interface ImgProductType {
 
 interface State {
     cart: ProductType[];
+    customBracelets: CustomBracelet[];
     totalItems: number;
     totalPrice: number;
     checkoutPayload: CheckoutPayload | null;
@@ -94,12 +117,16 @@ interface Actions {
     setCheckoutPayload: (payload: CheckoutPayload) => void;
     getCheckoutPayload: () => CheckoutPayload | null;
     clearCheckoutPayload: () => void;
+    addToCustomBracelet: (bracelet: CustomBracelet) => void;
+    removeFromCustomBracelet: (bracelet: CustomBracelet) => void;
+    updateCustomBracelet: (bracelet: CustomBracelet, quantity: number) => void;
 }
 
 type PersistedState = State & Partial<{ totalProducts: number }>;
 
 const INITIAL_STATE: State = {
-    cart: [],
+    cart:[],
+    customBracelets: [],
     totalItems: 0,
     totalPrice: 0,
     checkoutPayload: null,
@@ -121,14 +148,14 @@ export const useCartStore = create(
                     set((state) => ({
                         cart: updatedCart,
                         totalItems: state.totalItems + quantity,
-                        totalPrice: state.totalPrice + product.price * quantity,
+                        totalPrice: state.totalPrice + product.salePrice * quantity,
                     }));
                 } else {
                     const updatedCart = [...cart, { ...product, quantity }]
                     set((state) => ({
                         cart: updatedCart,
                         totalItems: state.totalItems + quantity,
-                        totalPrice: state.totalPrice + product.price * quantity,
+                        totalPrice: state.totalPrice + product.salePrice * quantity,
                     }));
                 }
             },
@@ -140,7 +167,7 @@ export const useCartStore = create(
                     set((state) => ({
                         cart: updatedCart,
                         totalItems: state.totalItems - cartItem.quantity,
-                        totalPrice: state.totalPrice - cartItem.price * cartItem.quantity,
+                        totalPrice: state.totalPrice - cartItem.salePrice * cartItem.quantity,
                     }));
                 }
             },
@@ -155,7 +182,7 @@ export const useCartStore = create(
                     set((state) => ({
                         cart: updatedCart,
                         totalItems: state.totalItems + quantityChange,
-                        totalPrice: state.totalPrice + product.price * quantityChange,
+                        totalPrice: state.totalPrice + product.salePrice * quantityChange,
                     }));
                 }
             },
@@ -174,6 +201,33 @@ export const useCartStore = create(
             },
             clearCheckoutPayload: () => {
                 set({ checkoutPayload: null });
+            },
+            addToCustomBracelet: (bracelet: CustomBracelet) => {
+                set((state) => ({
+                    customBracelets: [...state.customBracelets, {...bracelet}],
+                    totalItems: state.totalItems + bracelet.quantity,
+                    totalPrice: state.totalPrice + bracelet.price,
+                }));
+            },
+            removeFromCustomBracelet: (bracelet: CustomBracelet) => {
+                const customBracelets = get().customBracelets;
+                const updatedCustomBracelets = customBracelets.filter(item => item.id !== bracelet.id);
+                set((state) => ({
+                    customBracelets: updatedCustomBracelets,
+                    totalItems: state.totalItems - bracelet.quantity,
+                    totalPrice: state.totalPrice - bracelet.price,
+                }));
+            },
+            updateCustomBracelet: (bracelet: CustomBracelet, quantity: number) => {
+                const customBracelets = get().customBracelets;
+                const updatedCustomBracelets = customBracelets.map(item =>
+                    item.id === bracelet.id ? { ...item, quantity: Math.max(1, item.quantity + quantity) } : item
+                );
+                set((state) => ({
+                    customBracelets: updatedCustomBracelets,
+                    totalItems: state.totalItems + quantity,
+                    totalPrice: state.totalPrice + bracelet.price,
+                }));
             },
         }), {
         name: 'cart-store',

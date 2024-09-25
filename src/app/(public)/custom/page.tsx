@@ -1,11 +1,16 @@
 import { CustomBraceletCreator } from "./custom-bracelet-creator";
+import { Suspense } from 'react';
+import { fetchCharms, fetchStrings } from './actions';
 
-export default function CustomPage() {
+export default async function CustomPage() {
+  const charms = await fetchCharms();
+  const strings = await fetchStrings();
 
-  // TODO: fetch charms and strings
   return (
     <div>
-      <CustomBraceletCreator />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CustomBraceletCreator initialCharms={charms} initialStrings={strings} />
+      </Suspense>
     </div>
   );
 }

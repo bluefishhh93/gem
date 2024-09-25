@@ -74,7 +74,7 @@ export default function CartItem({ item }: Props) {
             new Intl.NumberFormat("vi", {
               style: "currency",
               currency: "VND",
-            }).format(item.price)
+            }).format(item.salePrice)
           }
         </p>
       </div>

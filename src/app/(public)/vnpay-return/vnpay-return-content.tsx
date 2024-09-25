@@ -11,9 +11,7 @@ import { useServerAction } from "zsa-react";
 import { finalizeVNPayPaymentAction } from "../checkout/actions";
 
 
-
-
-export async function VNPayReturnContent() {
+export function VNPayReturnContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 

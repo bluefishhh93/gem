@@ -1,6 +1,7 @@
 "use server";
 
 import { PaymentError, VNPayError } from "@/app/util";
+import { rateLimitByIp } from "@/lib/limiter";
 import { authenticatedAction, unauthenticatedAction } from "@/lib/safe-action";
 import vnpay from "@/lib/vnpay";
 import { createOrderUseCase } from "@/use-cases/orders";
@@ -49,7 +50,7 @@ export const checkoutWithCOD = unauthenticatedAction
   .createServerAction()
   .input(checkoutFormSchema)
   .handler(async ({ input }) => {
-
+    await rateLimitByIp({key: 'order-cod', limit: 3, window: 30000})
     const order = await createOrderUseCase(input);
     return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
   });

@@ -58,6 +58,6 @@ export const getItemList = (cart: ProductType[]): CartItemType[] => {
   return cart.map((item: ProductType) => ({
       productId: item.id,
       quantity: item.quantity,
-      subtotal: item.price * item.quantity,
+      subtotal: item.salePrice * item.quantity,
   }));
 };

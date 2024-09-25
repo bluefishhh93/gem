@@ -31,7 +31,7 @@ export default async function ProductsPage({
           </Suspense>
         </div>
       </div>
-      <Cart />
+      <Cart/ >
     </div>
   );
 }

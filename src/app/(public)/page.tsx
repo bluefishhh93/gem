@@ -19,7 +19,7 @@ export default function Page() {
     <div className="bg-gradient-to-b from-background to-secondary/20">
       <section className="w-full mb-6 py-12 md:py-24">
         <div className="container flex flex-col-reverse lg:grid lg:grid-cols-2 gap-6 px-4 md:px-6 lg:gap-10 items-center">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -33,11 +33,13 @@ export default function Page() {
                 Vòng tay cung hoàng đạo - Món quà ý nghĩa, dành tặng cho những tâm hồn yêu thích sự tinh tế.
               </p>
             </div>
-            <Button size="lg" className="w-full sm:w-auto">
-              Mua Ngay
-            </Button>
+            <Link href={"/products"}>
+              <Button size="lg" className="w-full sm:w-auto">
+                Mua Ngay
+              </Button>
+            </Link>
           </motion.div>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -57,7 +59,7 @@ export default function Page() {
       <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-b from-secondary/20 to-background">
         <div className="container px-4 md:px-6">
           <div className="grid gap-10 lg:grid-cols-2">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
@@ -72,7 +74,7 @@ export default function Page() {
             </motion.div>
             <div className="grid gap-6 sm:grid-cols-2">
               {zodiacSigns.map((zodiac, index) => (
-                <motion.div 
+                <motion.div
                   key={zodiac.name}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
@@ -111,7 +113,7 @@ export default function Page() {
               { icon: HandIcon, title: 'Làm Thủ Công', description: 'Mỗi chiếc vòng tay đều được làm thủ công với sự chú ý tỉ mỉ đến từng chi tiết.' },
               { icon: SparkleIcon, title: 'Hoàn Thiện Tỉ Mỉ', description: 'Các chi tiết hoàn thiện của vòng tay được chăm chút tỉ mỉ, đảm bảo vẻ đẹp và sự bền vững.' },
             ].map(({ icon: Icon, title, description }, index) => (
-              <motion.div 
+              <motion.div
                 key={title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}

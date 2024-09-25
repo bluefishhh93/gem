@@ -169,6 +169,7 @@ export const orderItems = pgTable("order_items", {
   id: serial("id").primaryKey(),
   orderId: integer("order_id").references(() => orders.id, { onDelete: "cascade" }),
   productId: integer("product_id").notNull().references(() => products.id),
+  customBraceletId: integer("custom_bracelet_id").references(() => customBracelets.id),
   quantity: integer("quantity").notNull(),
   subtotal: doublePrecision("subtotal").notNull(),
   isRated: boolean("is_rated").default(false),
@@ -210,7 +211,7 @@ export const braceletCharms = pgTable("bracelet_charms", {
 });
 
 export const customBracelets = pgTable("custom_bracelets", {
-  id: serial("id").primaryKey(),
+  id: integer("id").primaryKey(),
   userId: integer("user_id").references(() => users.id),
   stringId: integer("string_id").references(() => strings.id),
   totalPrice: doublePrecision("total_price").notNull(),
@@ -250,6 +251,10 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   product: one(products, {
     fields: [orderItems.productId],
     references: [products.id],
+  }),
+  customBracelet: one(customBracelets, {
+    fields: [orderItems.customBraceletId],
+    references: [customBracelets.id],
   }),
 }));
 
