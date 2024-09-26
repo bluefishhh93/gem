@@ -55,7 +55,7 @@ export const CheckoutForm = ({
   const { districts, wards, fetchDistricts, fetchWards } = useAddressData();
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
-  const { cart, clearCart, setCheckoutPayload } = useCartStore();
+  const { cart, customBracelets, clearCart, setCheckoutPayload } = useCartStore();
   const { toast } = useToast();
   const router = useRouter();
   const getItemList = useCallback((cart: ProductType[]): CartItemType[] => {

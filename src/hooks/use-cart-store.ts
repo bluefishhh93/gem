@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from 'uuid';
+import { debounce } from "lodash";
 
 export interface CustomBracelet {
     id: string;
@@ -171,21 +172,26 @@ export const useCartStore = create(
                     }));
                 }
             },
-            updateCartItem: (product: ProductType, quantityChange: number) => {
-                const cart = get().cart;
-                const cartItem = cart.find((item) => item.id === product.id);
-                if (cartItem) {
-                    const newQuantity = Math.max(1, cartItem.quantity + quantityChange);
-                    const updatedCart = cart.map((item) =>
-                        item.id === product.id ? { ...item, quantity: newQuantity } : item
-                    );
-                    set((state) => ({
-                        cart: updatedCart,
-                        totalItems: state.totalItems + quantityChange,
-                        totalPrice: state.totalPrice + product.salePrice * quantityChange,
-                    }));
-                }
-            },
+            updateCartItem: debounce((product: ProductType, quantityChange: number) => {
+                set((state) => {
+                    const cartItemIndex = state.cart.findIndex((item) => item.id === product.id);
+                    if (cartItemIndex !== -1) {
+                        const cartItem = state.cart[cartItemIndex];
+                        const newQuantity = Math.max(1, cartItem.quantity + quantityChange);
+                        const quantityDiff = newQuantity - cartItem.quantity;
+                        
+                        const updatedCart = [...state.cart];
+                        updatedCart[cartItemIndex] = { ...cartItem, quantity: newQuantity };
+            
+                        return {
+                            cart: updatedCart,
+                            totalItems: state.totalItems + quantityDiff,
+                            totalPrice: state.totalPrice + product.salePrice * quantityDiff,
+                        };
+                    }
+                    return state;
+                });
+            }, 300),
             clearCart: () => {
                 set((state) => ({
                     cart: [],
