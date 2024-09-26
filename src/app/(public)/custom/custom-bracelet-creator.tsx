@@ -38,6 +38,7 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
   const [placedCharms, setPlacedCharms] = useState<PlacedCharm[]>([]);
   const { toast } = useToast();
   const {addToCustomBracelet} = useCartStore();
+  const [activeTab, setActiveTab] = useState("string");
 
   const handleSubmit = () => {
     if (!selectedString || placedCharms.length === 0) {
@@ -84,6 +85,12 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
       description: "Your custom bracelet has been added to the cart.",
       variant: "success",
     });
+
+    // Reset the state
+    setSelectedString(null);
+    setPlacedCharms([]);
+    setActiveTab("string");
+
   };
 
   return (
@@ -92,8 +99,8 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
         <CardTitle className="text-2xl font-bold text-center">Tạo vòng tay theo sở thích của bạn</CardTitle>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="string" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="string">Chọn loại vòng dây</TabsTrigger>
             <TabsTrigger value="charms" disabled={!selectedString}>Đặt charms</TabsTrigger>
           </TabsList>
@@ -118,7 +125,7 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
             disabled={!selectedString || placedCharms.length === 0}
             className="w-full"
           >
-            Add to Cart
+            Thêm vào giỏ hàng
           </Button>
         </div>
       </CardContent>

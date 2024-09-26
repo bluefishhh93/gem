@@ -1,9 +1,12 @@
 import Image from "next/image";
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Search } from "lucide-react";
 
 const CHARM_POSITIONS = 30;
 
@@ -29,18 +32,32 @@ export default function CustomBraceletImage({
     size = 64, 
     defaultUrl = '/gem-custom.png' 
 }: CustomBraceletImageProps) {
+    const [isOpen, setIsOpen] = useState(false);
+
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-                <div className="relative cursor-pointer">
-                    <Image
-                        src={defaultUrl}
-                        alt="Custom bracelet"
-                        width={size}
-                        height={size}
-                        className="rounded-md object-cover"
-                    />
-                </div>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <div className="relative cursor-pointer group" onClick={() => setIsOpen(true)}>
+                                <Image
+                                    src={defaultUrl}
+                                    alt="Custom bracelet"
+                                    width={size}
+                                    height={size}
+                                    className="rounded-md object-cover transition-opacity duration-300 group-hover:opacity-75"
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <Search className="w-6 h-6 text-secondary-600" />
+                                </div>
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Click để xem chi tiết</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <div className="flex flex-col items-center">
@@ -72,7 +89,7 @@ export default function CustomBraceletImage({
                                         alt={charm.name} 
                                         width={30} 
                                         height={30} 
-                                        className="object-cover rounded-full"
+                                        className="object-cover rounded-full h-8 w-8"
                                     />
                                 </div>
                             );

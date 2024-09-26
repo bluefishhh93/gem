@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ProductType } from './use-cart-store';
+import { CustomBracelet, ProductType } from './use-cart-store';
 import { getItemList } from '@/util/util';
 
 export default function useCartCalculations(cart: ProductType[]) {
@@ -15,4 +15,13 @@ export default function useCartCalculations(cart: ProductType[]) {
   }, [cart]);
 
   return { total, cartItems };
+}
+
+export function useTotalCalculation(cart: ProductType[], customBracelets: CustomBracelet[]) {
+  const total = useMemo(() => {
+    const totalAmount = cart.reduce((acc, item) => acc + item.salePrice * item.quantity, 0) + customBracelets.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    return totalAmount;
+  }, [cart, customBracelets]);
+
+  return { total };
 }

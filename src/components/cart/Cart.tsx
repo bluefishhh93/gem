@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Drawer, DrawerTrigger, DrawerContent, DrawerHeader, DrawerTitle, DrawerDescription, DrawerFooter } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import {  ShoppingBasket } from "lucide-react";
@@ -7,7 +7,7 @@ import useFromStore from "@/hooks/use-from-store";
 import { useCartStore } from "@/hooks/use-cart-store";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { checkIneficientUseCase } from "@/use-cases/products";
-import useCartCalculations from "@/hooks/use-cart-calculation";
+import useCartCalculations, { useTotalCalculation } from "@/hooks/use-cart-calculation";
 import CartItemList from "./CartItemList";
 import EmptyCart from "./EmptyCart";
 import InsufficientStockWarning from "./InsufficientStockWarning";
@@ -15,50 +15,44 @@ import { useTransition } from "react";
 import CheckoutButton from "./CheckoutButton";
 import { useRouter } from "next/navigation";
 import CustomList from "./CustomList";
+import { getItemList } from "@/util/util";
 
 export default function Cart() {
   // const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const cart = useFromStore(useCartStore, (state) => state.cart);
   const [insufficientList, setInsufficientList] = useState<number[]>([]);
-  const { total, cartItems } = useCartCalculations(cart!);
+  
+  const cart = useFromStore(useCartStore, (state) => state.cart);
   const customBracelets = useFromStore(useCartStore, (state) => state.customBracelets);
+
+  const cartItems = useMemo(() => cart ? getItemList(cart) : [], [cart]);
+  const { total } = useTotalCalculation(cart || [], customBracelets || []);
+
   useEffect(() => {
     const fetchInefficientItems = async () => {
       if (cart && cart.length > 0) {
-        const result = await checkIneficientUseCase(cartItems);
-        if (result) {
-          setInsufficientList(result);
+        try {
+          const result = await checkIneficientUseCase(cartItems);
+          setInsufficientList(result || []);
+        } catch (error) {
+          console.error("Error checking inefficient items:", error);
+          // Handle error (e.g., show a toast notification)
         }
       }
     };
 
     fetchInefficientItems();
   }, [cart, cartItems]);
-
-  // const fetchInefficientItems = useCallback(() => {
-  //   if (cart && cart.length > 0) {
-  //     startTransition(async () => {
-  //       const result = await checkIneficientUseCase(cartItems);
-  //       if (result) {
-  //         setInsufficientList(result);
-  //       }
-  //     });
-  //   }
-  // }, [cart, cartItems]);
-
-  // useState(() => {
-  //   fetchInefficientItems();
-  // });
+  const hasItems = (cart && cart.length > 0) || (customBracelets && customBracelets.length > 0);
 
   return (
     <Drawer direction="bottom" open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild>
         <Button
           variant="outline"
-          className="fixed bottom-4 right-4 flex items-center gap-2 px-4 py-3 rounded-full bg-secondary-300 hover:bg-secondary-300  shadow-lg transition-transform hover:scale-105 active:scale-95 dark:bg-secondary-300 dark:text-white"
+          className="fixed bottom-4 right-4 flex items-center gap-2 px-4 py-3 rounded-full bg-secondary-300 hover:bg-secondary-300 shadow-lg transition-transform hover:scale-105 active:scale-95 dark:bg-secondary-300 dark:text-white"
         >
           <ShoppingBasket className="h-5 w-5 text-primary-900 dark:text-primary-700" />
           <span className="font-semibold text-primary-900 dark:text-primary-700">
@@ -76,7 +70,7 @@ export default function Cart() {
           </DrawerDescription>
         </DrawerHeader>
         <ScrollArea className="flex-1 overflow-auto py-4 max-h-[250px]">
-          {cart && cart.length > 0 || customBracelets && customBracelets.length > 0 ? (
+          {hasItems ? (
             <>
               <CartItemList cart={cart || []} insufficientList={insufficientList} />
               <CustomList customBracelets={customBracelets || []} />
@@ -84,19 +78,13 @@ export default function Cart() {
           ) : (
             <EmptyCart setIsOpen={setIsOpen} />
           )}
-         
         </ScrollArea>
-        {cart && cart.length > 0 && (
+        {hasItems && (
           <DrawerFooter className="border-t px-6 py-4">
             <div className="flex items-center justify-between mb-4">
               <p className="font-medium text-gray-800 dark:text-white">Tổng tiền</p>
               <p className="font-semibold text-xl text-primary-600 dark:text-primary-400">
-                {
-                  new Intl.NumberFormat('vi', {
-                    style: 'currency',
-                    currency: 'VND'
-                  }).format(total)
-                }
+                {new Intl.NumberFormat('vi', { style: 'currency', currency: 'VND' }).format(total)}
               </p>
             </div>
             <InsufficientStockWarning insufficientList={insufficientList} />

@@ -17,17 +17,17 @@ export default function CheckoutWrapper({
   } | undefined;
 }) {
 
-  const { cart } = useCartStore();
+  const { cart, customBracelets } = useCartStore();
 
   const router = useRouter();
 
   useEffect(() => {
-    if (cart.length === 0) {
+    if (cart.length === 0 && customBracelets.length === 0) {
       router.push('/');
     }
-  }, [cart, router]);
+  }, [cart, customBracelets, router]);
 
-  if (cart.length === 0) {
+  if (cart.length === 0 && customBracelets.length === 0) {
     return null;
   }
 

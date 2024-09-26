@@ -7,7 +7,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { fetchCharms } from './actions';
-
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { ShoppingCart } from 'lucide-react';
 
 const CHARM_POSITIONS = 30;
 
@@ -72,7 +74,7 @@ const CharmItem: React.FC<CharmItemProps> = ({ charm }) => {
           <div
             ref={ref}
             style={{ opacity: isDragging ? 0.5 : 1 }}
-            className="cursor-move w-16 h-16 rounded-full overflow-hidden transition-transform hover:scale-110 border-2 border-gray-200 hover:border-pink-300"
+            className="cursor-move w-16 h-16 rounded-full overflow-hidden transition-all duration-300 hover:scale-110 border-2 border-gray-200 hover:border-pink-300 hover:shadow-lg"
           >
             <Image 
               src={charm.imageUrl} 
@@ -84,7 +86,8 @@ const CharmItem: React.FC<CharmItemProps> = ({ charm }) => {
           </div>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{charm.name}</p>
+          <p className="font-semibold">{charm.name}</p>
+          <p className="text-sm text-gray-500">{charm.price.toLocaleString()} VND</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -128,7 +131,7 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
             alt={charm.name} 
             width={30} 
             height={30} 
-            className="object-cover rounded-full"
+            className="object-cover h-10 w-10 rounded-full"
           />
           <button
             onClick={() => onRemove(position)}
@@ -144,11 +147,14 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
 
 export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms, charms }: CharmPlacerProps & { charms: Charm[] }) {
   const [zoom, setZoom] = useState(1);
+  const MAX_ZOOM = 1.3; // Set your desired maximum zoom level here
+  const MIN_ZOOM = 0.5; // Set your desired minimum zoom level here
 
-  const totalPrice = selectedString!.price! + charms.reduce((sum, charm) => 
-    sum + (placedCharms.find(pc => pc.charmId === charm.id) ? charm.price : 0), 0
-  );
-  
+  const totalPrice = selectedString!.price! + placedCharms.reduce((sum, placedCharm) => {
+    const charm = charms.find(c => c.id === placedCharm.charmId);
+    return sum + (charm ? charm.price : 0);
+  }, 0);
+
   const charmCount = placedCharms.length;
   
 
@@ -169,59 +175,87 @@ export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms, cha
     setPlacedCharms((prev) => prev.filter(charm => charm.position !== position));
   };
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.1, 2));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.1, 0.5));
+  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.1, MAX_ZOOM));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.1, MIN_ZOOM));
   const handleResetZoom = () => setZoom(1);
+
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="flex flex-col items-center max-w-4xl mx-auto bg-gradient-to-r from-pink-50 to-pink-50 p-8 rounded-lg shadow-lg">
+      <div className="flex flex-col items-center max-w-6xl mx-auto bg-gradient-to-r from-pink-50 to-pink-100 p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-semibold mb-6 text-gray-800">
-          {/* Tùy chỉnh {selectedString?.name} */}
-          Tùy chỉnh theo ý thích 
+          Tùy chỉnh vòng tay của bạn
         </h2>
-        <div className="flex space-x-28">
-          <div className="relative w-[300px] h-[300px] mb-8">
-            <div style={{ transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.3s ease-in-out' }}>
-              <Image 
-                src={selectedString?.imageUrl || ''}
-                alt={`${selectedString?.material} ${selectedString?.color}` || ''}
-                width={300}
-                height={300}
-                className="rounded-full shadow-md"
-              />
-              {Array.from({ length: CHARM_POSITIONS }).map((_, index) => (
-                <StringDropZone
-                  key={index}
-                  position={index}
-                  onDrop={handleDrop}
-                  onRemove={handleRemove}
-                  placedCharm={placedCharms.find(c => c.position === index)}
-                  charms={charms}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col space-y-4">
-            <ScrollArea className="h-[300px] w-[240px] rounded-md border p-3 bg-pink-50">
-              <div className="grid grid-cols-3 gap-3">
-                {charms.map((charm) => (
-                  <CharmItem key={charm.id} charm={charm} />
-                ))}
+        <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
+          <Card className="p-4">
+            <CardHeader>
+              {/* <CardTitle>Xem trước</CardTitle> */}
+            </CardHeader>
+            <CardContent>
+              <div className="relative w-[300px] h-[300px] mb-16">
+                <div style={{ transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.3s ease-in-out' }}>
+                  <Image 
+                    src={selectedString?.imageUrl || ''}
+                    alt={`${selectedString?.material} ${selectedString?.color}` || ''}
+                    width={300}
+                    height={300}
+                    className="rounded-full shadow-md"
+                  />
+                  {Array.from({ length: CHARM_POSITIONS }).map((_, index) => (
+                    <StringDropZone
+                      key={index}
+                      position={index}
+                      onDrop={handleDrop}
+                      onRemove={handleRemove}
+                      placedCharm={placedCharms.find(c => c.position === index)}
+                      charms={charms}
+                    />
+                  ))}
+                </div>
               </div>
-            </ScrollArea>
-            <div className="flex justify-center space-x-2">
-              <Button onClick={handleZoomOut} variant="outline" size="icon">
-                <ZoomOut size={20} />
-              </Button>
-              <Button onClick={handleResetZoom} variant="outline" size="icon">
-                <RotateCcw size={20} />
-              </Button>
-              <Button onClick={handleZoomIn} variant="outline" size="icon">
-                <ZoomIn size={20} />
-              </Button>
-              
-            </div>
+              <div className="flex justify-center space-x-2 mb-4">
+                <Button onClick={handleZoomOut} variant="outline" size="icon">
+                  <ZoomOut size={20} />
+                </Button>
+                <Button onClick={handleResetZoom} variant="outline" size="icon">
+                  <RotateCcw size={20} />
+                </Button>
+                <Button onClick={handleZoomIn} variant="outline" size="icon">
+                  <ZoomIn size={20} />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          <div className="flex flex-col space-y-8">
+            <Card>
+              <CardHeader>
+                <CardTitle>Chọn charm</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ScrollArea className="h-[200px] w-full rounded-md border p-3 bg-white">
+                  <div className="grid grid-cols-4 gap-3">
+                    {charms.map((charm) => (
+                      <CharmItem key={charm.id} charm={charm} />
+                    ))}
+                  </div>
+                </ScrollArea>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Chi tiết vòng tay</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <p><strong>Chất liệu:</strong> {selectedString?.material}</p>
+                  <p><strong>Màu sắc:</strong> {selectedString?.color}</p>
+                  <p><strong>Số lượng charm:</strong> <Badge variant="secondary">{charmCount}</Badge></p>
+                  <p><strong>Giá dây:</strong> {selectedString?.price?.toLocaleString()} VND</p>
+                  <p className="text-lg font-semibold"><strong>Tổng giá:</strong> {totalPrice.toLocaleString()} VND</p>
+                </div>
+                
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>

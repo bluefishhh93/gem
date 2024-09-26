@@ -1,6 +1,6 @@
 
 import { MAX_UPLOAD_IMAGE_SIZE, MAX_UPLOAD_IMAGE_SIZE_IN_MB } from "@/app-config";
-import { CartItemType, ProductType } from "@/hooks/use-cart-store";
+import { CartItemType, CustomBracelet, ProductType } from "@/hooks/use-cart-store";
 import slugify from 'slugify';
 
 interface Omit {
@@ -61,3 +61,12 @@ export const getItemList = (cart: ProductType[]): CartItemType[] => {
       subtotal: item.salePrice * item.quantity,
   }));
 };
+
+export const getCustomItemList = (cart: CustomBracelet[]) => {
+  return cart.map((item: CustomBracelet) => ({
+      productId: item.id,
+      quantity: item.quantity,
+      subtotal: item.price * item.quantity,
+  }));
+};
+

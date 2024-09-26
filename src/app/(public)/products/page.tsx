@@ -68,14 +68,14 @@ const Banner = () => {
         </h1>
         <p className="max-w-[700px] text-muted-foreground md:text-xl text-white drop-shadow-md">
           Mang trên tay biểu tượng của các chòm sao, tôn vinh sự độc đáo và
-          sức mạnh nội tâm của bạn.
+          sức mạnh nội tâm của riêng bạn.
         </p>
         <Link
-          href="#"
+          href="/custom"
           className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 dark:bg-secondary/90 dark:text-secondary-foreground dark:hover:bg-secondary/50"
           prefetch={false}
         >
-          Mua ngay
+          Thiết kế ngay
         </Link>
       </div>
     </section>
