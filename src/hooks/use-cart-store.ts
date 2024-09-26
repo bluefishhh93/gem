@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from 'uuid';
-import { debounce } from "lodash";
 
 export interface CustomBracelet {
     id: string;
@@ -48,7 +47,7 @@ export type CheckoutFormType = {
     // province: string; // Add this line if 'province' is a field in your form
     district: string; // Add this line if 'district' is a field in your form
     address: string;
-  };
+};
 
 export interface CartItem {
     productId: number;
@@ -69,7 +68,7 @@ export interface ProductType {
     quantity: number;
 };
 
-export interface addToCartProductType{
+export interface addToCartProductType {
     id: number;
     name: string;
     description: string;
@@ -85,7 +84,7 @@ export interface CartItemType {
     productId: number;
     quantity: number;
     subtotal: number;
-  };
+};
 
 
 export interface ProductCategoryType {
@@ -126,7 +125,7 @@ interface Actions {
 type PersistedState = State & Partial<{ totalProducts: number }>;
 
 const INITIAL_STATE: State = {
-    cart:[],
+    cart: [],
     customBracelets: [],
     totalItems: 0,
     totalPrice: 0,
@@ -172,26 +171,24 @@ export const useCartStore = create(
                     }));
                 }
             },
-            updateCartItem: debounce((product: ProductType, quantityChange: number) => {
+            updateCartItem: (product: ProductType, quantityChange: number) =>
                 set((state) => {
                     const cartItemIndex = state.cart.findIndex((item) => item.id === product.id);
                     if (cartItemIndex !== -1) {
-                        const cartItem = state.cart[cartItemIndex];
-                        const newQuantity = Math.max(1, cartItem.quantity + quantityChange);
-                        const quantityDiff = newQuantity - cartItem.quantity;
-                        
-                        const updatedCart = [...state.cart];
-                        updatedCart[cartItemIndex] = { ...cartItem, quantity: newQuantity };
-            
+                        const newQuantity = Math.max(1, state.cart[cartItemIndex].quantity + quantityChange);
+                        const quantityDiff = newQuantity - state.cart[cartItemIndex].quantity;
                         return {
-                            cart: updatedCart,
+                            cart: [
+                                ...state.cart.slice(0, cartItemIndex),
+                                { ...state.cart[cartItemIndex], quantity: newQuantity },
+                                ...state.cart.slice(cartItemIndex + 1)
+                            ],
                             totalItems: state.totalItems + quantityDiff,
                             totalPrice: state.totalPrice + product.salePrice * quantityDiff,
                         };
                     }
                     return state;
-                });
-            }, 300),
+                }),
             clearCart: () => {
                 set((state) => ({
                     cart: [],
@@ -210,7 +207,7 @@ export const useCartStore = create(
             },
             addToCustomBracelet: (bracelet: CustomBracelet) => {
                 set((state) => ({
-                    customBracelets: [...state.customBracelets, {...bracelet}],
+                    customBracelets: [...state.customBracelets, { ...bracelet }],
                     totalItems: state.totalItems + bracelet.quantity,
                     totalPrice: state.totalPrice + bracelet.price,
                 }));
