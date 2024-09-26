@@ -1,3 +1,4 @@
+import { CustomBracelet } from "@/hooks/use-cart-store";
 import sanitizeHtml from "sanitize-html";
 
 export const AUTHENTICATION_ERROR_MESSAGE =
@@ -85,4 +86,10 @@ export function calculateReadingTime(content: string): number {
   const wordsPerMinute = 200;
 
   return Math.ceil(words / wordsPerMinute);
+}
+
+export function calculateTotal(orderItems?: {subtotal: number}[], customBracelets?: CustomBracelet[]): number {
+  const itemsTotal = orderItems?.reduce((acc, item) => acc + item.subtotal, 0) ?? 0;
+  const braceletTotal = customBracelets?.reduce((acc, bracelet) => acc + (bracelet.price * bracelet.quantity), 0) ?? 0;
+  return itemsTotal + braceletTotal;
 }

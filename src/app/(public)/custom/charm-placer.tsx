@@ -76,11 +76,11 @@ const CharmItem: React.FC<CharmItemProps> = ({ charm }) => {
             style={{ opacity: isDragging ? 0.5 : 1 }}
             className="cursor-move w-16 h-16 rounded-full overflow-hidden transition-all duration-300 hover:scale-110 border-2 border-gray-200 hover:border-pink-300 hover:shadow-lg"
           >
-            <Image 
-              src={charm.imageUrl} 
-              alt={charm.name} 
-              width={64} 
-              height={64} 
+            <Image
+              src={charm.imageUrl}
+              alt={charm.name}
+              width={64}
+              height={64}
               className="object-cover rounded-full"
             />
           </div>
@@ -116,9 +116,8 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
   return (
     <div
       ref={ref}
-      className={`w-8 h-8 rounded-full ${
-        isOver ? 'border-2 border-pink-300' : charm ? 'border-2 border-gray-300' : 'border-2 border-gray-300 border-dashed'
-      } flex items-center justify-center absolute overflow-hidden group transition-all duration-200 ease-in-out ${isOver ? 'scale-110' : ''}`}
+      className={`w-8 h-8 rounded-full ${isOver ? 'border-2 border-pink-300' : charm ? 'border-2 border-gray-300' : 'border-2 border-gray-300 border-dashed'
+        } flex items-center justify-center absolute overflow-hidden group transition-all duration-200 ease-in-out ${isOver ? 'scale-110' : ''}`}
       style={{
         left: `${left}px`,
         top: `${top}px`,
@@ -126,11 +125,11 @@ const StringDropZone: React.FC<StringDropZoneProps> = ({ position, onDrop, onRem
     >
       {charm && (
         <>
-          <Image 
-            src={charm.imageUrl} 
-            alt={charm.name} 
-            width={30} 
-            height={30} 
+          <Image
+            src={charm.imageUrl}
+            alt={charm.name}
+            width={30}
+            height={30}
             className="object-cover h-10 w-10 rounded-full"
           />
           <button
@@ -156,7 +155,7 @@ export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms, cha
   }, 0);
 
   const charmCount = placedCharms.length;
-  
+
 
   const handleDrop = (charmId: number, position: number) => {
     setPlacedCharms((prev) => {
@@ -194,7 +193,7 @@ export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms, cha
             <CardContent>
               <div className="relative w-[300px] h-[300px] mb-16">
                 <div style={{ transform: `scale(${zoom})`, transformOrigin: 'center', transition: 'transform 0.3s ease-in-out' }}>
-                  <Image 
+                  <Image
                     src={selectedString?.imageUrl || ''}
                     alt={`${selectedString?.material} ${selectedString?.color}` || ''}
                     width={300}
@@ -249,11 +248,10 @@ export function CharmPlacer({ selectedString, placedCharms, setPlacedCharms, cha
                 <div className="space-y-2">
                   <p><strong>Chất liệu:</strong> {selectedString?.material}</p>
                   <p><strong>Màu sắc:</strong> {selectedString?.color}</p>
-                  <p><strong>Số lượng charm:</strong> <Badge variant="secondary">{charmCount}</Badge></p>
+                  <div><strong>Số lượng charm:</strong> <Badge variant="secondary">{charmCount}</Badge></div>
                   <p><strong>Giá dây:</strong> {selectedString?.price?.toLocaleString()} VND</p>
                   <p className="text-lg font-semibold"><strong>Tổng giá:</strong> {totalPrice.toLocaleString()} VND</p>
                 </div>
-                
               </CardContent>
             </Card>
           </div>

@@ -1,18 +1,15 @@
 "use server";
 
-import { PaymentError, VNPayError } from "@/app/util";
+import { calculateTotal, PaymentError, VNPayError } from "@/app/util";
+import { CustomBracelet } from "@/hooks/use-cart-store";
 import { rateLimitByIp } from "@/lib/limiter";
 import { authenticatedAction, unauthenticatedAction } from "@/lib/safe-action";
 import vnpay from "@/lib/vnpay";
 import { createOrderUseCase } from "@/use-cases/orders";
 import moment from "moment";
-import { redirect } from "next/navigation";
 import { parse } from 'querystring';
 import { ReturnQueryFromVNPay } from "vnpay";
-
 import { z } from "zod";
-
-
 
 const vnpayReturnSchema = z.object({
   vnp_Amount: z.string(),
@@ -29,6 +26,26 @@ const vnpayReturnSchema = z.object({
   vnp_SecureHash: z.string(),
 });
 
+const customBraceletSchema = z.object({
+  id: z.number(),
+  quantity: z.number(),
+  price: z.number(),
+  stringType: z.object({
+    id: z.number(),
+    material: z.string(),
+    color: z.string(),
+    price: z.number(),
+    imageUrl: z.string(),
+  }),
+  charms: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    imageUrl: z.string(),
+    price: z.number(),
+    position: z.number(),
+  })),
+});
+
 const checkoutFormSchema = z.object({
   name: z.string().trim().min(1, "Name is required"),
   phone: z.string().trim().min(1, "Phone is required").regex(/^\d{10}$/, "Phone number is invalid"),
@@ -42,16 +59,16 @@ const checkoutFormSchema = z.object({
     productId: z.number(),
     quantity: z.number(),
     subtotal: z.number(),
-  })),
+  })).optional(),
+  customBracelets: z.array(customBraceletSchema).optional()
 });
-
 
 export const checkoutWithCOD = unauthenticatedAction
   .createServerAction()
   .input(checkoutFormSchema)
   .handler(async ({ input }) => {
-    await rateLimitByIp({key: 'order-cod', limit: 3, window: 30000})
-    const order = await createOrderUseCase(input);
+    // await rateLimitByIp({key: 'order-cod', limit: 3, window: 30000});
+    const order = await createOrderUseCase({orderData: input, customBracelets: input.customBracelets});
     return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
   });
 
@@ -60,12 +77,14 @@ export const checkoutWithVNPay = unauthenticatedAction
   .input(checkoutFormSchema)
   .handler(async ({ input }) => {
     try {
-      const totalAmount = input.orderItems.reduce((acc, item) => acc + item.subtotal, 0);
-      const date = new Date();
-      const orderId = moment(date).format("DDHHmmss");
+      const totalAmount = calculateTotal(input.orderItems, input.customBracelets);
+      if (totalAmount <= 0) {
+        throw new Error("Total amount must be greater than zero");
+      }
+      const orderId = moment().format("DDHHmmss");
       const vnpayUrl = vnpay.buildPaymentUrl({
         vnp_Amount: totalAmount,
-        vnp_IpAddr: '127.0.0.1', // You might want to get the actual IP address
+        vnp_IpAddr:  getClientIp(),
         vnp_TxnRef: orderId,
         vnp_OrderInfo: `Payment for order ${orderId}`,
         vnp_ReturnUrl: `${process.env.HOST_NAME}/vnpay-return`,
@@ -79,9 +98,13 @@ export const checkoutWithVNPay = unauthenticatedAction
   });
 
 function ensureString(value: string | string[] | undefined): string {
-  if (Array.isArray(value)) return value[0] || '';
-  return value || '';
+  return Array.isArray(value) ? value[0] || '' : value || '';
 }
+
+function getClientIp() {
+  return '127.0.0.1'; // TODO: Get actual IP address
+}
+
 
 export const finalizeVNPayPaymentAction = unauthenticatedAction
   .createServerAction()
@@ -92,21 +115,9 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
   .handler(async ({ input }) => {
     try {
       const parsedQuery = parse(input.queryString);
-      const vnpayReturn: ReturnQueryFromVNPay = {
-        vnp_Amount: ensureString(parsedQuery.vnp_Amount),
-        vnp_BankCode: ensureString(parsedQuery.vnp_BankCode),
-        vnp_BankTranNo: ensureString(parsedQuery.vnp_BankTranNo),
-        vnp_CardType: ensureString(parsedQuery.vnp_CardType),
-        vnp_OrderInfo: ensureString(parsedQuery.vnp_OrderInfo),
-        vnp_PayDate: ensureString(parsedQuery.vnp_PayDate),
-        vnp_ResponseCode: ensureString(parsedQuery.vnp_ResponseCode),
-        vnp_TmnCode: ensureString(parsedQuery.vnp_TmnCode),
-        vnp_TransactionNo: ensureString(parsedQuery.vnp_TransactionNo),
-        vnp_TransactionStatus: ensureString(parsedQuery.vnp_TransactionStatus),
-        vnp_TxnRef: ensureString(parsedQuery.vnp_TxnRef),
-        vnp_SecureHash: ensureString(parsedQuery.vnp_SecureHash)
-      };
-
+      const vnpayReturn: ReturnQueryFromVNPay = Object.fromEntries(
+        Object.entries(parsedQuery).map(([key, value]) => [key, ensureString(value)])
+      ) as ReturnQueryFromVNPay;
 
       const paymentResult = vnpay.verifyReturnUrl(vnpayReturn);
 
@@ -117,17 +128,21 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
       } else if (!paymentResult.isSuccess) {
         throw new PaymentError();
       }
+
+      console.log(input.checkoutData);
+
       const order = await createOrderUseCase({
-        ...input.checkoutData,
-        trackingNumber: vnpayReturn.vnp_TxnRef,
-        paymentMethod: 'vnpay',
+        orderData: {
+          ...input.checkoutData,
+          trackingNumber: vnpayReturn.vnp_TxnRef,
+          paymentMethod: 'vnpay',
+        },
+        customBracelets: input.checkoutData.customBracelets,
       });
 
-      if (order) {
-        return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
-      } else {
-        throw new Error("Failed to create order");
-      }
+      return order 
+        ? { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` }
+        : { success: false, error: "Failed to create order" };
 
     } catch (error) {
       console.error("Payment finalization failed:", error);

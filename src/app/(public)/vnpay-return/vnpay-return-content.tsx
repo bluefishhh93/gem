@@ -15,7 +15,7 @@ export function VNPayReturnContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
 
-    const { checkoutPayload, clearCart } = useCartStore();
+    const { checkoutPayload, clearCart, customBracelets } = useCartStore();
     const { execute, error, isPending } = useServerAction(finalizeVNPayPaymentAction, {
         onError: ({ err }) => {
             router.push('/checkout/fail');
@@ -28,7 +28,7 @@ export function VNPayReturnContent() {
                 try {
                     const [result] = await execute({
                         queryString: searchParams.toString(),
-                        checkoutData: checkoutPayload
+                        checkoutData: checkoutPayload ,
                     });
                     if (result && result.success) {
                         router.push(`${result.redirectUrl}`);

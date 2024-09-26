@@ -56,7 +56,7 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
     }, 0);
 
     const date = new Date();
-    const braceletId = moment(date).format("DDHHmmss");
+    const braceletId = parseInt(moment(date).format("DDHHmmss"));
 
     const braceletData = {
       id: braceletId,
@@ -81,8 +81,8 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
 
 
     toast({
-      title: "Custom Bracelet Created",
-      description: "Your custom bracelet has been added to the cart.",
+      title: "Vòng tay Được Tạo Thành Công",
+      description: "Vòng tay tùy chỉnh của bạn đã được thêm vào giỏ hàng.",
       variant: "success",
     });
 

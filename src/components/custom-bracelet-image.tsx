@@ -36,10 +36,10 @@ export default function CustomBraceletImage({
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
+            <DialogTrigger>
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger asChild>
+                        <TooltipTrigger>
                             <div className="relative cursor-pointer group" onClick={() => setIsOpen(true)}>
                                 <Image
                                     src={defaultUrl}

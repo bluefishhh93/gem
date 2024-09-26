@@ -56,7 +56,7 @@ export default function Cart() {
         >
           <ShoppingBasket className="h-5 w-5 text-primary-900 dark:text-primary-700" />
           <span className="font-semibold text-primary-900 dark:text-primary-700">
-            ({cart?.length || 0})
+            ({cartItems.length + (customBracelets?.length || 0)})
           </span>
         </Button>
       </DrawerTrigger>

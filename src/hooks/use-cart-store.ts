@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from 'uuid';
 
 export interface CustomBracelet {
-    id: string;
+    id: number;
     stringType: {
         id: number;
         material: string;
@@ -36,6 +36,7 @@ export interface CheckoutPayload {
     orderItems: CartItem[];
     totalPrice?: number;
     trackingNumber?: string;
+    customBracelets?: CustomBracelet[];
 };
 
 export type CheckoutFormType = {
@@ -194,6 +195,7 @@ export const useCartStore = create(
                     cart: [],
                     totalItems: 0,
                     totalPrice: 0,
+                    customBracelets: [],
                 }));
             },
             setCheckoutPayload: (payload: CheckoutPayload) => {

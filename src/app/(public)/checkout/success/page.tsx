@@ -39,7 +39,7 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
               <ul className="space-y-2">
                 {order.orderItems.map((item) => (
                   <li key={item.id} className="flex justify-between">
-                    <span>{item.product.name} x {item.quantity}</span>
+                    <span>{item.product?.name || `Vòng tay custom ${item.customBracelet?.id}`} x {item.quantity}</span>
                     <span>{vietnamCurrency(item.subtotal)}</span>
                   </li>
                 ))}

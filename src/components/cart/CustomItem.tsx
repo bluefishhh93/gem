@@ -76,6 +76,7 @@ export function CustomItem({ customBracelet }: { customBracelet: CustomBracelet 
             }
           >
             <MinusIcon className="h-4 w-4" />
+            <span className="sr-only">Decrease item</span>
           </Button>
           <span className="font-medium w-3">{customBracelet.quantity}</span>
           <Button
@@ -84,6 +85,7 @@ export function CustomItem({ customBracelet }: { customBracelet: CustomBracelet 
             onClick={() => handleUpdateQuantity(1)}
           >
             <PlusIcon className="h-4 w-4" />
+            <span className="sr-only">Increase item</span>
           </Button>
         </div>
         <div className="h-[1px] text-xs text-red-500">

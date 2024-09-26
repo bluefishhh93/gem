@@ -8,6 +8,7 @@ import {
   pgTable,
   integer,
   doublePrecision,
+  index,
 } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["user", "admin"]);
@@ -125,7 +126,12 @@ export const reviews = pgTable("reviews", {
   productId: integer("product_id").references(() => products.id),
   orderItemId: integer("order_item_id").references(() => orderItems.id),
   createdAt: timestamp("created_at").defaultNow(),
-});
+},
+(t) => ({
+  productIdIndex: index('product_id_index').on(t.productId),
+  createdAtAndIdIndex: index('created_at_and_id_index').on(t.createdAt, t.id).asc(),
+}),
+);
 
 // Product
 export const products = pgTable("products", {
@@ -168,11 +174,12 @@ export const orders = pgTable("orders", {
 export const orderItems = pgTable("order_items", {
   id: serial("id").primaryKey(),
   orderId: integer("order_id").references(() => orders.id, { onDelete: "cascade" }),
-  productId: integer("product_id").notNull().references(() => products.id),
+  productId: integer("product_id").references(() => products.id),
   customBraceletId: integer("custom_bracelet_id").references(() => customBracelets.id),
   quantity: integer("quantity").notNull(),
   subtotal: doublePrecision("subtotal").notNull(),
   isRated: boolean("is_rated").default(false),
+  isCustomBracelet: boolean("is_custom_bracelet").default(false),
 });
 
 export const discounts = pgTable("discounts", {

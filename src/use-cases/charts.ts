@@ -12,20 +12,17 @@ export async function getMetricDataUseCase() {
 
 export async function getTopSellingProductsUseCase() {
   const data = await getTopSellingProducts();
-  console.log(data);
   return data;
 }
 
 
 export async function getSalesByCategoryUseCase() {
   const data = await getSalesByCategory();
-  console.log(data);
   return data;
 }
 
 
 export async function getMonthlyRevenueUseCase() {
   const data = await getMonthlyRevenue();
-  console.log(data);
   return data;
 }

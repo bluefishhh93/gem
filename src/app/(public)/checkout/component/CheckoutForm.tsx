@@ -24,6 +24,8 @@ import Image from 'next/image';
 import { vietnamCurrency } from '@/util/util';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import CustomBraceletImage from '@/components/custom-bracelet-image';
+import { calculateTotal } from '@/app/util';
 
 const checkoutFormSchema = z.object({
   name: z.string().trim().min(1, "Tên không được để trống"),
@@ -101,16 +103,31 @@ export const CheckoutForm = ({
   };
 
   const onSubmit = async (data: z.infer<typeof checkoutFormSchema>) => {
+    console.log(customBracelets, 'customBracelets')
     const result = await execute({
       ...data,
       userId: user?.id,
       orderItems: getItemList(cart),
+      customBracelets: customBracelets.map((item) => ({
+        id: item.id,
+        quantity: item.quantity,
+        price: item.price,
+        stringType: item.stringType,
+        charms: item.charms
+      }))
     });
 
     if(result[0] && result[0].success) {
       setCheckoutPayload({
         ...data,
         orderItems: getItemList(cart),
+        customBracelets: customBracelets.map((item) => ({
+          id: item.id,
+          quantity: item.quantity,
+          price: item.price,
+          stringType: item.stringType,
+          charms: item.charms
+        }))
       });
       router.push(result[0].redirectUrl as string);
     }
@@ -249,8 +266,21 @@ export const CheckoutForm = ({
                     </div>
                   </div>
                 ))}
+                {customBracelets.map((item) => (
+                  <div key={item.id} className="flex items-center space-x-4">
+                    <CustomBraceletImage
+                      charms={item.charms}
+                      stringType={item.stringType}
+                    />
+                    <div>
+                      <p className="font-semibold">{item.stringType.material} - {item.stringType.color}</p>
+                      <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                      <p className="text-sm font-medium">{vietnamCurrency(item.price * item.quantity)}</p>
+                    </div>
+                  </div>
+                ))}
                 <div className="border-t pt-4">
-                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(cart.reduce((total, item) => total + item.salePrice * item.quantity, 0))}</span></p>
+                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(calculateTotal(getItemList(cart), customBracelets))}</span></p>
                 </div>
               </div>
             </CardContent>
