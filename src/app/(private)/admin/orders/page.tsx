@@ -1,5 +1,6 @@
 import { Breadcrumb } from "@/components/Breadcrumb";
 import { OrdersTable } from "./orders-table";
+import { OrderStatus, PaymentStatus, ShippingStatus } from "@/types/enums";
 
 export interface OrderType {
     id: number;
@@ -9,9 +10,9 @@ export interface OrderType {
     phone: string;
     createdAt: Date;
     total: number;
-    orderStatus: "pending" | "processing" | "canceled" | "cancelling" | "completed" | null;
-    shippingStatus: "pending" | "processing" | "shipping" | "delivered" | "failed" | null;
-    paymentStatus: "pending" | "paid" | "refunded" | "failed" | null;
+    orderStatus: OrderStatus;
+    shippingStatus: ShippingStatus;
+    paymentStatus: PaymentStatus;
     shipAddress: string;
     shipDate: Date | null;
     paymentMethod: string;
