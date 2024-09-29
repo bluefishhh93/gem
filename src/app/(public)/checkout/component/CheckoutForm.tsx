@@ -153,7 +153,10 @@ export const CheckoutForm = ({
           string: item.string,
           charms: item.charms
         })),
-        fee: shippingFee || 0
+        fee: shippingFee || 0,
+        provinceId: 203,
+        districtId: districtId,
+        wardCode: wardCode,
       });
       router.push(result[0].redirectUrl as string);
     }

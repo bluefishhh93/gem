@@ -38,6 +38,9 @@ export interface CheckoutPayload {
     trackingNumber?: string;
     customBracelets?: CustomBracelet[];
     fee: number;
+    provinceId: number;
+    districtId: number;
+    wardCode: string;
 };
 
 export type CheckoutFormType = {
