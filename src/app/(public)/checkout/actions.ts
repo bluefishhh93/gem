@@ -29,7 +29,7 @@ const vnpayReturnSchema = z.object({
 });
 
 const customBraceletSchema = z.object({
-  id: z.number(),
+  // id: z.number(),
   quantity: z.number(),
   price: z.number(),
   stringType: z.object({

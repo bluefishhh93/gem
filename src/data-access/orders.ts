@@ -5,7 +5,7 @@ import { OrderStatus, PaymentStatus, ShippingStatus } from "@/types/enums";
 import { CustomBracelet } from "@/hooks/use-cart-store";
 
 interface CustomBraceletData {
-  id: number;
+  // id: number;
   orderId: number;
   stringId: number;
   price: number;
@@ -59,7 +59,7 @@ export async function createOrder({
 
 async function handleCustomBracelet(tx: any, orderId: number, customBraceletData: CustomBraceletData) {
   const [newCustomBracelet] = await tx.insert(customBracelets).values({
-    id: customBraceletData.id,
+    // id: customBraceletData.id,
     orderId,
     stringId: customBraceletData.stringId,
     price: customBraceletData.price,

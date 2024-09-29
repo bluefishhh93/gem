@@ -151,7 +151,7 @@ export const CheckoutForm = ({
       userId: user?.id,
       orderItems: getItemList(cart),
       customBracelets: customBracelets.map((item) => ({
-        id: item.id,
+        // id: item.id,
         quantity: item.quantity,
         price: item.price,
         stringType: item.stringType,

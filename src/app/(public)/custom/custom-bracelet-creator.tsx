@@ -59,7 +59,7 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
     const braceletId = parseInt(moment(date).format("DDHHmmss"));
 
     const braceletData = {
-      id: braceletId,
+      // id: braceletId,
       stringType: {
         ...selectedString,
         imageUrl: selectedString.imageUrl

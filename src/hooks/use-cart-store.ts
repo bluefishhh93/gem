@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { v4 as uuidv4 } from 'uuid';
 
 export interface CustomBracelet {
-    id: number;
+    id?: number;
     stringType: {
         id: number;
         material: string;
