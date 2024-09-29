@@ -1,6 +1,6 @@
 import { braceletCharms, charms, customBracelets, NewOrder, NewOrderItem, Order, orderItems, orders, products, strings } from "@/db/schema";
 import { database } from "@/db";
-import { desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { OrderStatus, PaymentStatus, ShippingStatus } from "@/types/enums";
 import { CustomBracelet } from "@/hooks/use-cart-store";
 
@@ -104,7 +104,6 @@ export async function getOrderById(id: number) {
 
     }
   });
-  console.log(order);
 
   return order;
 }
@@ -129,3 +128,46 @@ export async function getOrders() {
     }
   });
 }
+
+
+export async function getOrdersByUserAndStatus(userId: number, status: string) {
+  return await database.query.orders.findMany({
+    where: and(eq(orders.userId, userId), eq(orders.orderStatus, status as OrderStatus)),
+    with: {
+      orderItems: {
+        with: {
+          product: true,
+        },
+      },
+    },
+    orderBy: [desc(orders.createdAt)],
+  });
+}
+
+export async function getOrdersByUser(userId: number) {
+  const result = await database.query.orders.findMany({
+    where: eq(orders.userId, userId),
+    orderBy: desc(orders.createdAt),
+    with: {
+      orderItems: {
+        with: {
+          product: {
+            with: {
+              imgProducts: true,
+            }
+          },
+          customBracelet: {
+            with: {
+              charms: true,
+              string: true,
+            }
+          },
+        }
+      },
+    }
+  });
+  return result;
+}
+
+
+

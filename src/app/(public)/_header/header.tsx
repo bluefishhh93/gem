@@ -98,6 +98,14 @@ export async function HeaderActions() {
                   <Settings2Icon className="w-4 h-4" /> Cài đặt
                 </Link>
               </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link
+                  href="/dashboard/purchase"
+                  className="flex gap-2 items-center cursor-pointer"
+                >
+                  <Settings2Icon className="w-4 h-4" /> Đơn hàng
+                </Link>
+              </DropdownMenuItem>
               <SignOutItem />
             </DropdownMenuContent>
           </DropdownMenu>

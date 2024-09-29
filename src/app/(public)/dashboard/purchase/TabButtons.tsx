@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Package, Truck, CheckCircle, CircleX } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TabButtonsProps {
   activeTab: string;
@@ -21,7 +22,7 @@ const statusIcons = {
 
 const TabButtons: React.FC<TabButtonsProps> = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="flex flex-wrap justify-center gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
+    <div className="flex  w-full md:w-2/3 mx-auto flex-wrap justify-center gap-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md">
       {ORDER_STATUSES.map((status) => {
         const Icon = statusIcons[status as OrderStatus];
         return (
@@ -41,7 +42,7 @@ const TabButtons: React.FC<TabButtonsProps> = ({ activeTab, setActiveTab }) => {
           >
             {activeTab === status && (
               <motion.div
-                className="absolute inset-0 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full"
+                className="absolute inset-0 bg-gradient-to-r from-pink-300 to-secondary-500 rounded-full"
                 layoutId="activeBg"
                 initial={false}
                 transition={{ type: "spring", stiffness: 300, damping: 30 }}

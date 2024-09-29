@@ -11,14 +11,16 @@ export enum PaymentMethod {
   
   export enum ShippingStatus {
     PENDING = 'pending',
+    PROCESSING = 'processing',
     SHIPPING = 'shipping',
-    SHIPPED = 'shipped',
+    DELIVERED = 'delivered',
+    FAILED = 'failed',
   }
   
   export enum OrderStatus {
     PENDING = 'pending',
     PROCESSING = 'processing',
-    SHIPPED = 'shipped',
-    DELIVERED = 'delivered',
     CANCELED = 'canceled',
+    CANCELLING = 'cancelling',
+    COMPLETED = 'completed',
   }

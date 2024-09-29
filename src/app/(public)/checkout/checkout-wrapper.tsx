@@ -18,7 +18,6 @@ export default function CheckoutWrapper({
 }) {
 
   const { cart, customBracelets } = useCartStore();
-
   const router = useRouter();
 
   useEffect(() => {

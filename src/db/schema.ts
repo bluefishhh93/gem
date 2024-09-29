@@ -13,10 +13,10 @@ import {
 
 export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const accountTypeEnum = pgEnum("type", ["email", "google", "github"]);
-export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "failed"]);
-export const orderStatusEnum = pgEnum("order_status", ["pending", "processing", "shipped", "delivered", "canceled"]);
+export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "refunded", "failed"]);
+export const orderStatusEnum = pgEnum("order_status", ["pending", "processing", "canceled", "cancelling", "completed"]);
 export const paymentMethodEnum = pgEnum("payment_method", ["cod", "vnpay"]);
-export const shippingStatusEnum = pgEnum("shipping_status", ["pending", "shipping", "shipped"]);
+export const shippingStatusEnum = pgEnum("shipping_status", ["pending", "processing", "shipping", "delivered", "failed"]);
 
 export const users = pgTable("gf_user", {
   id: serial("id").primaryKey(),
@@ -127,10 +127,10 @@ export const reviews = pgTable("reviews", {
   orderItemId: integer("order_item_id").references(() => orderItems.id),
   createdAt: timestamp("created_at").defaultNow(),
 },
-(t) => ({
-  productIdIndex: index('product_id_index').on(t.productId),
-  createdAtAndIdIndex: index('created_at_and_id_index').on(t.createdAt, t.id).asc(),
-}),
+  (t) => ({
+    productIdIndex: index('product_id_index').on(t.productId),
+    createdAtAndIdIndex: index('created_at_and_id_index').on(t.createdAt, t.id).asc(),
+  }),
 );
 
 // Product
@@ -156,17 +156,17 @@ export const categories = pgTable("categories", {
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
-  name: text("name"),
+  name: text("name").notNull(),
   total: doublePrecision("total").notNull(),
   orderStatus: orderStatusEnum("order_status").default("pending"),
-  shipAddress: text("ship_address"),
-  phone: text("phone"),
-  email: text("email"),
-  paymentMethod:paymentMethodEnum("payment_method").notNull(),
+  shipAddress: text("ship_address").notNull(),
+  phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  paymentMethod: paymentMethodEnum("payment_method").notNull(),
   paymentStatus: paymentStatusEnum("payment_status").notNull(),
   trackingNumber: text("tracking_number"),
   shippingStatus: shippingStatusEnum("shipping_status").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   shipDate: timestamp("ship_date"),
 });
 
@@ -199,7 +199,7 @@ export const strings = pgTable("strings", {
   price: doublePrecision("price").notNull(),
   stock: integer("stock").notNull().default(0),
   imageUrl: text("image_url").notNull(),
-  
+
 });
 
 export const charms = pgTable("charms", {

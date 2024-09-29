@@ -2,11 +2,13 @@
 
 import { calculateTotal, PaymentError, VNPayError } from "@/app/util";
 import { CustomBracelet } from "@/hooks/use-cart-store";
+import { calculateShippingFee } from "@/lib/ghn";
 import { rateLimitByIp } from "@/lib/limiter";
 import { authenticatedAction, unauthenticatedAction } from "@/lib/safe-action";
 import vnpay from "@/lib/vnpay";
 import { createOrderUseCase } from "@/use-cases/orders";
 import moment from "moment";
+import { revalidatePath } from "next/cache";
 import { parse } from 'querystring';
 import { ReturnQueryFromVNPay } from "vnpay";
 import { z } from "zod";
@@ -55,6 +57,7 @@ const checkoutFormSchema = z.object({
   address: z.string().trim().min(1, "Address is required"),
   ward: z.string().trim().min(1, "Ward is required"),
   district: z.string().trim().min(1, "District is required"),
+  fee: z.number(),
   orderItems: z.array(z.object({
     productId: z.number(),
     quantity: z.number(),
@@ -77,7 +80,7 @@ export const checkoutWithVNPay = unauthenticatedAction
   .input(checkoutFormSchema)
   .handler(async ({ input }) => {
     try {
-      const totalAmount = calculateTotal(input.orderItems, input.customBracelets);
+      const totalAmount = calculateTotal(input.orderItems, input.customBracelets) + input.fee;
       if (totalAmount <= 0) {
         throw new Error("Total amount must be greater than zero");
       }
@@ -129,7 +132,6 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
         throw new PaymentError();
       }
 
-      console.log(input.checkoutData);
 
       const order = await createOrderUseCase({
         orderData: {
@@ -148,4 +150,28 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
       console.error("Payment finalization failed:", error);
       return { success: false, error: error instanceof Error ? error.message : "Failed to finalize payment" };
     }
+  });
+
+export const calculateShippingFeeAction = unauthenticatedAction
+  .createServerAction()
+  .input(z.object({
+    districtId: z.number(),
+    wardCode: z.string(),
+    weight: z.number(),
+    length: z.number(),
+    width: z.number(),
+    height: z.number(),
+  }))
+  .handler(async ({ input }) => {
+    const fee = await calculateShippingFee({
+      to_district_id: input.districtId,
+      to_ward_code: input.wardCode,
+      weight: input.weight,
+      length: input.length,
+      width: input.width,
+      height: input.height,
+      insurance_value: 100000, // Assuming default insurance value is 0 if not provided
+    });
+    revalidatePath('/checkout');
+    return fee;
   });

@@ -1,10 +1,10 @@
 'use client';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
-import { checkoutWithCOD, checkoutWithVNPay } from "../actions";
+import { calculateShippingFeeAction, checkoutWithCOD, checkoutWithVNPay } from "../actions";
 import { useAddressData } from "@/hooks/use-address-data";
 import { CartItemType, ProductType, useCartStore } from "@/hooks/use-cart-store";
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,8 @@ const checkoutFormSchema = z.object({
   paymentMethod: z.enum(["cod", "vnpay"], {
     required_error: "Vui lòng chọn phương thức thanh toán",
   }),
-  ward: z.string().trim().min(1, "Vui lòng chọn phường/xã"), 
-  district: z.string().trim().min(1, "Vui lòng chọn quận/huyện"), 
+  ward: z.string().trim().min(1, "Vui lòng chọn phường/xã"),
+  district: z.string().trim().min(1, "Vui lòng chọn quận/huyện"),
 });
 
 export const CheckoutForm = ({
@@ -56,10 +56,18 @@ export const CheckoutForm = ({
 }) => {
   const { districts, wards, fetchDistricts, fetchWards } = useAddressData();
   const [paymentMethod, setPaymentMethod] = useState("cod");
-
+  const [shippingFee, setShippingFee] = useState(0);
+  const [districtId, setDistrictId] = useState(0);
+  const [wardCode, setWardCode] = useState("");
   const { cart, customBracelets, clearCart, setCheckoutPayload } = useCartStore();
   const { toast } = useToast();
   const router = useRouter();
+
+  useEffect(() => {
+    // Fetch initial data or perform side effects here
+    fetchDistricts(203);
+  }, []);
+
   const getItemList = useCallback((cart: ProductType[]): CartItemType[] => {
     return cart.map((item: ProductType) => ({
       productId: item.id,
@@ -81,13 +89,14 @@ export const CheckoutForm = ({
     },
   });
 
+  const { execute: calculateShippingFee, error: calculateShippingFeeError, isPending: calculateShippingFeeIsPending } = useServerAction(calculateShippingFeeAction)
   const { execute, error, isPending } = useServerAction(
     paymentMethod === "cod" ? checkoutWithCOD : checkoutWithVNPay,
     {
-      onSuccess: () => {      
-          // clearCart();
+      onSuccess: () => {
+        // clearCart();
       },
-      onError: ({err}) => {
+      onError: ({ err }) => {
         toast({
           variant: "error",
           title: 'Đặt hàng thất bại',
@@ -97,9 +106,42 @@ export const CheckoutForm = ({
     }
   );
 
-  const handleDistrictChange = (districtId: string) => {
-    fetchWards(districtId);
+  const calculateTotalWeight = useCallback(() => {
+    const cartItemsWeight = cart.reduce((total, item) => total + item.quantity, 0) * 200;
+    const customBraceletsWeight = customBracelets.reduce((total, item) => total + item.quantity, 0) * 200;
+    return cartItemsWeight + customBraceletsWeight;
+  }, [cart, customBracelets]);
+
+  const handleDistrictChange = async (districtId: number) => {
+    await fetchWards(districtId);
     form.setValue("ward", "");
+    setDistrictId(districtId);
+    setShippingFee(0);
+  };
+
+  const handleWardChange = async (wardCode: string) => {
+    setWardCode(wardCode);
+    const totalWeight = calculateTotalWeight();
+    if (districtId && wardCode) {
+      try {
+        const data = await calculateShippingFee({
+          districtId: Number(districtId),
+          wardCode: wardCode,
+          weight: totalWeight, // Adjust this based on your actual order weight
+          length: 10,
+          width: 10,
+          height: 10,
+        });
+        setShippingFee(data[0]);
+      } catch (error) {
+        console.error('Failed to calculate shipping fee:', error);
+        toast({
+          variant: "destructive",
+          title: 'Lỗi tính phí vận chuyển',
+          description: 'Không thể tính phí vận chuyển. Vui lòng thử lại sau.',
+        });
+      }
+    }
   };
 
   const onSubmit = async (data: z.infer<typeof checkoutFormSchema>) => {
@@ -114,10 +156,11 @@ export const CheckoutForm = ({
         price: item.price,
         stringType: item.stringType,
         charms: item.charms
-      }))
+      })),
+      fee: shippingFee
     });
 
-    if(result[0] && result[0].success) {
+    if (result[0] && result[0].success) {
       setCheckoutPayload({
         ...data,
         orderItems: getItemList(cart),
@@ -127,7 +170,8 @@ export const CheckoutForm = ({
           price: item.price,
           stringType: item.stringType,
           charms: item.charms
-        }))
+        })),
+        fee: shippingFee
       });
       router.push(result[0].redirectUrl as string);
     }
@@ -175,17 +219,21 @@ export const CheckoutForm = ({
                     name="district"
                     label="Quận/Huyện"
                     options={districts.map((d) => ({
-                      id: d.district_id,
-                      name: d.district_name,
+                      id: d.DistrictID.toString(),
+                      name: d.DistrictName,
                     }))}
                     form={form}
-                    onChange={handleDistrictChange}
+                    onChange={(value) => handleDistrictChange(Number(value))}
                   />
                   <SelectFieldCustom
                     name="ward"
                     label="Phường/Xã"
-                    options={wards.map((w) => ({ id: w.ward_id, name: w.ward_name }))}
+                    options={wards.map((w) => ({
+                      id: w.WardCode,
+                      name: w.WardName,
+                    }))}
                     form={form}
+                    onChange={handleWardChange}
                   />
                   <InputFieldCustom
                     name="address"
@@ -252,10 +300,10 @@ export const CheckoutForm = ({
               <div className="space-y-4">
                 {cart.map((item) => (
                   <div key={item.id} className="flex items-center space-x-4">
-                    <Image 
-                      src={item.imgProducts[0].imageUrl} 
-                      alt={item.name} 
-                      className="w-16 h-16 object-cover rounded" 
+                    <Image
+                      src={item.imgProducts[0].imageUrl}
+                      alt={item.name}
+                      className="w-16 h-16 object-cover rounded"
                       width={100}
                       height={100}
                     />
@@ -280,7 +328,13 @@ export const CheckoutForm = ({
                   </div>
                 ))}
                 <div className="border-t pt-4">
-                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(calculateTotal(getItemList(cart), customBracelets))}</span></p>
+                  {shippingFee > 0 && (
+                    <div className="flex text-sm justify-between">
+                      <span>Phí vận chuyển:</span>
+                      <span>{vietnamCurrency(shippingFee)}</span>
+                    </div>
+                  )}
+                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(calculateTotal(getItemList(cart), customBracelets) + shippingFee)}</span></p>
                 </div>
               </div>
             </CardContent>

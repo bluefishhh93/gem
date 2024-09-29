@@ -37,6 +37,7 @@ export interface CheckoutPayload {
     totalPrice?: number;
     trackingNumber?: string;
     customBracelets?: CustomBracelet[];
+    fee: number;
 };
 
 export type CheckoutFormType = {
