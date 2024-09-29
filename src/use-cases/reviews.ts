@@ -1,6 +1,6 @@
 import { uploadMultipleToCloudinary } from "@/lib/cloudinary";
 import { validateImage } from "@/util/util";
-import { createReview } from "@/data-access/reviews";
+import { createReview, deleteReview } from "@/data-access/reviews";
 
 export async function getProductReviews(productId: number, page: number = 1, limit: number = 10) {
   return await getProductReviews(productId, page, limit);
@@ -45,4 +45,8 @@ export async function createReviewUseCase({
     comment,
     images: uploadedImages
   });
+}
+
+export async function deleteReviewUseCase(reviewId: number) {
+  return await deleteReview(reviewId);
 }

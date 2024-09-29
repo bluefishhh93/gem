@@ -8,6 +8,7 @@ import { vietnamCurrency } from "@/util/util";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useReducer, useState } from "react";
+import ProductComment, { ReviewType } from "../components/ProductComment/ProductComment";
 
 interface ProductDetail {
     id: number;
@@ -24,6 +25,7 @@ interface ProductDetail {
         publicId: string;
         productId: number;
     }[];
+    reviews: ReviewType[];
 }
 
 type State = {
@@ -185,6 +187,8 @@ export default function ProductDetail({ product }: { product: ProductDetail }) {
                         <h2 className="text-xl font-semibold">Mô tả sản phẩm</h2>
                         <p className="">{product.description}</p>
                     </div>
+
+                    <ProductComment reviews={product.reviews} isAdmin={false} />
 
                 </div>
 

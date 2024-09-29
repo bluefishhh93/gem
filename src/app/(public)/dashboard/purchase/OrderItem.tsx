@@ -9,6 +9,7 @@ import { vietnamCurrency } from "@/util/util";
 const IMAGE_NOT_FOUND = "/path/to/image-not-found.jpg"; // Update this path as needed
 
 interface OrderItemType {
+  id: number;
   quantity: number;
   subtotal: number;
   product?: {
@@ -84,7 +85,7 @@ const OrderItems: React.FC<OrderItemsProps> = ({ items, status }) => {
             </p>
             {status === "completed" && !item.isRated && !item.isCustomBracelet && item.product && (
               <RatingButton
-                orderItemId={item.product.id}
+                orderItemId={item.id}
                 productId={item.product.id}
               />
             )}

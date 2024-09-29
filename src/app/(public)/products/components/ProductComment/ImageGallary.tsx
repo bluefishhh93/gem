@@ -4,12 +4,17 @@ import Image from "next/image";
 const imgNotFoundUrl = process.env.NEXT_PUBLIC_IMG_NOTFOUND as string;
 
 interface ImageGalleryProps {
-  images: string[];
+  images?: {
+    imageUrl: string;
+    publicId: string;
+  }[];
   onImageClick: (imageSrc: string) => void;
 }
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, onImageClick }) => {
-  if (images.length === 0) return null;
+  
+  console.log(images, 'image');
+  if (!images || images.length === 0) return null;
 
   return (
     <div className="mt-2 flex flex-wrap gap-2">
@@ -17,10 +22,10 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, onImageClick
         <div 
           key={index} 
           className="cursor-pointer w-20 h-20 relative"
-          onClick={() => onImageClick(image)}
+          onClick={() => onImageClick(image.imageUrl)}
         >
           <Image
-            src={image || imgNotFoundUrl}
+            src={image.imageUrl || imgNotFoundUrl}
             alt={`Feedback image ${index + 1}`}
             layout="fill"
             objectFit="cover"

@@ -5,20 +5,20 @@ import Cart from "@/components/cart/Cart";
 
 export default async function ProductPage({ params }: { params: { productId: string } }) {
 
-    if(!params.productId || isNaN(Number(params.productId))) {
+    if (!params.productId || isNaN(Number(params.productId))) {
         return notFound();
     }
 
     const product = await getProductByIdUseCase(Number(params.productId));
-
+    console.log(product?.reviews);
     if (!product) {
         return notFound();
     }
 
     return (
         <>
-        <ProductDetail product={product} />
-        <Cart />
+            <ProductDetail product={product as any} />
+            <Cart />
         </>
     )
 }

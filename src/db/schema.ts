@@ -244,6 +244,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   }),
   imgProducts: many(imgProducts),
   orderItems: many(orderItems),
+  reviews: many(reviews),
 }));
 
 export const ordersRelations = relations(orders, ({ many }) => ({
@@ -311,6 +312,26 @@ export const imgProductsRelations = relations(imgProducts, ({ one }) => ({
   }),
 }));
 
+export const imgReviewsRelations = relations(imgReviews, ({ one }) => ({
+  review: one(reviews, {
+    fields: [imgReviews.reviewId],
+    references: [reviews.id],
+  }),
+}));
+
+export const usersRelations = relations(users, ({ one }) => ({
+  profile: one(profiles, {
+    fields: [users.id],
+    references: [profiles.userId],
+  }),
+}));
+
+export const profilesRelations = relations(profiles, ({ one }) => ({
+  user: one(users, {
+    fields: [profiles.userId],
+    references: [users.id],
+  }),
+}));
 
 /**
  * newsletters - although the emails for the newsletter are tracked in Resend, it's beneficial to also track

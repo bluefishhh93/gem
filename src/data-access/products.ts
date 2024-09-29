@@ -1,5 +1,5 @@
 import { database } from "@/db";
-import { categories, Charm, imgProducts, NewProduct, OrderItem, Product, products } from "@/db/schema";
+import { categories, Charm, imgProducts, NewProduct, OrderItem, Product, products, reviews } from "@/db/schema";
 import { and, eq, gte, ilike, inArray, like, lte, sql } from "drizzle-orm";
 
 // export async function getProducts() {
@@ -21,7 +21,17 @@ export async function getProductById(id: number) {
   return await database.query.products.findFirst({
     where: eq(products.id, id),
     with: {
-      imgProducts: true
+      imgProducts: true,
+      reviews: {
+        with:{
+          user: {
+            with:{
+              profile: true
+            }
+          },
+          imgReviews: true,
+        }
+      }
     },
   })
 }

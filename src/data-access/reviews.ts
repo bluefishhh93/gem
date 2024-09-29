@@ -18,6 +18,7 @@ export async function createReview({
   images: { imageUrl: string, publicId: string }[];
 }) {
   return await database.transaction(async (tx) => {
+    console.log('orderItemId', orderItemId);
     const [review] = await tx.insert(reviews).values({
       userId,
       orderItemId,
@@ -50,7 +51,11 @@ export async function getProductReviews(productId: number, page: number = 1, lim
   const result = await database.query.reviews.findMany({
     where: eq(reviews.productId, productId),
     with: {
-      user: true,
+      user: {
+        with: {
+          profile: true
+        }
+      },
       imgReviews: true
     },
     limit: limit,
