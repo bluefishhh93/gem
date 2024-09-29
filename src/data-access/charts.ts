@@ -1,5 +1,6 @@
 import { database } from "@/db";
 import { orders, users, products, orderItems, categories } from "@/db/schema";
+import { OrderStatus } from "@/types/enums";
 import { and, count, desc, eq, gte, lt, lte, sql } from "drizzle-orm";
 
 export async function getTodayTotalOrders() {
@@ -22,7 +23,7 @@ export async function getTodayTotalIncome() {
         .where(and(gte(orders.createdAt, startOfDay),
             lte(orders.createdAt, endOfDay),
 
-            eq(orders.orderStatus, 'delivered')));
+            eq(orders.orderStatus, OrderStatus.COMPLETED)));
     return data;
 }
 
