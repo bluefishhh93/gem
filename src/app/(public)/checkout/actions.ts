@@ -63,6 +63,9 @@ const checkoutFormSchema = z.object({
     quantity: z.number(),
     subtotal: z.number(),
   })).optional(),
+  districtId: z.number(),
+  wardCode: z.string(),
+  provinceId: z.number().optional(),
   customBracelets: z.array(customBraceletSchema).optional()
 });
 

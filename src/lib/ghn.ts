@@ -14,12 +14,10 @@ const ghn = new Ghn({
 
 export default ghn;
 
-export const createOrderGHN = async (order: any): Promise<any> => {
-    const data = order.shipAddress.split(',').map((item: string) => item.trim());
-    const {districtId, wardCode, provinceId} = await returnAddressCodeGHN({
-        district: data[1],
-        ward: data[2],
-    });
+export const createOrderGHN = async (
+    {order , districtId, wardCode, provinceId}: 
+    {order: any, districtId: number, wardCode: string, provinceId?: number}
+    ): Promise<any> => {
     const payload: CreateOrder = {
         payment_type_id: order.paymentMethod === 'cod' ? 2 : 1,
         note: `Order #${order.id}`,

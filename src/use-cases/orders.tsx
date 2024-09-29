@@ -2,7 +2,7 @@
 import { Order } from "@/db/schema";
 import { OrderStatus, PaymentMethod, PaymentStatus, ShippingStatus } from "@/types/enums";
 import { InsufficientProductQuantityError } from "@/app/util";
-import { createOrder, getOrderById, getOrders, updateOrder , getOrdersByUser, getOrdersByUserAndStatus} from "@/data-access/orders";
+import { createOrder, getOrderById, getOrders, updateOrder, getOrdersByUser, getOrdersByUserAndStatus } from "@/data-access/orders";
 import { checkIneficient, getProductById } from "@/data-access/products";
 import { CustomBracelet } from "@/hooks/use-cart-store";
 import moment from "moment";
@@ -22,6 +22,9 @@ interface CreateOrderInput {
     orderItems?: OrderItem[];
     customBracelets?: CustomBracelet[];
     fee?: number;
+    districtId: number;
+    wardCode: string;
+    provinceId?: number;
 }
 
 interface OrderItem {
@@ -36,14 +39,19 @@ export async function checkIneficientUseCase(cartItems: { productId: number; qua
 
 export async function getOrdersByStatusUseCase(userId: number, status: string) {
     return await getOrdersByUserAndStatus(userId, status);
-  }
+}
 
 export async function getProductByIdUseCase(id: number) {
     return await getProductById(id);
 }
 
-export async function createOrderUseCase({orderData, customBracelets}: {orderData: CreateOrderInput, customBracelets?: CustomBracelet[]}): Promise<Order> {
-    
+export async function createOrderUseCase({
+    orderData,
+    customBracelets,
+    }: {
+        orderData: CreateOrderInput, customBracelets?: CustomBracelet[],
+    }): Promise<Order> {
+
     if (orderData.orderItems?.length) {
         const insufficientProducts = await checkIneficient(orderData.orderItems);
         if (insufficientProducts.length > 0) {
@@ -63,7 +71,7 @@ export async function createOrderUseCase({orderData, customBracelets}: {orderDat
                 name: orderData.name,
                 email: orderData.email,
                 phone: orderData.phone,
-                total ,
+                total,
                 shipAddress,
                 trackingNumber: orderData.trackingNumber,
                 paymentMethod: orderData.paymentMethod as PaymentMethod,
@@ -86,15 +94,20 @@ export async function createOrderUseCase({orderData, customBracelets}: {orderDat
 
         const newOrder = await getOrderByIdUseCase(order.id);
 
-        
+
         await sendEmail(
             newOrder!.email,
             `Order Confirmation for Order #${newOrder!.id}`,
-            <OrderConfirmationEmail order={newOrder as any}/>,
+            <OrderConfirmationEmail order={newOrder as any} />,
         );
 
 
-        const ghnOrder = await createOrderGHN(newOrder);
+        const ghnOrder = await createOrderGHN({
+            order: newOrder,
+            districtId: orderData.districtId,
+            wardCode: orderData.wardCode,
+            // provinceId: orderData.provinceId
+        });
         return order;
     } catch (error) {
         console.error('Error creating order:', error);
@@ -104,14 +117,14 @@ export async function createOrderUseCase({orderData, customBracelets}: {orderDat
 
 export async function cancelOrderUsecase(orderId: number) {
     const order = await getOrderById(orderId);
-    if(!order) {
+    if (!order) {
         throw new Error('Order not found');
     }
 
-    if(order.orderStatus === OrderStatus.PENDING) {
+    if (order.orderStatus === OrderStatus.PENDING) {
     }
 
-    if(order.paymentStatus === PaymentStatus.PAID) {
+    if (order.paymentStatus === PaymentStatus.PAID) {
         throw new Error('Order has already been paid');
     }
     // return await cancelOrder(orderId);
@@ -135,7 +148,7 @@ function calculateTotal(orderItems?: OrderItem[], customBracelets?: CustomBracel
     return itemsTotal + braceletTotal;
 }
 
-function formatShipAddress({address, district, ward}: CreateOrderInput): string {
+function formatShipAddress({ address, district, ward }: CreateOrderInput): string {
     return `${address}, ${district}, ${ward}`;
 }
 

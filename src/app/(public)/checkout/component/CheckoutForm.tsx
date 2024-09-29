@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -26,6 +26,8 @@ import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
 import CustomBraceletImage from '@/components/custom-bracelet-image';
 import { calculateTotal } from '@/app/util';
+import { useShippingFee } from '@/hooks/use-shipping-fee';
+import { debounce } from 'lodash';
 
 const checkoutFormSchema = z.object({
   name: z.string().trim().min(1, "Tên không được để trống"),
@@ -56,7 +58,6 @@ export const CheckoutForm = ({
 }) => {
   const { districts, wards, fetchDistricts, fetchWards } = useAddressData();
   const [paymentMethod, setPaymentMethod] = useState("cod");
-  const [shippingFee, setShippingFee] = useState(0);
   const [districtId, setDistrictId] = useState(0);
   const [wardCode, setWardCode] = useState("");
   const { cart, customBracelets, clearCart, setCheckoutPayload } = useCartStore();
@@ -64,7 +65,6 @@ export const CheckoutForm = ({
   const router = useRouter();
 
   useEffect(() => {
-    // Fetch initial data or perform side effects here
     fetchDistricts(203);
   }, []);
 
@@ -89,7 +89,6 @@ export const CheckoutForm = ({
     },
   });
 
-  const { execute: calculateShippingFee, error: calculateShippingFeeError, isPending: calculateShippingFeeIsPending } = useServerAction(calculateShippingFeeAction)
   const { execute, error, isPending } = useServerAction(
     paymentMethod === "cod" ? checkoutWithCOD : checkoutWithVNPay,
     {
@@ -106,43 +105,25 @@ export const CheckoutForm = ({
     }
   );
 
-  const calculateTotalWeight = useCallback(() => {
+  const calculateTotalWeight = useMemo(() => {
     const cartItemsWeight = cart.reduce((total, item) => total + item.quantity, 0) * 200;
     const customBraceletsWeight = customBracelets.reduce((total, item) => total + item.quantity, 0) * 200;
     return cartItemsWeight + customBraceletsWeight;
   }, [cart, customBracelets]);
 
-  const handleDistrictChange = async (districtId: number) => {
+  const { shippingFee, isLoading: isLoadingShippingFee } = useShippingFee(districtId, wardCode, 203, calculateTotalWeight);
+
+  const handleDistrictChange = useCallback(async (districtId: number) => {
     await fetchWards(districtId);
     form.setValue("ward", "");
     setDistrictId(districtId);
-    setShippingFee(0);
-  };
+    setWardCode("");
+  }, [fetchWards, form]);
 
-  const handleWardChange = async (wardCode: string) => {
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleWardChange = useCallback(debounce(async (wardCode: string) => {
     setWardCode(wardCode);
-    const totalWeight = calculateTotalWeight();
-    if (districtId && wardCode) {
-      try {
-        const data = await calculateShippingFee({
-          districtId: Number(districtId),
-          wardCode: wardCode,
-          weight: totalWeight, // Adjust this based on your actual order weight
-          length: 10,
-          width: 10,
-          height: 10,
-        });
-        setShippingFee(data[0]);
-      } catch (error) {
-        console.error('Failed to calculate shipping fee:', error);
-        toast({
-          variant: "destructive",
-          title: 'Lỗi tính phí vận chuyển',
-          description: 'Không thể tính phí vận chuyển. Vui lòng thử lại sau.',
-        });
-      }
-    }
-  };
+  }, 300), []);
 
   const onSubmit = async (data: z.infer<typeof checkoutFormSchema>) => {
     console.log(customBracelets, 'customBracelets')
@@ -151,13 +132,15 @@ export const CheckoutForm = ({
       userId: user?.id,
       orderItems: getItemList(cart),
       customBracelets: customBracelets.map((item) => ({
-        // id: item.id,
         quantity: item.quantity,
         price: item.price,
         stringType: item.stringType,
         charms: item.charms
       })),
-      fee: shippingFee
+      fee: shippingFee || 0,
+      districtId: districtId,
+      wardCode: wardCode,
+      provinceId: 203,
     });
 
     if (result[0] && result[0].success) {
@@ -171,7 +154,7 @@ export const CheckoutForm = ({
           stringType: item.stringType,
           charms: item.charms
         })),
-        fee: shippingFee
+        fee: shippingFee || 0
       });
       router.push(result[0].redirectUrl as string);
     }
@@ -284,7 +267,7 @@ export const CheckoutForm = ({
                 </CardContent>
               </Card>
 
-              <Button type="submit" className="w-full" disabled={isPending}>
+              <Button type="submit" className="w-full" disabled={isPending || isLoadingShippingFee}>
                 {isPending ? "Đang xử lý..." : "Đặt hàng"}
               </Button>
             </form>
@@ -331,10 +314,10 @@ export const CheckoutForm = ({
                   {shippingFee > 0 && (
                     <div className="flex text-sm justify-between">
                       <span>Phí vận chuyển:</span>
-                      <span>{vietnamCurrency(shippingFee)}</span>
+                      <span>{isLoadingShippingFee ? 'Đang tính...' : vietnamCurrency(shippingFee)}</span>
                     </div>
                   )}
-                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(calculateTotal(getItemList(cart), customBracelets) + shippingFee)}</span></p>
+                  <p className="flex justify-between"><span>Tổng cộng:</span> <span className="font-bold">{vietnamCurrency(calculateTotal(getItemList(cart), customBracelets) + (shippingFee || 0))}</span></p>
                 </div>
               </div>
             </CardContent>
