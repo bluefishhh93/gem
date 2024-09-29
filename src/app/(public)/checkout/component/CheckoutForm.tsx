@@ -126,7 +126,6 @@ export const CheckoutForm = ({
   }, 300), []);
 
   const onSubmit = async (data: z.infer<typeof checkoutFormSchema>) => {
-    console.log(customBracelets, 'customBracelets')
     const result = await execute({
       ...data,
       userId: user?.id,
@@ -134,7 +133,7 @@ export const CheckoutForm = ({
       customBracelets: customBracelets.map((item) => ({
         quantity: item.quantity,
         price: item.price,
-        stringType: item.stringType,
+        string: item.string,
         charms: item.charms
       })),
       fee: shippingFee || 0,
@@ -151,7 +150,7 @@ export const CheckoutForm = ({
           id: item.id,
           quantity: item.quantity,
           price: item.price,
-          stringType: item.stringType,
+          string: item.string,
           charms: item.charms
         })),
         fee: shippingFee || 0
@@ -301,10 +300,10 @@ export const CheckoutForm = ({
                   <div key={item.id} className="flex items-center space-x-4">
                     <CustomBraceletImage
                       charms={item.charms}
-                      stringType={item.stringType}
+                      stringType={item.string}
                     />
                     <div>
-                      <p className="font-semibold">{item.stringType.material} - {item.stringType.color}</p>
+                      <p className="font-semibold">{item.string.material} - {item.string.color}</p>
                       <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
                       <p className="text-sm font-medium">{vietnamCurrency(item.price * item.quantity)}</p>
                     </div>

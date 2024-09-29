@@ -22,13 +22,15 @@ import {
 } from "@/components/ui/table";
 import { vietnamCurrency } from "@/util/util";
 import { OrderType } from "./page";
+import CustomBraceletImage from "@/components/custom-bracelet-image";
+import Image from "next/image";
 
 interface ViewOrderDialogProps {
     selectedOrder: OrderType;
 };
 
 const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
-    console.log(selectedOrder);
+    console.log(selectedOrder, 'hehe');
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -90,6 +92,7 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead>Image</TableHead>
                                         <TableHead>Item</TableHead>
                                         <TableHead>Quantity</TableHead>
                                         <TableHead>Price</TableHead>
@@ -99,14 +102,30 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
                                 <TableBody>
                                     {selectedOrder.orderItems.map((item, index) => (
                                         <TableRow key={index}>
+                                            <TableCell>
+                                                {item.product ? (
+                                                    <Image
+                                                        src={item.product.imgProducts[0]?.imageUrl || "/path/to/default-image.jpg"}
+                                                        alt={item.product.name}
+                                                        width={50}
+                                                        height={50}
+                                                        className="rounded-md object-cover"
+                                                    />
+                                                ) : item.customBracelet ? (
+                                                    <CustomBraceletImage
+                                                        stringType={item.customBracelet.string}
+                                                        charms={item.customBracelet.charms}
+                                                    />
+                                                ) : (
+                                                    <div className="w-[50px] h-[50px] bg-gray-200 rounded-md"></div>
+                                                )}
+                                            </TableCell>
                                             <TableCell>{item.product?.name || `Vòng tay custom ${item.customBracelet?.id}`}</TableCell>
                                             <TableCell>{item.quantity}</TableCell>
                                             <TableCell>
                                                 {vietnamCurrency(item.product?.price || item.customBracelet?.totalPrice!)}
                                             </TableCell>
-                                            <TableCell>{    
-                                                vietnamCurrency(item.subtotal)
-                                            }</TableCell>
+                                            <TableCell>{vietnamCurrency(item.subtotal)}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

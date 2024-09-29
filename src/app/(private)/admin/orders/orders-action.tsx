@@ -17,8 +17,6 @@ export function OrdersAction({ order }: {
     order: any;
 }) {
     const [isOpen, setIsOpen] = useState(false);
-    console.log(order);
-
     return (
         <>
             {/* <Dialog

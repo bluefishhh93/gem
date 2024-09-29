@@ -82,7 +82,7 @@ export async function createOrderUseCase({
             customBraceletData: customBracelets?.map(bracelet => ({
                 // id: bracelet.id,
                 orderId,
-                stringId: bracelet.stringType.id,
+                stringId: bracelet.string.id,
                 price: bracelet.price,
                 quantity: bracelet.quantity,
                 charms: bracelet.charms.map(charm => ({

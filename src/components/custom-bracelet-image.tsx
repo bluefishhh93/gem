@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Search } from "lucide-react";
 
 const CHARM_POSITIONS = 30;
@@ -21,6 +20,11 @@ interface CustomBraceletImageProps {
         name: string;
         imageUrl: string;
         position: number;
+        charm?: {
+            id: number;
+            name: string;
+            imageUrl: string;
+        };
     }[];
     size?: number;
     defaultUrl?: string;
@@ -36,28 +40,25 @@ export default function CustomBraceletImage({
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger>
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger>
-                            <div className="relative cursor-pointer group" onClick={() => setIsOpen(true)}>
-                                <Image
-                                    src={defaultUrl}
-                                    alt="Custom bracelet"
-                                    width={size}
-                                    height={size}
-                                    className="rounded-md object-cover transition-opacity duration-300 group-hover:opacity-75"
-                                />
-                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <Search className="w-6 h-6 text-secondary-600" />
-                                </div>
-                            </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                            <p>Click để xem chi tiết</p>
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+            <DialogTrigger asChild>
+            <div 
+                    className="relative cursor-pointer group"
+                    onClick={() => setIsOpen(true)}
+                >
+                    <Image
+                        src={defaultUrl}
+                        alt="Custom bracelet"
+                        width={size}
+                        height={size}
+                        className="rounded-md object-cover transition-opacity duration-300 group-hover:opacity-75"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Search className="w-6 h-6 text-secondary-600" />
+                    </div>
+                    <div className="absolute top-0 left-1/2 transform  opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black text-white text-xs rounded py-1 px-2 pointer-events-none whitespace-nowrap">
+                        Click để xem chi tiết
+                    </div>
+                </div>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <div className="flex flex-col items-center">
@@ -85,8 +86,8 @@ export default function CustomBraceletImage({
                                     }}
                                 >
                                     <Image 
-                                        src={charm.imageUrl} 
-                                        alt={charm.name} 
+                                        src={charm.imageUrl || charm.charm?.imageUrl!} 
+                                        alt={`charm ${charm.name}`} 
                                         width={30} 
                                         height={30} 
                                         className="object-cover rounded-full h-8 w-8"

@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export interface CustomBracelet {
     id?: number;
-    stringType: {
+    string: {
         id: number;
         material: string;
         color: string;

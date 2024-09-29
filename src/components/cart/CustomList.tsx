@@ -9,8 +9,8 @@ export default function CustomList({ customBracelets }: CustomListProps) {
     return (
         <ul className="grid gap-4 px-6">
             {
-                customBracelets.map((customBracelet) => (
-                    <li key={customBracelet.id}>
+                customBracelets.map((customBracelet, index) => (
+                    <li key={index}>
                         <CustomItem customBracelet={customBracelet} />
                     </li>
                 ))

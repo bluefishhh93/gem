@@ -32,7 +32,7 @@ const customBraceletSchema = z.object({
   // id: z.number(),
   quantity: z.number(),
   price: z.number(),
-  stringType: z.object({
+  string: z.object({
     id: z.number(),
     material: z.string(),
     color: z.string(),

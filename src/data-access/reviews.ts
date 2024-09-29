@@ -18,7 +18,6 @@ export async function createReview({
   images: { imageUrl: string, publicId: string }[];
 }) {
   return await database.transaction(async (tx) => {
-    console.log('orderItemId', orderItemId);
     const [review] = await tx.insert(reviews).values({
       userId,
       orderItemId,

@@ -95,7 +95,7 @@ export function OrderConfirmationEmail({ order }: { order: OrderType }) {
 
             <Section className="mb-[32px] text-center">
               <Link
-                href={`${BASE_URL}/dashboard/orders`}
+                href={`${BASE_URL}/dashboard/purchase`}
                 target="_blank"
                 className="bg-[#2754C5] text-white px-6 py-3 rounded text-[14px] font-medium no-underline"
               >

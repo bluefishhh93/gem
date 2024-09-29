@@ -69,7 +69,7 @@ async function handleCustomBracelet(tx: any, orderId: number, customBraceletData
   if (customBraceletData.charms.length) {
     await tx.insert(braceletCharms).values(
       customBraceletData.charms.map(charm => ({
-        customBraceletId: newCustomBracelet.id,
+        braceletId: newCustomBracelet.id,
         charmId: charm.id,
         position: charm.position
       }))
@@ -98,7 +98,12 @@ export async function getOrderById(id: number) {
       orderItems: {
         with: {
           product: true,
-          customBracelet: true,
+          customBracelet: {
+            with: {
+              charms: true,
+              string: true,
+            }
+          },
         }
       },
 
@@ -122,8 +127,21 @@ export async function getOrders() {
     with: {
       orderItems: {
         with: {
-          product: true,
-          customBracelet: true,
+          product: {
+            with: {
+              imgProducts: true,
+            }
+          },
+          customBracelet: {
+            with: {
+              charms: {
+                with: {
+                  charm: true,
+                }
+              },
+              string: true,
+            }
+          },
         }
       },
     }

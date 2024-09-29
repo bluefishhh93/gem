@@ -10,7 +10,6 @@ export default async function ProductPage({ params }: { params: { productId: str
     }
 
     const product = await getProductByIdUseCase(Number(params.productId));
-    console.log(product?.reviews);
     if (!product) {
         return notFound();
     }

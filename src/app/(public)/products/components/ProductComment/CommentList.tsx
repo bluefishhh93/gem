@@ -11,7 +11,6 @@ interface CommentListProps {
 
 export const CommentList: React.FC<CommentListProps> = ({ comments, onImageClick }) => {
   // const user = await getCurrentUser();
-  console.log(comments)
   return (
     <div className="space-y-6">
       {comments.map((comment, index) => (

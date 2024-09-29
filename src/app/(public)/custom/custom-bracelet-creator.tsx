@@ -60,7 +60,7 @@ export function CustomBraceletCreator({ initialCharms, initialStrings }: { initi
 
     const braceletData = {
       // id: braceletId,
-      stringType: {
+      string: {
         ...selectedString,
         imageUrl: selectedString.imageUrl
       },      charms: placedCharms.map(pc => {

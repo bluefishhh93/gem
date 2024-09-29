@@ -11,7 +11,6 @@ export default async function PurchasePage() {
     }
 
     const orders = await getOrdersByUserUseCase(user.id);
-    console.log(orders[0].orderItems);
     return (
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <Breadcrumb items={[{ label: "Trang chủ", link: "/" }, { label: "Lịch sử mua hàng" }]} />

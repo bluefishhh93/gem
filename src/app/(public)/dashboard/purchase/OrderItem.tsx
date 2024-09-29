@@ -27,7 +27,7 @@ interface OrderItemType {
       imageUrl: string;
       position: number;
     }[];
-    stringType: {
+    string: {
       material: string;
       color: string;
       imageUrl: string;

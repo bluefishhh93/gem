@@ -10,7 +10,7 @@ import { CheckoutForm } from '../checkout/component/CheckoutForm';
 
 interface CustomBracelet {
   id: string;
-  stringType: {
+  string: {
     id: number;
     material: string;
     color: string;
@@ -28,7 +28,7 @@ interface CustomBracelet {
 export default function CustomCheckout() {
   const [customBracelet, setCustomBracelet] = useState<CustomBracelet>({
     id: 'custom-1',
-    stringType: { id: 1, material: 'Leather', color: 'Brown', price: 50000 },
+    string: { id: 1, material: 'Leather', color: 'Brown', price: 50000 },
     charms: [
       { id: 1, name: 'Heart', price: 20000, imageUrl: '/images/heart-charm.jpg' },
       { id: 2, name: 'Star', price: 25000, imageUrl: '/images/star-charm.jpg' },
@@ -70,7 +70,7 @@ export default function CustomCheckout() {
   };
 
   const calculateTotal = () => {
-    const customBraceletTotal = (customBracelet.stringType.price + 
+    const customBraceletTotal = (customBracelet.string.price + 
       customBracelet.charms.reduce((sum, charm) => sum + charm.price, 0)) * customBracelet.quantity;
     const cartTotal = cart.reduce((sum, item) => sum + item.salePrice * item.quantity, 0);
     return customBraceletTotal + cartTotal;
@@ -94,11 +94,11 @@ export default function CustomCheckout() {
                   className="rounded-md"
                 />
                 <div className="flex-grow">
-                  <h3 className="font-semibold">{customBracelet.stringType.material} Bracelet</h3>
+                  <h3 className="font-semibold">{customBracelet.string.material} Bracelet</h3>
                   <p className="text-sm text-gray-500">
-                    {customBracelet.charms.length} charms • {customBracelet.stringType.color}
+                    {customBracelet.charms.length} charms • {customBracelet.string.color}
                   </p>
-                  <p className="font-medium">{vietnamCurrency(customBracelet.stringType.price + 
+                  <p className="font-medium">{vietnamCurrency(customBracelet.string.price + 
                     customBracelet.charms.reduce((sum, charm) => sum + charm.price, 0))}</p>
                 </div>
                 <div className="flex items-center space-x-2">

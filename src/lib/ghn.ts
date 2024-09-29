@@ -109,7 +109,6 @@ export async function calculateShippingFee({
         coupon: null,
     };
 
-    console.log(payload);
 
     const response = await fetch(`${process.env.GHN_API_URL}shipping-order/fee`, {
         method: 'POST',
@@ -128,7 +127,6 @@ export async function calculateShippingFee({
     }
     
     const {data} = await response.json();
-    console.log(data.total, 'total');
     return data.total;
 }
 

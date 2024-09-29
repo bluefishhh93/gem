@@ -13,7 +13,6 @@ interface ImageGalleryProps {
 
 export const ImageGallery: React.FC<ImageGalleryProps> = ({ images, onImageClick }) => {
   
-  console.log(images, 'image');
   if (!images || images.length === 0) return null;
 
   return (
