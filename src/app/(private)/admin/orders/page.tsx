@@ -17,6 +17,7 @@ export interface OrderType {
     shipDate: Date | null;
     paymentMethod: string;
     orderItems: {
+        id: number;
         quantity: number;
         subtotal: number;
         product?: {

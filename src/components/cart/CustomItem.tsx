@@ -39,7 +39,7 @@ export function CustomItem({ customBracelet }: { customBracelet: CustomBracelet 
     <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4">
       <CustomBraceletImage stringType={customBracelet.stringType} charms={customBracelet.charms} />
       <div className="grid gap-1">
-        <h4 className="font-medium">{`Vòng tay custom ${customBracelet.id}`}</h4>
+        <h4 className="font-medium">{`Vòng tay custom`}</h4>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           {
             new Intl.NumberFormat("vi", {

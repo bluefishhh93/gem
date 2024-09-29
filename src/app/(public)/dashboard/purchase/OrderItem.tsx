@@ -73,7 +73,7 @@ const OrderItems: React.FC<OrderItemsProps> = ({ items, status }) => {
           </div>
           <div className="flex-grow min-w-0">
             <p className="font-medium text-sm truncate">
-              {item.isCustomBracelet ? `Vòng tay custom ${item.customBracelet?.id}` : item.product?.name || "Unknown Product"}
+              {item.isCustomBracelet ? `Vòng tay custom` : item.product?.name || "Unknown Product"}
             </p>
             <p className="text-xs text-gray-500">
               {item.quantity} x {vietnamCurrency(item.subtotal / item.quantity)}
