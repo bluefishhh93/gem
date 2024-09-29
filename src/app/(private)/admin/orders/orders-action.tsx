@@ -14,9 +14,10 @@ import { OrderType } from "./page";
 import { UpdateOrderForm } from "./update-order-form";
 
 export function OrdersAction({ order }: {
-    order: OrderType;
+    order: any;
 }) {
     const [isOpen, setIsOpen] = useState(false);
+    console.log(order);
 
     return (
         <>

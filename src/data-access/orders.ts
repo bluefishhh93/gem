@@ -123,6 +123,7 @@ export async function getOrders() {
       orderItems: {
         with: {
           product: true,
+          customBracelet: true,
         }
       },
     }

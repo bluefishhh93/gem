@@ -28,7 +28,7 @@ interface ViewOrderDialogProps {
 };
 
 const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
-
+    console.log(selectedOrder);
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -41,7 +41,7 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
                     <DialogTitle>Order Details</DialogTitle>
                     <DialogDescription>
                         Order #{selectedOrder.id} -{" "}
-                        {new Date(selectedOrder.createAt).toLocaleString()}
+                        {new Date(selectedOrder.createdAt).toLocaleString()}
                     </DialogDescription>
                 </DialogHeader>
                 <Tabs defaultValue="customer-info" className="w-full">
@@ -99,12 +99,12 @@ const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
                                 <TableBody>
                                     {selectedOrder.orderItems.map((item, index) => (
                                         <TableRow key={index}>
-                                            <TableCell>{item.product.name}</TableCell>
+                                            <TableCell>{item.product?.name || `Vòng tay custom ${item.customBracelet?.id}`}</TableCell>
                                             <TableCell>{item.quantity}</TableCell>
                                             <TableCell>
-                                                {vietnamCurrency(item.product.price)}
+                                                {vietnamCurrency(item.product?.price || item.customBracelet?.totalPrice!)}
                                             </TableCell>
-                                            <TableCell>{
+                                            <TableCell>{    
                                                 vietnamCurrency(item.subtotal)
                                             }</TableCell>
                                         </TableRow>
