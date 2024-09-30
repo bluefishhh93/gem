@@ -48,22 +48,24 @@ export async function getProductByIdUseCase(id: number) {
 export async function createOrderUseCase({
     orderData,
     customBracelets,
-    }: {
-        orderData: CreateOrderInput, customBracelets?: CustomBracelet[],
-    }): Promise<Order> {
+}: {
+    orderData: CreateOrderInput,
+    customBracelets?: CustomBracelet[],
+}): Promise<Order> {
+    try {
+        const insufficientProducts = orderData.orderItems?.length ? await checkIneficient(orderData.orderItems) : [];
 
-    if (orderData.orderItems?.length) {
-        const insufficientProducts = await checkIneficient(orderData.orderItems);
         if (insufficientProducts.length > 0) {
             throw new InsufficientProductQuantityError();
         }
-    }
 
-    const orderId = generateOrderId();
-    const userId = orderData.userId || generateUserId();
-    const total = calculateTotal(orderData.orderItems, customBracelets) + (orderData.fee || 0);
-    const shipAddress = formatShipAddress(orderData);
-    try {
+        const [orderId, userId, total, shipAddress] = await Promise.all([
+            generateOrderId(),
+            orderData.userId || generateUserId(),
+            calculateTotal(orderData.orderItems, customBracelets) + (orderData.fee || 0),
+            formatShipAddress(orderData)
+        ]);
+
         const order = await createOrder({
             orderData: {
                 id: orderId,
@@ -80,7 +82,6 @@ export async function createOrderUseCase({
             },
             orderItemsData: orderData.orderItems,
             customBraceletData: customBracelets?.map(bracelet => ({
-                // id: bracelet.id,
                 orderId,
                 stringId: bracelet.string.id,
                 price: bracelet.price,
@@ -92,22 +93,20 @@ export async function createOrderUseCase({
             }))
         });
 
-        const newOrder = await getOrderByIdUseCase(order.id);
+        // Move these to background jobs if possible
+        Promise.all([
+            sendEmail(
+                order.email,
+                `Order Confirmation for Order #${order.id}`,
+                <OrderConfirmationEmail order={order as any} />
+            ),
+            createOrderGHN({
+                order,
+                districtId: orderData.districtId,
+                wardCode: orderData.wardCode,
+            })
+        ]).catch(error => console.error('Error in background tasks:', error));
 
-
-        await sendEmail(
-            newOrder!.email,
-            `Order Confirmation for Order #${newOrder!.id}`,
-            <OrderConfirmationEmail order={newOrder as any} />,
-        );
-
-
-        const ghnOrder = await createOrderGHN({
-            order: newOrder,
-            districtId: orderData.districtId,
-            wardCode: orderData.wardCode,
-            // provinceId: orderData.provinceId
-        });
         return order;
     } catch (error) {
         console.error('Error creating order:', error);
