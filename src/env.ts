@@ -37,9 +37,6 @@ export const env = createEnv({
     GHN_SHOP_PROVINCE_ID: z.string().min(1),
 
     OPENAI_API_KEY: z.string().min(1),
-    AI_API_URL: z.string().min(1),
-    GROQ_API_KEY: z.string().min(1),
-    GOOGLE_AI_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
@@ -86,8 +83,5 @@ export const env = createEnv({
     GHN_SHOP_DISTRICT_ID: process.env.GHN_SHOP_DISTRICT_ID,
     GHN_SHOP_WARD_CODE: process.env.GHN_SHOP_WARD_CODE,
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-    AI_API_URL: process.env.AI_API_URL,
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
-    GOOGLE_AI_KEY: process.env.GOOGLE_AI_KEY,
   },
 });
