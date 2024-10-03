@@ -9,6 +9,7 @@ import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
 import { useReducer, useState } from "react";
 import ProductComment, { ReviewType } from "../components/ProductComment/ProductComment";
+import React from "react";
 
 interface ProductDetail {
     id: number;

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { BookIcon, SearchIcon, UsersIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import React from "react";
 
 const HeaderButton = ({ href, label, isActive }: { href: string, label: string, isActive: boolean }) => {
   return (
@@ -41,6 +42,7 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
           {/* <HeaderButton href={"/promotion"} label={"Khuyến mãi"} isActive={pathname === '/promotion'} />          */}
           <HeaderButton href={"/about"} label={"Giới thiệu"} isActive={pathname === '/about'} />
           <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname.startsWith('/blogs')} />
+          <HeaderButton href={"/astrology"} label={"Tử vi"} isActive={pathname.startsWith('/astrology')} />
         </div>
       )}
 
@@ -51,6 +53,7 @@ export function HeaderLinks({ isAuthenticated }: { isAuthenticated: boolean }) {
           {/* <HeaderButton href={"/promotion"} label={"Khuyến mãi"} isActive={pathname === '/promotion'} />          */}
           <HeaderButton href={"/about"} label={"Giới thiệu"} isActive={pathname === '/about'} />
           <HeaderButton href={"/blogs"} label={"Bài viết"} isActive={pathname.startsWith('/blogs')} />
+          <HeaderButton href={"/astrology"} label={"Tử vi"} isActive={pathname.startsWith('/astrology')} />
         </div>
       )}
     </>

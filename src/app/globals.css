@@ -99,6 +99,9 @@
     @apply bg-background text-foreground;
     font-family: var(--font-libre_franklin), sans-serif;
   }
+  /* body {
+    @apply min-h-screen bg-gradient-to-b from-secondary-50 to-white dark:from-gray-900 dark:to-gray-800;
+  } */
 
   a {
     @apply text-foreground;

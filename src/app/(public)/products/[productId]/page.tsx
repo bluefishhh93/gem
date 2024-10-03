@@ -1,3 +1,4 @@
+import React from "react";
 import { getProductByIdUseCase } from "@/use-cases/products";
 import ProductDetail from "./product-detail";
 import { notFound } from "next/navigation";

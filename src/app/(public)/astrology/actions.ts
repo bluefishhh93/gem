@@ -25,13 +25,7 @@ interface RecommendedProduct {
   name: string;
   price: number;
   imageUrl: string;
-}
-
-interface Product {
-  id: number;
-  name: string;
-  price: number;
-  imageUrl: string;
+  description: string;
 }
 
 const inputSchema = z.object({
@@ -49,15 +43,22 @@ const inputSchema = z.object({
   gender: z.enum(["male", "female"]),
   viewMonth: z.number(),
   viewYear: z.number(),
+  products: z.array(z.object({
+    id: z.number(),
+    name: z.string(),
+    imageUrl: z.string(),
+    description: z.string(),
+    price: z.number(),
+  })),
 });
+
 
 export const getAstrologyPredictionAction = unauthenticatedAction
   .createServerAction()
   .input(inputSchema)
   .handler(async ({ input }) => {
-    const products = await getProductsUseCase();
     const { name, birthday, birthTime, gender, viewMonth, viewYear } = input;
-    
+
     const prompt = `Bạn là một chuyên gia xem tử vi chuyên nghiệp. Với những thông tin sau:
     Tên: ${name}
     Ngày sinh: ${birthday.day}/${birthday.month}/${birthday.year} (${birthday.calendar})
@@ -68,8 +69,8 @@ export const getAstrologyPredictionAction = unauthenticatedAction
     Hãy phân tích lá số đó và trả về kết quả với các mục: sức khỏe, gia đạo, tình duyên, công danh, sự nghiệp, tài lộc, các mối quan hệ và vận hạn, biến cố trong cuộc đời. Mỗi mục chứa một đoạn văn ngắn gọn.
     
     Dựa trên phân tích tử vi, hãy đề xuất 3 sản phẩm phù hợp từ danh sách sau:
-    ${products.map(p => `- ID ${p.id}: ${p.name}`).join('\n')}
-    
+      ${input.products.map(p => `- ID ${p.id}: ${p.name} : ${p.description}`).join('\n')}
+  
     Hãy định dạng phản hồi của bạn như một đối tượng JSON với các trường sau:
     
     {
@@ -99,7 +100,7 @@ export const getAstrologyPredictionAction = unauthenticatedAction
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "gpt-3.5-turbo-0125",
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -114,13 +115,13 @@ export const getAstrologyPredictionAction = unauthenticatedAction
         max_tokens: 1000,
         response_format: { type: "json_object" },
       });
-    
+
       const response = completion.choices[0].message.content;
       const parsedResponse = JSON.parse(response || '{}') as AstrologyPrediction;
 
       // Enhance the recommended products with full product details
       const enhancedRecommendedProducts = parsedResponse.recommendedProducts.map((rec) => {
-        const fullProduct = products.find(p => p.id === rec.id);
+        const fullProduct = input.products.find(p => p.id === rec.id);
         return {
           ...rec,
           ...fullProduct // This adds all product details (name, price, imageUrl, etc.)

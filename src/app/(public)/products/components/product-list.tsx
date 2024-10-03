@@ -1,3 +1,4 @@
+import React from 'react';
 import Pagination from './pagination';
 import ProductListContent from './ProductListContent';
 import { getShopProductsUseCase } from '@/use-cases/products';
@@ -20,7 +21,7 @@ interface Product {
 }
 export default async function ProductList({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const page = Number(searchParams.page) || 1;
-  const pageSize = 12;
+  const pageSize = 6;
   const search = searchParams.search as string | undefined;
   const category = searchParams.category ? Number(searchParams.category) : undefined;
   const minPrice = Number(searchParams.minPrice) || undefined;

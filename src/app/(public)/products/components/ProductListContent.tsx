@@ -68,10 +68,10 @@ function ProductItem({ product }: { product: Product }) {
           )}
         </div>
       </Link>
-      <div className="p-4 bg-background dark:bg-gray-900">
+      <div className="p-4 bg-background dark:bg-gray-900 bg-gradient-to-b from-secondary-50 to-white dark:from-gray-900 dark:to-gray-800">
         <h3 className="text-xl font-bold dark:text-white truncate">{product.name}</h3>
         <div className="h-12 mt-2">
-          <p className="text-sm text-muted-foreground dark:text-gray-300 line-clamp-2">
+          <p className="text-sm text-muted-foreground dark:text-gray-300 line-clamp-2 ">
             {product.description}
           </p>
         </div>
