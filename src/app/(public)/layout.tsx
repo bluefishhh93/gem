@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Header } from "./_header/header";
 import Footer from "@/components/footer";
 import { FloatingContactButtons } from "@/components/contact-button";
+import  StarryBackground  from "@/components/starry-background";
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -56,7 +57,8 @@ export default async function RootLayout({
         <Providers>
           <NextTopLoader color="var(--loader-color)" showSpinner={false} />
           <Header />
-          <div className="container mx-auto w-full py-12">{children}</div>
+          <StarryBackground />
+          <main className="flex-grow relative z-10">{children}</main>
           <Footer />
           <FloatingContactButtons />
         </Providers>

@@ -8,7 +8,7 @@ import { useServerAction } from "zsa-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { Loader2, MoonIcon, SunIcon } from "lucide-react";
+import { Loader2, MoonIcon, Sparkles, SunIcon } from "lucide-react";
 
 import { getLunarDate } from "@/util/date";
 import { getAstrologyPredictionAction } from "./actions";
@@ -29,6 +29,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React from "react";
 import { Calendar, Clock, Moon, User } from "lucide-react";
 import { ProductType } from "@/hooks/use-cart-store";
+import StarryBackground from "@/components/starry-background";
 
 
 const keyTranslations = {
@@ -40,7 +41,7 @@ const keyTranslations = {
     finance: "Tài chính",
     relationships: "Các mối quan hệ",
     luck: "May mắn"
-  };
+};
 
 
 // Define types for the API response
@@ -122,7 +123,7 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
     const onSubmit: SubmitHandler<AstrologyFormValues> = async (values) => {
         if (activeStep !== 4) return; // Only submit if on the last step
         try {
-            const response = await execute({...values, products});
+            const response = await execute({ ...values, products });
             if (response && response[0]) {
                 setResult(response[0].result);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -140,7 +141,7 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
         if (error.message.includes("birthday")) return 2;
         if (error.message.includes("birthTime")) return 3;
         if (error.message.includes("viewMonth") || error.message.includes("viewYear")) return 4;
-        return 4; 
+        return 4;
     }
 
     const steps = [
@@ -151,34 +152,73 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-secondary-50 to-white dark:from-gray-900 dark:to-gray-800">
-            <div className="container mx-auto px-4 py-12">
+        <div className="min-h-screen bg-gradient-to-br relative overflow-hidden">
+            {/* <StarryBackground /> */}
+            {/* Enhanced animated stars background */}
+            {/* <div className="absolute inset-0 overflow-hidden">
+                <div className="stars-container absolute inset-0">
+                    {[...Array(100)].map((_, i) => (
+                        <motion.div
+                            key={i}
+                            className="absolute w-1 h-1 bg-white rounded-full"
+                            initial={{ opacity: 0.1 + Math.random() * 0.5 }}
+                            animate={{
+                                opacity: [0.1 + Math.random() * 0.5, 0.8, 0.1 + Math.random() * 0.5],
+                                scale: [1, 1.2, 1],
+                                rotate: [0, 360]
+                            }}
+                            transition={{
+                                duration: 2 + Math.random() * 5,
+                                repeat: Infinity,
+                                repeatType: "reverse"
+                            }}
+                            style={{
+                                top: `${Math.random() * 100}%`,
+                                left: `${Math.random() * 100}%`,
+                            }}
+                        />
+                    ))}
+                </div>
+            </div> */}
+            <div className="container mx-auto px-4 py-12 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}  
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                     className="max-w-3xl mx-auto"
                 >
                     <div className="text-center mb-12">
-                        <h1 className={`${playfairDisplay.className} text-5xl font-bold text-secondary-900 dark:text-purple-300 mb-4`}>
+                        <motion.div
+                            initial={{ scale: 0.9 }}
+                            animate={{ scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="inline-block mb-6"
+                        >
+                            <Sparkles className="w-16 h-16 text-purple-300" />
+                        </motion.div>
+                        <h1 className={`${playfairDisplay.className} text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-300 to-pink-200 mb-4`}>
                             Xem Tử Vi
                         </h1>
-                        <p className="text-gray-600 dark:text-gray-300 text-lg">
+                        <p className="text-purple-200 text-lg">
                             Khám phá vận mệnh và những dự đoán cho tương lai của bạn
                         </p>
                     </div>
 
-                    <Card className="backdrop-blur-sm bg-white/90 dark:bg-gray-800/90 shadow-xl">
+                    <Card className="backdrop-blur-md bg-white/10 shadow-2xl border border-purple-500/20">
                         <CardHeader>
                             <div className="flex justify-between items-center mb-6">
                                 {steps.map((step, index) => (
                                     <motion.div
                                         key={index}
-                                        className={`flex flex-col items-center ${activeStep === index + 1 ? 'text-secondary-600 dark:text-purple-400' : 'text-gray-400 dark:text-gray-500'
+                                        className={`flex flex-col items-center ${activeStep === index + 1
+                                            ? 'text-purple-300'
+                                            : 'text-gray-400'
                                             }`}
                                         whileHover={{ scale: 1.05 }}
                                     >
-                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${activeStep === index + 1 ? 'bg-secondary-100 dark:bg-purple-900' : 'bg-gray-100 dark:bg-gray-700'
+                                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${activeStep === index + 1
+                                            ? 'bg-purple-900/50 border-2 border-purple-400'
+                                            : 'bg-gray-800/50 border border-gray-600'
                                             }`}>
                                             <step.icon className="w-5 h-5" />
                                         </div>
@@ -200,9 +240,7 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                     <FormLabel className="text-lg dark:text-gray-200">Họ và tên</FormLabel>
                                                     <FormControl>
                                                         <Input
-                                                            placeholder="Nhập họ và tên của bạn"
-                                                            {...field}
-                                                            className="h-12 text-lg dark:bg-gray-700 dark:text-white"
+                                                            className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
                                                         />
                                                     </FormControl>
                                                     <FormMessage />
@@ -253,8 +291,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Ngày"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -272,8 +310,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Tháng"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -291,8 +329,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Năm"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -348,8 +386,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Giờ"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -367,8 +405,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Phút"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -392,8 +430,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Tháng xem"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>)}
@@ -410,8 +448,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 placeholder="Năm xem"
                                                                 {...field}
                                                                 onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="h-12 text-lg"
-                                                            />
+                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                                />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -426,8 +464,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                             variant="outline"
                                             onClick={() => setActiveStep(Math.max(1, activeStep - 1))}
                                             disabled={activeStep === 1}
-                                            className="dark:bg-gray-700 dark:text-white"
-                                        >
+                                            className="border-purple-500/30 text-purple-300 hover:bg-purple-900/50
+                                            transition-all duration-300"                                        >
                                             Quay lại
                                         </Button>
                                         {activeStep < 4 && (
@@ -515,7 +553,7 @@ const AstrologyResult = ({ result }: { result: AstrologyPrediction }) => {
                             whileHover={{ scale: 1.03 }}
                             transition={{ duration: 0.2 }}
                         >
-                            <Card className="overflow-hidden hover:shadow-xl transition-shadow dark:bg-gray-800">
+                            <Card className="overflow-hidden hover:shadow-2xl transition-shadow duration-300 ease-in-out dark:bg-gray-700">
                                 <div className="relative h-64">
                                     <Image
                                         src={product.imageUrl}
@@ -528,14 +566,14 @@ const AstrologyResult = ({ result }: { result: AstrologyPrediction }) => {
                                     <h3 className="text-xl font-semibold mb-3 dark:text-white">{product.name}</h3>
                                     <p className="text-gray-600 dark:text-gray-300 mb-6">{product.reason}</p>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-2xl font-bold text-purple-300">
+                                        <span className="text-2xl font-bold text-secondary-300">
                                             {new Intl.NumberFormat("vi-VN", {
                                                 style: "currency",
                                                 currency: "VND",
                                             }).format(product.price)}
                                         </span>
                                         <Link href={`/products/${product.id}`}>
-                                            <Button className="bg-purple-300 hover:bg-purple-400 text-white">
+                                            <Button className="bg-secondary-300 hover:bg-secondary-400 text-white">
                                                 Xem chi tiết
                                             </Button>
                                         </Link>

@@ -18,14 +18,14 @@ export default async function AstrologyPage() {
 
 
     return (
-        <div>
-                <Breadcrumb
-                    items={[
-                        { label: 'Trang chủ', link: '/' },
-                        { label: 'Tử vi', link: '/astrology' },
-                    ]}
-                />
-                <AstrologyForm products={filteredProducts} />
+        <div className="flex flex-col min-h-full">
+            {/* <Breadcrumb
+                items={[
+                    { label: 'Trang chủ', link: '/' },
+                    { label: 'Tử vi', link: '/astrology' },
+                ]}
+            /> */}
+            <AstrologyForm products={filteredProducts} />
         </div>
     )
 }

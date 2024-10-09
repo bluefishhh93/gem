@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAddToCart } from '@/hooks/use-add-to-cart';
 import { PlusIcon } from 'lucide-react';
+import { vietnamCurrency } from '@/util/util';
 
 interface Product {
     id: number;
@@ -65,10 +66,7 @@ const ProductItem: React.FC<ProductItemProps> = ({ product }) => {
       <div className="px-2  pb-3 flex items-center justify-between">
         <div>
         <div className="text-sm font-bold text-primary-600 dark:text-primary-400 whitespace-nowrap">
-          {new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(product.price)}
+          {vietnamCurrency(product.salePrice)}
         </div>
         </div>
         <button 
