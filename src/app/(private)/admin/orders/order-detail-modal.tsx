@@ -30,7 +30,6 @@ interface ViewOrderDialogProps {
 };
 
 const ViewOrderDialog: React.FC<ViewOrderDialogProps> = ({ selectedOrder }) => {
-    console.log(selectedOrder, 'hehe');
     return (
         <Dialog>
             <DialogTrigger asChild>

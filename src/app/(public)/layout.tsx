@@ -57,8 +57,8 @@ export default async function RootLayout({
         <Providers>
           <NextTopLoader color="var(--loader-color)" showSpinner={false} />
           <Header />
-          <StarryBackground />
           <main className="flex-grow relative z-10">{children}</main>
+          <StarryBackground />
           <Footer />
           <FloatingContactButtons />
         </Providers>

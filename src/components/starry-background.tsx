@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 
@@ -17,10 +18,11 @@ interface ShootingStar {
   startY: number;
 }
 
-export default function StarryBackground(): JSX.Element {
+const StarryBackground = (): JSX.Element => {
+  const [mounted, setMounted] = useState(false);
   const [shootingStars, setShootingStars] = useState<ShootingStar[]>([]);
 
-  // Tạo mảng các ngôi sao tĩnh một lần và tái sử dụng
+  // Create static stars array once and reuse
   const stars: Star[] = useMemo(() => {
     return Array.from({ length: 100 }, (_, i) => ({
       id: i,
@@ -32,7 +34,10 @@ export default function StarryBackground(): JSX.Element {
     }));
   }, []);
 
+  // Handle shooting stars
   useEffect(() => {
+    setMounted(true);
+
     const interval = setInterval(() => {
       const newShootingStar: ShootingStar = {
         id: Date.now(),
@@ -42,6 +47,7 @@ export default function StarryBackground(): JSX.Element {
       
       setShootingStars(prev => [...prev, newShootingStar]);
 
+      // Remove shooting star after animation
       setTimeout(() => {
         setShootingStars(prev => 
           prev.filter(star => star.id !== newShootingStar.id)
@@ -52,10 +58,15 @@ export default function StarryBackground(): JSX.Element {
     return () => clearInterval(interval);
   }, []);
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!mounted) {
+    return <></>;
+  }
+
   return (
-    <div className="fixed inset-0 overflow-hidden z-[-1]">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
       <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-purple-950/40 to-gray-950">
-        {/* Các ngôi sao tĩnh */}
+        {/* Static stars */}
         {stars.map((star) => (
           <motion.div
             key={star.id}
@@ -79,7 +90,7 @@ export default function StarryBackground(): JSX.Element {
           />
         ))}
 
-        {/* Sao băng */}
+        {/* Shooting stars */}
         {shootingStars.map((star) => (
           <motion.div
             key={star.id}
@@ -110,4 +121,6 @@ export default function StarryBackground(): JSX.Element {
       </div>
     </div>
   );
-}
+};
+
+export default StarryBackground;

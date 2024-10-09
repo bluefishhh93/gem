@@ -28,8 +28,6 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React from "react";
 import { Calendar, Clock, Moon, User } from "lucide-react";
-import { ProductType } from "@/hooks/use-cart-store";
-import StarryBackground from "@/components/starry-background";
 
 
 const keyTranslations = {
@@ -240,6 +238,7 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                     <FormLabel className="text-lg dark:text-gray-200">Họ và tên</FormLabel>
                                                     <FormControl>
                                                         <Input
+                                                            {...field}
                                                             className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
                                                         />
                                                     </FormControl>
@@ -290,9 +289,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Ngày"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
-                                                                className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
+                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -309,9 +311,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Tháng"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -328,9 +333,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Năm"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -385,9 +393,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Giờ"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -404,9 +415,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Phút"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -429,9 +443,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Tháng xem"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>)}
@@ -447,9 +464,12 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                                                 type="number"
                                                                 placeholder="Năm xem"
                                                                 {...field}
-                                                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                                                                    field.onChange(value);
+                                                                }}
                                                                 className="bg-purple-900/30 border-purple-500/30 text-purple-100 placeholder-purple-300/50 focus:border-purple-400 focus:ring-purple-400/30 transition-all duration-300"
-                                                                />
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
