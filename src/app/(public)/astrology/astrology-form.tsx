@@ -209,8 +209,8 @@ export default function AstrologyForm({ products }: { products: filteredProduct[
                                     <motion.div
                                         key={index}
                                         className={`flex flex-col items-center ${activeStep === index + 1
-                                            ? 'text-purple-300'
-                                            : 'text-gray-400'
+                                            ? 'text-purple-500 dark:text-purple-300'
+                                            : 'text-gray-700 dark:text-gray-400'
                                             }`}
                                         whileHover={{ scale: 1.05 }}
                                     >

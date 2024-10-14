@@ -70,6 +70,11 @@ export const getAstrologyPredictionAction = unauthenticatedAction
     
     Dựa trên phân tích tử vi, hãy đề xuất 3 sản phẩm phù hợp từ danh sách sau:
       ${input.products.map(p => `- ID ${p.id}: ${p.name} : ${p.description}`).join('\n')}
+    
+    Lưu ý quan trọng:
+    1. Nếu có vòng tay theo tháng sinh, chỉ gợi ý vòng tay phù hợp với tháng sinh của người dùng (tháng ${birthday.month}).
+    2. Không gợi ý vòng tay của các tháng khác.
+    3. Các sản phẩm khác có thể được gợi ý dựa trên phân tích tử vi tổng thể.
   
     Hãy định dạng phản hồi của bạn như một đối tượng JSON với các trường sau:
     
@@ -85,7 +90,7 @@ export const getAstrologyPredictionAction = unauthenticatedAction
       "recommendedProducts": [
         {
           "id": [ID sản phẩm],
-          "reason": "[Lý do gợi ý sản phẩm]"
+          "reason": "[Lý do gợi ý sản phẩm, bao gồm cả việc phù hợp với tháng sinh nếu là vòng tay theo tháng]"
         },
         {
           "id": [ID sản phẩm],
@@ -97,6 +102,7 @@ export const getAstrologyPredictionAction = unauthenticatedAction
         }
       ]
     }`;
+
 
     try {
       const completion = await openai.chat.completions.create({
