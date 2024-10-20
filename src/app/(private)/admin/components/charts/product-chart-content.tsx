@@ -77,7 +77,11 @@ export default function ProductChartContent({ initialData, chartConfig, topSelle
         <CardFooter className="flex-col items-start gap-2 text-sm">
           <div className="flex gap-2 font-medium leading-none">
             <Package className="h-4 w-4" />
-            Top seller: {topSeller.product} ({topSeller.sales} units)
+            {
+              topSeller && (
+                <span>Top seller: {topSeller.product} ({topSeller.sales} units)</span>
+              )
+            }
           </div>
           <div className="flex gap-2 font-medium leading-none">
             <TrendingUp className="h-4 w-4" />
