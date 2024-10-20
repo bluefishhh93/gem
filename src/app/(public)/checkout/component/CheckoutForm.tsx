@@ -113,7 +113,9 @@ export const CheckoutForm = ({
     return cartItemsWeight + customBraceletsWeight;
   }, [cart, customBracelets]);
 
-  const { shippingFee, isLoading: isLoadingShippingFee } = useShippingFee(districtId, wardCode, 203, calculateTotalWeight);
+  // const { shippingFee, isLoading: isLoadingShippingFee } = useShippingFee(districtId, wardCode, 203, calculateTotalWeight);
+  const shippingFee = 0;
+  const isLoadingShippingFee = false;
 
   const handleDistrictChange = useCallback(async (districtId: number) => {
     await fetchWards(districtId);

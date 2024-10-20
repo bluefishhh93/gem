@@ -22,7 +22,7 @@ import { OrderType } from "@/app/(private)/admin/orders/page";
 
 export const BASE_URL = env.HOST_NAME;
 
-export function OrderConfirmationEmail({ order }: { order: OrderType }) {
+export function OrderConfirmationEmail({ order, items }: { order: OrderType, items: any[] }) {
   const previewText = `Order Confirmation for Order #${order.id}`;
   return (
     <Html>
@@ -66,7 +66,7 @@ export function OrderConfirmationEmail({ order }: { order: OrderType }) {
               <Text className="text-[18px] font-bold leading-[24px] text-black">
                 Items Ordered
               </Text>
-              {order.orderItems && order.orderItems.length > 0 && order.orderItems.map((item, index) => (
+              {items && items.length > 0 && items.map((item, index) => (
                 <Text key={index} className="text-[14px] leading-[24px] text-black">
                   {item.product ? item.product?.name : `Custom Bracelet #${item.customBracelet?.id}`} - 
                   Quantity: {item.quantity} - 

@@ -94,18 +94,19 @@ export async function createOrderUseCase({
         });
 
         // Move these to background jobs if possible
+
         Promise.all([
             sendEmail(
                 order.email,
                 `Order Confirmation for Order #${order.id}`,
-                <OrderConfirmationEmail order={order as any} />
+                <OrderConfirmationEmail order={order as any} items={orderData.orderItems || []} />
             ),
-            createOrderGHN({
-                order,
-                items: orderData.orderItems || [],
-                districtId: orderData.districtId,
-                wardCode: orderData.wardCode,
-            })
+            // createOrderGHN({
+            //     order,
+            //     items: orderData.orderItems || [],
+            //     districtId: orderData.districtId,
+            //     wardCode: orderData.wardCode,
+            // })
         ]).catch(error => console.error('Error in background tasks:', error));
 
         return order;
