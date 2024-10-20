@@ -12,6 +12,13 @@ import { Header } from "./_header/header";
 import Footer from "@/components/footer";
 import { FloatingContactButtons } from "@/components/contact-button";
 import  StarryBackground  from "@/components/starry-background";
+import { initPosthog } from "@/lib/posthog";
+import dynamic from "next/dynamic";
+// import PostHogPageView from "@/components/posthog-page-view";
+
+const PostHogPageView = dynamic(() => import('@/components/posthog-page-view'), {
+  ssr: false,
+})
 
 const archivo = Archivo({
   subsets: ["latin"],
@@ -44,6 +51,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: ReactNode;
 }>) {
+  // initPosthog();
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -54,6 +62,7 @@ export default async function RootLayout({
           playfair_display.variable
         )}
       >
+        <PostHogPageView />
         <Providers>
           <NextTopLoader color="var(--loader-color)" showSpinner={false} />
           <Header />

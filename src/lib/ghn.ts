@@ -15,8 +15,8 @@ const ghn = new Ghn({
 export default ghn;
 
 export const createOrderGHN = async (
-    {order , districtId, wardCode, provinceId}: 
-    {order: any, districtId: number, wardCode: string, provinceId?: number}
+    {order, items ,districtId, wardCode, provinceId}: 
+    {order: any, items: any[], districtId: number, wardCode: string, provinceId?: number}
     ): Promise<any> => {
     const payload: CreateOrder = {
         payment_type_id: order.paymentMethod === 'cod' ? 2 : 1,
@@ -38,19 +38,19 @@ export const createOrderGHN = async (
         to_address: order.shipAddress,
         to_ward_code: wardCode, // You need to implement a function to get this from the order address
         to_district_id: districtId, // You need to implement a function to get this from the order address
-        cod_amount: order.paymentMethod === 'cod' ? Math.round(order.total) : 0,
+        cod_amount: order.paymentMethod === 'cod' ? Math.round(order.total - (order.fee || 0)) : 0,
         content: `Order #${order.id}`,
         weight: 200, // You might want to calculate this based on the order items
         length: 10,
         width: 10,
         height: 10,
         pick_station_id: 0,
-        insurance_value: Math.round(order.total),
+        insurance_value: Math.round(order.total - (order.fee || 0)),
         service_id: 0,
-        service_type_id: 2,
+        service_type_id: 3,
         coupon: null,
         pick_shift: [2],
-        items: order.orderItems.map((item: any) => ({
+        items: items.map((item: any) => ({
             name: item.product?.name || 'Custom Bracelet',
             code: item.product?.id.toString() || item.customBracelet?.id.toString(),
             quantity: item.quantity,
@@ -65,6 +65,7 @@ export const createOrderGHN = async (
         }))
     };
 
+    console.log(payload, 'payload');
     return ghn.order.createOrder(payload);
 }
 

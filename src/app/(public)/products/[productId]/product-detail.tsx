@@ -7,8 +7,9 @@ import { useAddToCart } from "@/hooks/use-add-to-cart";
 import { vietnamCurrency } from "@/util/util";
 import { MinusIcon, PlusIcon } from "lucide-react";
 import Image from "next/image";
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import ProductComment, { ReviewType } from "../components/ProductComment/ProductComment";
+import { posthogInstance } from '@/lib/posthog';
 import React from "react";
 
 interface ProductDetail {
@@ -62,6 +63,14 @@ function reducer(state: State, action: Action, maxQuantity: number): State {
 export default function ProductDetail({ product }: { product: ProductDetail }) {
 
     const [activeIndex, setActiveIndex] = useState(0);
+
+    useEffect(() => {
+        posthogInstance.capture('product_viewed', {
+          product_id: product.id,
+          product_name: product.name
+        });
+    }, [product]);
+
     const [state, dispatch] = useReducer(
         (state: State, action: Action) =>
             reducer(state, action, product.currentQuantity),

@@ -2,6 +2,7 @@
 import { useCallback, useState, useRef } from "react";
 import { toast } from "@/components/ui/use-toast";
 import { addToCartProductType, useCartStore } from "./use-cart-store";
+import { posthogInstance } from "@/lib/posthog";
 
 export const useAddToCart = () => {
     const addToCart = useCartStore((state) => state.addToCart);
@@ -22,6 +23,11 @@ export const useAddToCart = () => {
             })
         }else{
             addToCart(product, quantity);
+            posthogInstance.capture('product_added_to_cart', {
+                product_id: product.id,
+                product_name: product.name,
+                quantity:quantity
+              });
             toast({
                 title: "Thông báo",
                 description: "Sản phẩm đã được thêm vào giỏ hàng",

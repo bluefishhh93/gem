@@ -15,7 +15,7 @@ export const roleEnum = pgEnum("role", ["user", "admin"]);
 export const accountTypeEnum = pgEnum("type", ["email", "google", "github"]);
 export const paymentStatusEnum = pgEnum("payment_status", ["pending", "paid", "refunded", "failed"]);
 export const orderStatusEnum = pgEnum("order_status", ["pending", "processing", "canceled", "cancelling", "completed"]);
-export const paymentMethodEnum = pgEnum("payment_method", ["cod", "vnpay"]);
+export const paymentMethodEnum = pgEnum("payment_method", ["cod", "vnpay", "payos"]);
 export const shippingStatusEnum = pgEnum("shipping_status", ["pending", "processing", "shipping", "delivered", "failed"]);
 
 export const users = pgTable("gf_user", {

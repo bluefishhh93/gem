@@ -4,9 +4,11 @@ import { calculateTotal, PaymentError, VNPayError } from "@/app/util";
 import { CustomBracelet } from "@/hooks/use-cart-store";
 import { calculateShippingFee } from "@/lib/ghn";
 import { rateLimitByIp } from "@/lib/limiter";
+import payos from "@/lib/payos";
 import { authenticatedAction, unauthenticatedAction } from "@/lib/safe-action";
 import vnpay from "@/lib/vnpay";
 import { createOrderUseCase } from "@/use-cases/orders";
+import { CheckoutRequestType, WebhookDataType, WebhookType } from "@payos/node/lib/type";
 import moment from "moment";
 import { revalidatePath } from "next/cache";
 import { parse } from 'querystring';
@@ -59,6 +61,7 @@ const checkoutFormSchema = z.object({
   district: z.string().trim().min(1, "District is required"),
   fee: z.number(),
   orderItems: z.array(z.object({
+    name: z.string().optional(),
     productId: z.number(),
     quantity: z.number(),
     subtotal: z.number(),
@@ -136,6 +139,10 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
       }
 
 
+     if (
+      (input.checkoutData.orderItems && input.checkoutData.orderItems.length > 0) ||
+      (input.checkoutData.customBracelets && input.checkoutData.customBracelets.length > 0)
+     ) {
       const order = await createOrderUseCase({
         orderData: {
           ...input.checkoutData,
@@ -148,6 +155,9 @@ export const finalizeVNPayPaymentAction = unauthenticatedAction
       return order 
         ? { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` }
         : { success: false, error: "Failed to create order" };
+     }
+
+      
 
     } catch (error) {
       console.error("Payment finalization failed:", error);
@@ -173,8 +183,130 @@ export const calculateShippingFeeAction = unauthenticatedAction
       length: input.length,
       width: input.width,
       height: input.height,
-      insurance_value: 100000, // Assuming default insurance value is 0 if not provided
+      insurance_value: 0, // Assuming default insurance value is 0 if not provided
     });
     revalidatePath('/checkout');
     return fee;
   });
+
+
+
+  //payos
+  export const checkoutWithPayos = unauthenticatedAction
+  .createServerAction()
+  .input(checkoutFormSchema)
+  .handler(async ({ input }) => {
+    try {
+      const totalAmount = calculateTotal(input.orderItems, input.customBracelets) + input.fee;
+      
+      if (totalAmount <= 0) {
+        throw new Error("Total amount must be greater than zero");
+      }
+
+      const orderId = moment().format("DDHHmmss");
+
+      const orderItems = input.orderItems?.map((item) => ({
+        name: item.name ?? item.productId.toString(),
+        quantity: item.quantity,
+        price: item.subtotal,
+      })) ?? [];
+
+      const customBraceletItems = input.customBracelets?.map((item) => ({
+        name: `Vòng tay custom ${item.string.material}`,
+        quantity: item.quantity,
+        price: item.price,
+      })) ?? [];
+
+      const shippingFee = {
+        name: 'Phí vận chuyển',
+        quantity: 1,
+        price: input.fee,
+      };
+
+      const body: CheckoutRequestType = {
+        orderCode: Number(orderId),
+        amount: totalAmount,
+        returnUrl: `${process.env.HOST_NAME}/payos-return`,
+        cancelUrl: `${process.env.HOST_NAME}/checkout`,
+        description: `Pay order ${orderId}`,
+        buyerName: input.name,
+        items: [...orderItems, ...customBraceletItems, shippingFee],
+      };
+
+      console.log(body);
+      const paymentLinkRes = await payos.createPaymentLink(body);
+
+      return { 
+        success: true, 
+        redirectUrl: paymentLinkRes.checkoutUrl 
+      };
+    } catch (error) {
+      console.error("Payos checkout failed:", error);
+      return { 
+        success: false, 
+        error: "Failed to initiate Payos payment" 
+      };
+    }
+  });
+
+  export const finalizePayOSPaymentAction = unauthenticatedAction
+  .createServerAction()
+  .input(
+    z.object({
+      queryString: z.string(),
+      checkoutData: checkoutFormSchema,
+    })
+  )
+  .handler(async ({ input }) => {
+    try {
+      // Parsing the query string to get payment details
+      const parsedQuery = parse(input.queryString);
+      
+      // Convert parsed query to WebhookType
+      // const webhookData: WebhookType = {
+      //   code: ensureString(parsedQuery.code),
+      //   desc: ensureString(parsedQuery.desc),
+      //   success: parsedQuery.success === 'true',
+      //   data: JSON.parse(ensureString(parsedQuery.data)),
+      //   signature: ensureString(parsedQuery.signature)
+      // };
+
+      // // Verify the webhook data
+      // const verifiedData: WebhookDataType = payos.verifyPaymentWebhookData(webhookData);
+
+      // // Check if verification was successful
+      // if (!verifiedData) {
+      //   throw new Error("Payment verification failed");
+      // }
+
+      // Handling the response based on status
+      if (parsedQuery.code !== "00") {
+        // Payment failed or canceled
+        return { success: false, redirectUrl: "/checkout" };
+      }
+
+      // Assuming payment success, create the order
+     if(
+      (input.checkoutData.orderItems && input.checkoutData.orderItems.length > 0) ||
+      (input.checkoutData.customBracelets && input.checkoutData.customBracelets.length > 0)
+     ) {
+      const order = await createOrderUseCase({
+        orderData: {
+          ...input.checkoutData,
+          trackingNumber: parsedQuery.orderCode!.toString(),
+          paymentMethod: 'payos'
+        },
+        customBracelets: input.checkoutData.customBracelets,
+      });
+
+      if(order) {
+        return { success: true, redirectUrl: `/checkout/success?orderId=${order.id}` };
+      }
+     }
+     return { success: false, redirectUrl: '/' };
+    } catch (error) {
+      console.error("Payment finalization failed:", error);
+      return { success: false, error: error instanceof Error ? error.message : "Failed to finalize payment" };
+    }
+  });
+

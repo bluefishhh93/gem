@@ -102,6 +102,7 @@ export async function createOrderUseCase({
             ),
             createOrderGHN({
                 order,
+                items: orderData.orderItems || [],
                 districtId: orderData.districtId,
                 wardCode: orderData.wardCode,
             })

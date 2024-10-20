@@ -66,7 +66,7 @@ export function OrderConfirmationEmail({ order }: { order: OrderType }) {
               <Text className="text-[18px] font-bold leading-[24px] text-black">
                 Items Ordered
               </Text>
-              {order.orderItems.map((item, index) => (
+              {order.orderItems && order.orderItems.length > 0 && order.orderItems.map((item, index) => (
                 <Text key={index} className="text-[14px] leading-[24px] text-black">
                   {item.product ? item.product?.name : `Custom Bracelet #${item.customBracelet?.id}`} - 
                   Quantity: {item.quantity} - 

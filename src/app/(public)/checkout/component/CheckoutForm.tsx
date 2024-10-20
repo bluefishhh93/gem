@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useServerAction } from "zsa-react";
-import { calculateShippingFeeAction, checkoutWithCOD, checkoutWithVNPay } from "../actions";
+import { calculateShippingFeeAction, checkoutWithCOD, checkoutWithPayos, checkoutWithVNPay } from "../actions";
 import { useAddressData } from "@/hooks/use-address-data";
 import { CartItemType, ProductType, useCartStore } from "@/hooks/use-cart-store";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ const checkoutFormSchema = z.object({
     .regex(/^\d{10}$/, "Số điện thoại không hợp lệ"),
   address: z.string().trim().min(1, "Địa chỉ không hợp lệ"),
   email: z.string().email("Email không hợp lệ").min(1, "Vui lòng nhập email"),
-  paymentMethod: z.enum(["cod", "vnpay"], {
+  paymentMethod: z.enum(["cod", "vnpay", "payos"], {
     required_error: "Vui lòng chọn phương thức thanh toán",
   }),
   ward: z.string().trim().min(1, "Vui lòng chọn phường/xã"),
@@ -70,11 +70,13 @@ export const CheckoutForm = ({
 
   const getItemList = useCallback((cart: ProductType[]): CartItemType[] => {
     return cart.map((item: ProductType) => ({
+      name: item.name,
       productId: item.id,
       quantity: item.quantity,
       subtotal: item.salePrice * item.quantity,
     }));
   }, []);
+
 
   const form = useForm({
     resolver: zodResolver(checkoutFormSchema),
@@ -90,7 +92,7 @@ export const CheckoutForm = ({
   });
 
   const { execute, error, isPending } = useServerAction(
-    paymentMethod === "cod" ? checkoutWithCOD : checkoutWithVNPay,
+    paymentMethod === "cod" ? checkoutWithCOD : checkoutWithPayos,
     {
       onSuccess: () => {
         // clearCart();
@@ -256,9 +258,9 @@ export const CheckoutForm = ({
                             </FormItem>
                             <FormItem className="flex items-center space-x-3 space-y-0">
                               <FormControl>
-                                <RadioGroupItem value="vnpay" />
+                                <RadioGroupItem value="payos" />
                               </FormControl>
-                              <FormLabel className="font-normal">Thanh toán qua VNPay</FormLabel>
+                              <FormLabel className="font-normal">Thanh toán qua PayOS</FormLabel>
                             </FormItem>
                           </RadioGroup>
                         </FormControl>

@@ -57,6 +57,13 @@
       "when": 1727597965141,
       "tag": "0007_careless_firestar",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1729405997060,
+      "tag": "0008_clammy_strong_guy",
+      "breakpoints": true
     }
   ]
 }

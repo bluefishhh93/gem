@@ -6,6 +6,7 @@ import { ShoppingBag, CheckCircle } from "lucide-react";
 import Link from 'next/link';
 import { vietnamCurrency } from '@/util/util';
 import ClearCart from './clear-cart';
+import { posthogInstance } from '@/lib/posthog';
 
 export default async function CheckoutSuccessPage({ searchParams }: { searchParams: { orderId: string } }) {
   const { orderId } = searchParams;
@@ -19,6 +20,13 @@ export default async function CheckoutSuccessPage({ searchParams }: { searchPara
   if (!order) {
     redirect('/');
   }
+
+  posthogInstance.capture('checkout_completed', {
+    order_id: order.id,
+    total_amount: order.total
+  });
+
+
 
   return (
     <div className="container mx-auto px-4 py-8 ">

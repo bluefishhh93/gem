@@ -40,6 +40,11 @@ export const env = createEnv({
     AI_API_URL: z.string().min(1),
     GROQ_API_KEY: z.string().min(1),
     GOOGLE_AI_KEY: z.string().min(1),
+
+    PAYOS_API_KEY: z.string().min(1),
+    PAYOS_CHECKSUM_KEY: z.string().min(1),
+    PAYOS_CLIENT_ID: z.string().min(1),
+
   },
   client: {
     NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
@@ -89,5 +94,8 @@ export const env = createEnv({
     AI_API_URL: process.env.AI_API_URL,
     GROQ_API_KEY: process.env.GROQ_API_KEY,
     GOOGLE_AI_KEY: process.env.GOOGLE_AI_KEY,
+    PAYOS_API_KEY: process.env.PAYOS_API_KEY,
+    PAYOS_CHECKSUM_KEY: process.env.PAYOS_CHECKSUM_KEY,
+    PAYOS_CLIENT_ID: process.env.PAYOS_CLIENT_ID,
   },
 });
